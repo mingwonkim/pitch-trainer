@@ -18,7 +18,6 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);min-height:100dvh;overflow-x:hidden;}
 
-/* Lock Screen */
 .lock{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s,transform .4s;}
 .lock.hide{opacity:0;transform:scale(1.05);pointer-events:none;}
 .lock .greeting{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;margin-bottom:8px;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
@@ -33,17 +32,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .lock .nk.del{font-size:14px;color:var(--txd);}
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
 
-/* Dashboard */
 .dashboard{max-width:1100px;margin:0 auto;padding:20px;min-height:100dvh;display:none;flex-direction:column;}
 .dashboard.show{display:flex;}
 .dash-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
 .dash-hd h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;}
 .dash-hd .lock-btn{padding:8px 16px;border:1px solid var(--bd);border-radius:10px;background:none;color:var(--txd);font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
 .dash-hd .lock-btn:hover{border-color:var(--red);color:var(--red);}
-
 .dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 @media(max-width:768px){.dash-grid{grid-template-columns:1fr;}}
-
 .dash-card{background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:32px 28px;cursor:pointer;transition:.25s;position:relative;overflow:hidden;}
 .dash-card:hover{transform:translateY(-4px);}
 .dash-card:active{transform:scale(.97);}
@@ -55,7 +51,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .dash-card.files{border-color:rgba(62,207,142,.2);}.dash-card.files:hover{border-color:var(--green);box-shadow:0 8px 40px rgba(62,207,142,.1);}
 .dash-card.music{border-color:rgba(167,139,250,.2);}.dash-card.music:hover{border-color:var(--purple);box-shadow:0 8px 40px rgba(167,139,250,.1);}
 
-/* App Pages */
 .app-page{display:none;flex-direction:column;max-width:1100px;margin:0 auto;padding:20px;min-height:100dvh;width:100%;}
 .app-page.show{display:flex;}
 .app-hd{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
@@ -63,12 +58,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .back-btn:hover{border-color:var(--blue);}
 .app-hd h1{font-size:22px;font-weight:900;flex:1;}
 
-/* Memo */
 .memo-toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
 .memo-toolbar button,.memo-toolbar input{padding:10px 16px;border:1px solid var(--bd);border-radius:10px;background:var(--sf);color:var(--tx);font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;}
 .memo-toolbar button{font-weight:600;cursor:pointer;}.memo-toolbar button:hover{border-color:var(--blue);}
-.memo-toolbar input{flex:1;min-width:120px;}
-.memo-toolbar input:focus{border-color:var(--blue);}
+.memo-toolbar input{flex:1;min-width:120px;}.memo-toolbar input:focus{border-color:var(--blue);}
 .memo-list{display:flex;flex-direction:column;gap:10px;}
 .memo-item{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:16px 20px;cursor:pointer;transition:.2s;}
 .memo-item:hover{border-color:var(--blue);}
@@ -87,7 +80,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .memo-editor .ebtns button{padding:12px 24px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
 .memo-editor .sv{background:var(--blue);color:#fff;}.memo-editor .cn{background:var(--sf2);color:var(--txd);border:1px solid var(--bd);}
 
-/* Files */
 .drop-zone{border:2px dashed var(--bd);border-radius:16px;padding:40px;text-align:center;color:var(--txd);font-size:14px;margin-bottom:16px;transition:.2s;cursor:pointer;}
 .drop-zone:hover,.drop-zone.over{border-color:var(--green);color:var(--green);}
 .drop-zone input{display:none;}
@@ -105,17 +97,13 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .file-item .fa button{padding:5px 10px;border:1px solid var(--bd);border-radius:6px;background:none;color:var(--txd);font-size:10px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
 .file-item .fa button:hover{border-color:var(--green);color:var(--green);}
 .file-item .fa .db:hover{border-color:var(--red);color:var(--red);}
-
-/* Music iframe */
 .music-frame{flex:1;border:none;border-radius:16px;min-height:85vh;background:var(--sf);}
-
-/* Empty */
 .empty{text-align:center;padding:60px 20px;color:var(--txd);}.empty .ei{font-size:48px;margin-bottom:12px;}.empty p{font-size:14px;}
+.loading{text-align:center;padding:40px;color:var(--txd);font-size:13px;}
 </style>
 </head>
 <body>
 
-<!-- Lock -->
 <div class="lock" id="lockScreen">
   <span class="greeting">민권</span>
   <span class="sub">비밀번호를 입력하세요</span>
@@ -123,39 +111,36 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
   <div class="numpad" id="numpad"></div>
 </div>
 
-<!-- Dashboard -->
 <div class="dashboard" id="dashboard">
   <div class="dash-hd"><h1>민권</h1><button class="lock-btn" onclick="lockApp()">🔒 잠금</button></div>
-  <!-- Storage bar -->
   <div style="background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:16px 20px;margin-bottom:20px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-      <span style="font-size:13px;font-weight:700;">💾 저장 공간</span>
-      <span style="font-size:12px;color:var(--txd);font-family:'JetBrains Mono',monospace;" id="dashStorage">0 KB / 5 MB</span>
+      <span style="font-size:13px;font-weight:700;">💾 저장 공간 (Firebase)</span>
+      <span style="font-size:12px;color:var(--txd);font-family:'JetBrains Mono',monospace;" id="dashStorage">계산 중...</span>
     </div>
     <div style="height:8px;background:var(--sf2);border-radius:4px;overflow:hidden;">
       <div id="dashStorageBar" style="height:100%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:4px;transition:width .3s;width:0%"></div>
     </div>
     <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--txd);">
-      <span>📝 메모: <span id="dashMemoSize">0 KB</span></span>
-      <span>📁 파일: <span id="dashFileSize">0 KB</span></span>
-      <span>🎵 음악: <span id="dashMusicSize">0 KB</span></span>
+      <span>📝 메모: <span id="dashMemoSize">-</span></span>
+      <span>📁 파일: <span id="dashFileSize">-</span></span>
+      <span>한도: 5 GB (무료)</span>
     </div>
   </div>
   <div class="dash-grid">
-    <div class="dash-card memo" onclick="openApp('memo')"><span class="card-icon">📝</span><span class="card-count" id="memoCount">0개</span><h2>메모장</h2><p>메모 작성 · 검색 · 자동 저장</p></div>
-    <div class="dash-card files" onclick="openApp('files')"><span class="card-icon">📁</span><span class="card-count" id="fileCount">0개</span><h2>저장소</h2><p>파일 업로드 · 다운로드 · 관리</p></div>
-    <div class="dash-card music" onclick="openApp('music')"><span class="card-icon">🎵</span><span class="card-count" id="musicCount">1개</span><h2>음악</h2><p>음악 도구 · 트레이너 · 악기</p></div>
+    <div class="dash-card memo" onclick="openApp('memo')"><span class="card-icon">📝</span><span class="card-count" id="memoCount">-</span><h2>메모장</h2><p>메모 작성 · 검색 · 클라우드 저장</p></div>
+    <div class="dash-card files" onclick="openApp('files')"><span class="card-icon">📁</span><span class="card-count" id="fileCount">-</span><h2>저장소</h2><p>파일 업로드 · 다운로드 · 최대 50MB/파일</p></div>
+    <div class="dash-card music" onclick="openApp('music')"><span class="card-icon">🎵</span><span class="card-count">도구</span><h2>음악</h2><p>절대음감 트레이너 · 악기 도구</p></div>
   </div>
 </div>
 
-<!-- Memo App -->
 <div class="app-page" id="app-memo">
   <div class="app-hd"><button class="back-btn" onclick="closeApp()">←</button><h1>📝 메모장</h1></div>
   <div class="memo-toolbar" id="memoToolbar">
     <button onclick="newMemo()">+ 새 메모</button>
     <input type="text" id="memoSearch" placeholder="검색..." oninput="renderMemos()">
   </div>
-  <div class="memo-list" id="memoList"></div>
+  <div class="memo-list" id="memoList"><div class="loading">불러오는 중...</div></div>
   <div class="memo-editor" id="memoEditor">
     <input type="text" id="memoTitleInput" placeholder="제목">
     <textarea id="memoBodyInput" placeholder="내용을 입력하세요..."></textarea>
@@ -163,18 +148,16 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
   </div>
 </div>
 
-<!-- File Storage -->
 <div class="app-page" id="app-files">
   <div class="app-hd"><button class="back-btn" onclick="closeApp()">←</button><h1>📁 저장소</h1></div>
   <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-    📂 파일을 드래그하거나 클릭하여 업로드<br><span style="font-size:11px;">(파일당 최대 5MB · 브라우저 저장)</span>
+    📂 파일을 드래그하거나 클릭하여 업로드<br><span style="font-size:11px;">(파일당 최대 50MB · Firebase Cloud Storage)</span>
     <input type="file" id="fileInput" multiple onchange="handleFiles(this.files)">
   </div>
-  <div class="file-toolbar"><button onclick="document.getElementById('fileInput').click()">+ 파일 추가</button><span class="usage" id="storageUsage">0 KB</span></div>
-  <div class="file-list" id="fileList"></div>
+  <div class="file-toolbar"><button onclick="document.getElementById('fileInput').click()">+ 파일 추가</button><span class="usage" id="storageUsage">-</span></div>
+  <div class="file-list" id="fileList"><div class="loading" style="grid-column:1/-1;">불러오는 중...</div></div>
 </div>
 
-<!-- Music -->
 <div class="app-page" id="app-music">
   <div class="app-hd"><button class="back-btn" onclick="closeApp()">←</button><h1>🎵 음악</h1></div>
   <div id="musicHome">
@@ -185,21 +168,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
         <div class="fs">에구치 메소드 + Wong 2025 기반</div>
         <div class="fa" style="margin-top:12px;"><button style="background:var(--purple);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer;" onclick="event.stopPropagation();openMusicApp('pitch')">시작하기 →</button></div>
       </div>
-      <div class="file-item" style="opacity:.4;cursor:default;">
-        <div class="fi">🎸</div>
-        <div class="fn">코드 사전</div>
-        <div class="fs">준비 중...</div>
-      </div>
-      <div class="file-item" style="opacity:.4;cursor:default;">
-        <div class="fi">🥁</div>
-        <div class="fn">리듬 트레이너</div>
-        <div class="fs">준비 중...</div>
-      </div>
-      <div class="file-item" style="opacity:.4;cursor:default;">
-        <div class="fi">🎤</div>
-        <div class="fn">보컬 트레이너</div>
-        <div class="fs">준비 중...</div>
-      </div>
+      <div class="file-item" style="opacity:.4;cursor:default;"><div class="fi">🎸</div><div class="fn">코드 사전</div><div class="fs">준비 중...</div></div>
+      <div class="file-item" style="opacity:.4;cursor:default;"><div class="fi">🥁</div><div class="fn">리듬 트레이너</div><div class="fs">준비 중...</div></div>
+      <div class="file-item" style="opacity:.4;cursor:default;"><div class="fi">🎤</div><div class="fn">보컬 트레이너</div><div class="fs">준비 중...</div></div>
     </div>
   </div>
   <div id="musicAppView" style="display:none;flex:1;flex-direction:column;">
@@ -208,11 +179,30 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
   </div>
 </div>
 
+<!-- Firebase SDK (compat for simplicity) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+
 <script>
+// ===== Firebase Init =====
+firebase.initializeApp({
+  apiKey:"AIzaSyDWXJ1nIQIZXSMruwFhyoMSU3gf3omiyMc",
+  authDomain:"mingwon-hub.firebaseapp.com",
+  projectId:"mingwon-hub",
+  storageBucket:"mingwon-hub.firebasestorage.app",
+  messagingSenderId:"108345228898",
+  appId:"1:108345228898:web:81aa09a240d48e54081b3b"
+});
+const db=firebase.firestore();
+const storage=firebase.storage();
+const memosRef=db.collection('mk_app').doc('data').collection('memos');
+const fileMetaRef=db.collection('mk_app').doc('data').collection('files');
+const storageRef=storage.ref('mk_files');
+
 // ===== Lock =====
 const PIN='5940';
 let pinInput='';
-
 function buildNumpad(){
   const pad=document.getElementById('numpad');
   [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(k=>{
@@ -221,17 +211,12 @@ function buildNumpad(){
     pad.innerHTML+=`<div class="nk" onclick="pinAdd('${k}')">${k}</div>`;
   });
 }
-
 function pinAdd(n){
   if(pinInput.length>=4)return;
   pinInput+=n;updateDots();
   if(pinInput.length===4){
-    if(pinInput===PIN){
-      setTimeout(()=>{document.getElementById('lockScreen').classList.add('hide');document.getElementById('dashboard').classList.add('show');updateCounts();},200);
-    }else{
-      document.querySelectorAll('.pin-dot').forEach(d=>d.classList.add('wrong'));
-      setTimeout(()=>{pinInput='';updateDots();document.querySelectorAll('.pin-dot').forEach(d=>d.classList.remove('wrong'));},500);
-    }
+    if(pinInput===PIN){setTimeout(()=>{document.getElementById('lockScreen').classList.add('hide');document.getElementById('dashboard').classList.add('show');updateCounts();},200);}
+    else{document.querySelectorAll('.pin-dot').forEach(d=>d.classList.add('wrong'));setTimeout(()=>{pinInput='';updateDots();document.querySelectorAll('.pin-dot').forEach(d=>d.classList.remove('wrong'));},500);}
   }
 }
 function pinDel(){pinInput=pinInput.slice(0,-1);updateDots();}
@@ -242,99 +227,127 @@ function lockApp(){pinInput='';updateDots();document.getElementById('lockScreen'
 let curApp=null;
 function openApp(a){document.getElementById('dashboard').classList.remove('show');document.getElementById('app-'+a).classList.add('show');curApp=a;if(a==='memo')renderMemos();if(a==='files')renderFiles();}
 function closeApp(){if(curApp){if(curApp==='music')closeMusicApp();document.getElementById('app-'+curApp).classList.remove('show');document.getElementById('dashboard').classList.add('show');curApp=null;updateCounts();}}
-function updateCounts(){
-  document.getElementById('memoCount').textContent=getMemos().length+'개';
-  document.getElementById('fileCount').textContent=getFiles().length+'개';
-  // Storage bar
-  const memoStr=localStorage.getItem('mk_memos')||'';
-  const fileStr=localStorage.getItem('mk_files')||'';
-  const musicStr=localStorage.getItem('eguchi2')||localStorage.getItem('apt4')||'';
-  const memoKB=(memoStr.length/1024).toFixed(1);
-  const fileKB=(fileStr.length/1024).toFixed(1);
-  const musicKB=(musicStr.length/1024).toFixed(1);
-  const totalKB=((memoStr.length+fileStr.length+musicStr.length)/1024).toFixed(1);
-  const maxMB=5;
-  const pct=Math.min((totalKB/(maxMB*1024))*100,100);
-  document.getElementById('dashStorage').textContent=totalKB+' KB / '+maxMB+' MB';
-  document.getElementById('dashStorageBar').style.width=pct+'%';
-  if(pct>80)document.getElementById('dashStorageBar').style.background='linear-gradient(90deg,var(--gold),var(--red))';
-  else document.getElementById('dashStorageBar').style.background='linear-gradient(90deg,var(--green),var(--blue))';
-  document.getElementById('dashMemoSize').textContent=memoKB+' KB';
-  document.getElementById('dashFileSize').textContent=fileKB+' KB';
-  document.getElementById('dashMusicSize').textContent=musicKB+' KB';
+
+async function updateCounts(){
+  try{
+    const mSnap=await memosRef.get();
+    const fSnap=await fileMetaRef.get();
+    document.getElementById('memoCount').textContent=mSnap.size+'개';
+    document.getElementById('fileCount').textContent=fSnap.size+'개';
+    // Estimate sizes
+    let memoBytes=0;mSnap.forEach(d=>{const s=JSON.stringify(d.data());memoBytes+=s.length;});
+    let fileBytes=0;fSnap.forEach(d=>{fileBytes+=(d.data().size||0);});
+    const memoKB=(memoBytes/1024).toFixed(1);
+    const fileMB=(fileBytes/1048576).toFixed(1);
+    const totalMB=((memoBytes+fileBytes)/1048576).toFixed(2);
+    const maxGB=5;
+    const pct=Math.min((totalMB/(maxGB*1024))*100,100);
+    document.getElementById('dashStorage').textContent=totalMB<1?(memoBytes+fileBytes>0?totalMB+' MB':'0 KB'):totalMB+' MB / '+maxGB+' GB';
+    document.getElementById('dashStorageBar').style.width=pct+'%';
+    document.getElementById('dashMemoSize').textContent=memoKB+' KB';
+    document.getElementById('dashFileSize').textContent=fileMB+' MB';
+  }catch(e){console.error(e);}
 }
 
-// ===== Music App Nav =====
+// ===== Music =====
 function openMusicApp(app){
-  if(app==='pitch'){
-    document.getElementById('musicHome').style.display='none';
-    const mv=document.getElementById('musicAppView');
-    mv.style.display='flex';
-    document.getElementById('musicFrame').src='pitch-trainer.html';
-  }
+  if(app==='pitch'){document.getElementById('musicHome').style.display='none';document.getElementById('musicAppView').style.display='flex';document.getElementById('musicFrame').src='pitch-trainer.html';}
 }
-function closeMusicApp(){
-  document.getElementById('musicAppView').style.display='none';
-  document.getElementById('musicHome').style.display='';
-  document.getElementById('musicFrame').src='';
-}
+function closeMusicApp(){document.getElementById('musicAppView').style.display='none';document.getElementById('musicHome').style.display='';document.getElementById('musicFrame').src='';}
 
-// ===== Memo =====
+// ===== Memo (Firestore) =====
 let editId=null;
-function getMemos(){try{return JSON.parse(localStorage.getItem('mk_memos')||'[]');}catch{return[];}}
-function svMemos(m){localStorage.setItem('mk_memos',JSON.stringify(m));}
+let cachedMemos=[];
 
-function renderMemos(){
-  const q=(document.getElementById('memoSearch').value||'').toLowerCase();
-  let ms=getMemos();if(q)ms=ms.filter(m=>m.t.toLowerCase().includes(q)||m.b.toLowerCase().includes(q));
+async function loadMemos(){
+  try{
+    const snap=await memosRef.orderBy('u','desc').get();
+    cachedMemos=[];
+    snap.forEach(d=>{cachedMemos.push({id:d.id,...d.data()});});
+  }catch(e){console.error(e);cachedMemos=[];}
+}
+
+async function renderMemos(){
   const el=document.getElementById('memoList');
+  el.innerHTML='<div class="loading">불러오는 중...</div>';
+  await loadMemos();
+  const q=(document.getElementById('memoSearch').value||'').toLowerCase();
+  let ms=cachedMemos;
+  if(q)ms=ms.filter(m=>(m.t||'').toLowerCase().includes(q)||(m.b||'').toLowerCase().includes(q));
   if(!ms.length){el.innerHTML=`<div class="empty"><div class="ei">📝</div><p>${q?'검색 결과 없음':'새 메모를 작성해보세요'}</p></div>`;return;}
-  el.innerHTML=ms.sort((a,b)=>b.u-a.u).map(m=>{
+  el.innerHTML=ms.map(m=>{
     const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
     return`<div class="memo-item" onclick="editMemo('${m.id}')"><span class="mdel" onclick="event.stopPropagation();delMemo('${m.id}')">삭제</span><div class="mt">${m.t||'제목 없음'}</div><div class="mp">${(m.b||'').substring(0,80).replace(/\n/g,' ')||'내용 없음'}</div><div class="md">${d}</div></div>`;
   }).join('');
 }
 
 function newMemo(){editId=null;document.getElementById('memoTitleInput').value='';document.getElementById('memoBodyInput').value='';showEditor();}
-function editMemo(id){const m=getMemos().find(x=>x.id===id);if(!m)return;editId=id;document.getElementById('memoTitleInput').value=m.t;document.getElementById('memoBodyInput').value=m.b;showEditor();}
+function editMemo(id){const m=cachedMemos.find(x=>x.id===id);if(!m)return;editId=id;document.getElementById('memoTitleInput').value=m.t||'';document.getElementById('memoBodyInput').value=m.b||'';showEditor();}
 function showEditor(){document.getElementById('memoList').style.display='none';document.getElementById('memoToolbar').style.display='none';document.getElementById('memoEditor').classList.add('show');}
 
-function saveMemo(){
-  const t=document.getElementById('memoTitleInput').value.trim(),b=document.getElementById('memoBodyInput').value;
-  const ms=getMemos();
-  if(editId){const m=ms.find(x=>x.id===editId);if(m){m.t=t;m.b=b;m.u=Date.now();}}
-  else ms.push({id:'m'+Date.now(),t,b,c:Date.now(),u:Date.now()});
-  svMemos(ms);cancelMemo();
+async function saveMemo(){
+  const t=document.getElementById('memoTitleInput').value.trim();
+  const b=document.getElementById('memoBodyInput').value;
+  try{
+    if(editId){await memosRef.doc(editId).update({t,b,u:Date.now()});}
+    else{await memosRef.add({t,b,c:Date.now(),u:Date.now()});}
+  }catch(e){alert('저장 실패: '+e.message);return;}
+  cancelMemo();
 }
 
 function cancelMemo(){editId=null;document.getElementById('memoEditor').classList.remove('show');document.getElementById('memoList').style.display='';document.getElementById('memoToolbar').style.display='';renderMemos();}
-function delMemo(id){if(!confirm('삭제할까요?'))return;svMemos(getMemos().filter(m=>m.id!==id));renderMemos();}
 
-// ===== Files =====
-function getFiles(){try{return JSON.parse(localStorage.getItem('mk_files')||'[]');}catch{return[];}}
-function svFiles(f){localStorage.setItem('mk_files',JSON.stringify(f));}
+async function delMemo(id){
+  if(!confirm('삭제할까요?'))return;
+  try{await memosRef.doc(id).delete();}catch(e){alert('삭제 실패');}
+  renderMemos();
+}
+
+// ===== Files (Firebase Storage + Firestore metadata) =====
+let cachedFiles=[];
+
+async function loadFiles(){
+  try{
+    const snap=await fileMetaRef.orderBy('c','desc').get();
+    cachedFiles=[];
+    snap.forEach(d=>{cachedFiles.push({id:d.id,...d.data()});});
+  }catch(e){console.error(e);cachedFiles=[];}
+}
 
 const dz=document.getElementById('dropZone');
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
 dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');handleFiles(e.dataTransfer.files);});
 
-function handleFiles(fl){
-  const fs=getFiles();
-  Array.from(fl).forEach(f=>{
-    if(f.size>5*1024*1024){alert(f.name+': 5MB 초과');return;}
-    const r=new FileReader();
-    r.onload=e=>{fs.push({id:'f'+Date.now()+'_'+Math.random().toString(36).substr(2,4),n:f.name,s:f.size,tp:f.type,d:e.target.result,c:Date.now()});svFiles(fs);renderFiles();};
-    r.readAsDataURL(f);
-  });
+async function handleFiles(fl){
+  for(const f of Array.from(fl)){
+    if(f.size>50*1024*1024){alert(f.name+': 50MB 초과');continue;}
+    try{
+      const fileId='f'+Date.now()+'_'+Math.random().toString(36).substr(2,4);
+      const ref=storageRef.child(fileId+'_'+f.name);
+      // Upload
+      const uploadEl=document.getElementById('storageUsage');
+      uploadEl.textContent='업로드 중: '+f.name;
+      await ref.put(f);
+      const url=await ref.getDownloadURL();
+      // Save metadata to Firestore
+      await fileMetaRef.doc(fileId).set({n:f.name,size:f.size,type:f.type,url,path:ref.fullPath,c:Date.now()});
+      uploadEl.textContent='업로드 완료!';
+    }catch(e){alert('업로드 실패: '+e.message);}
+  }
+  renderFiles();
 }
 
-function renderFiles(){
-  const fs=getFiles(),el=document.getElementById('fileList');
-  document.getElementById('storageUsage').textContent='사용량: '+(JSON.stringify(fs).length/1024).toFixed(1)+' KB';
-  if(!fs.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1;"><div class="ei">📂</div><p>파일을 업로드해보세요</p></div>`;return;}
-  el.innerHTML=fs.sort((a,b)=>b.c-a.c).map(f=>{
-    const ic=fIcon(f.tp,f.n),sz=f.s<1024?f.s+'B':f.s<1048576?(f.s/1024).toFixed(1)+'KB':(f.s/1048576).toFixed(1)+'MB';
+async function renderFiles(){
+  const el=document.getElementById('fileList');
+  el.innerHTML='<div class="loading" style="grid-column:1/-1;">불러오는 중...</div>';
+  await loadFiles();
+  let totalSize=0;cachedFiles.forEach(f=>totalSize+=(f.size||0));
+  document.getElementById('storageUsage').textContent='사용량: '+(totalSize<1048576?(totalSize/1024).toFixed(1)+' KB':(totalSize/1048576).toFixed(1)+' MB');
+  if(!cachedFiles.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1;"><div class="ei">📂</div><p>파일을 업로드해보세요</p></div>`;return;}
+  el.innerHTML=cachedFiles.map(f=>{
+    const ic=fIcon(f.type||'',f.n||'');
+    const sz=f.size<1024?f.size+'B':f.size<1048576?(f.size/1024).toFixed(1)+' KB':(f.size/1048576).toFixed(1)+' MB';
     const dt=new Date(f.c).toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
     return`<div class="file-item"><div class="fi">${ic}</div><div class="fn">${f.n}</div><div class="fs">${sz} · ${dt}</div><div class="fa"><button onclick="dlFile('${f.id}')">다운로드</button><button class="db" onclick="rmFile('${f.id}')">삭제</button></div></div>`;
   }).join('');
@@ -346,10 +359,23 @@ function fIcon(t,n){
   if(n.match(/\.xlsx?$/))return'📊';if(n.match(/\.pptx?$/))return'📽️';if(t.includes('text'))return'📋';return'📎';
 }
 
-function dlFile(id){const f=getFiles().find(x=>x.id===id);if(!f)return;const a=document.createElement('a');a.href=f.d;a.download=f.n;a.click();}
-function rmFile(id){if(!confirm('삭제할까요?'))return;svFiles(getFiles().filter(f=>f.id!==id));renderFiles();}
+function dlFile(id){
+  const f=cachedFiles.find(x=>x.id===id);
+  if(!f||!f.url)return;
+  window.open(f.url,'_blank');
+}
 
-// Init
+async function rmFile(id){
+  if(!confirm('삭제할까요?'))return;
+  const f=cachedFiles.find(x=>x.id===id);
+  try{
+    if(f&&f.path)await storage.ref(f.path).delete();
+    await fileMetaRef.doc(id).delete();
+  }catch(e){console.error(e);}
+  renderFiles();
+}
+
+// ===== Init =====
 buildNumpad();
 </script>
 </body>
