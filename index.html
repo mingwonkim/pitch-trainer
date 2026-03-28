@@ -555,7 +555,6 @@
       <img class="gallery-lb-img" id="galleryLbImg" src="" alt="">
       <button class="gallery-lb-nav gallery-lb-next" onclick="event.stopPropagation();lbNav(1)"><span class="material-symbols-outlined">arrow_forward</span></button>
       <div class="gallery-lb-counter" id="galleryLbCounter"></div>
-      <button class="gallery-lb-del" onclick="event.stopPropagation();lbDel()"><span class="material-symbols-outlined" style="font-size:14px;">delete</span> Delete</button>
     </div>
 
   </div>
@@ -1078,10 +1077,78 @@ function setPage(p){
 function goHub(){setPage('hub');}
 function openApp(a){
   if((a==='memo'||a==='files'||a==='settings')&&!isUnlocked){
-    showPin(a==='settings'?'SETTINGS':a==='memo'?'NOTEPAD':'VAULT',()=>doOpenApp(a));
+    showTextPin(()=>doOpenApp(a));
     return;
   }
   doOpenApp(a);
+}
+
+function showTextPin(cb){
+  const overlay=document.createElement('div');
+  overlay.id='textPinOverlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(10,10,14,.97);z-index:9995;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(16px);';
+  overlay.innerHTML=`
+    <div style="width:100%;max-width:400px;padding:40px 32px;display:flex;flex-direction:column;align-items:center;gap:14px;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.3em;color:#a08d88;text-transform:uppercase;">MK.HUB — 인증</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#ffb4a2;text-transform:uppercase;" id="tpTitle">비밀번호 입력</div>
+      <div style="font-size:12px;color:#a08d88;font-family:'Space Grotesk',sans-serif;" id="tpSub">1단계: 영문·숫자 (최대 13자)</div>
+      <div style="display:flex;gap:6px;margin-bottom:4px;" id="tpDots">
+        <div style="width:24px;height:3px;border-radius:2px;background:#ffb4a2;" id="tpd0"></div>
+        <div style="width:24px;height:3px;border-radius:2px;background:#353535;" id="tpd1"></div>
+        <div style="width:24px;height:3px;border-radius:2px;background:#353535;" id="tpd2"></div>
+      </div>
+      <input id="tpInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        style="width:100%;padding:16px 20px;background:rgba(255,255,255,.04);border:1px solid #353535;border-radius:12px;color:#e5e2e1;font-size:16px;font-family:'Space Grotesk',sans-serif;outline:none;transition:border-color .2s;"
+        placeholder="">
+      <div style="font-size:11px;color:#FF3B00;font-family:'Space Grotesk',sans-serif;min-height:16px;" id="tpErr"></div>
+      <div style="display:flex;gap:12px;width:100%;">
+        <button onclick="document.body.removeChild(document.getElementById('textPinOverlay'))" style="flex:1;padding:14px;background:transparent;border:1px solid #353535;border-radius:10px;color:#a08d88;font-size:13px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;">취소</button>
+        <button id="tpNext" style="flex:2;padding:14px;background:#ffb4a2;border:none;border-radius:10px;color:#360e05;font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;">다음 →</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const phases=[
+    {sub:'1단계: 영문·숫자 (최대 13자)',type:'text',key:'s1'},
+    {sub:'2단계: 생년월일 6자리',type:'tel',key:'s2'},
+    {sub:'3단계: 궁극적으로 만들고 싶은 것',type:'text',key:'s3'},
+  ];
+  let phase=0;
+
+  function updatePhase(){
+    const cfg=phases[phase];
+    document.getElementById('tpSub').textContent=cfg.sub;
+    document.getElementById('tpInput').type=cfg.type;
+    document.getElementById('tpInput').value='';
+    document.getElementById('tpInput').focus();
+    document.getElementById('tpErr').textContent='';
+    document.getElementById('tpNext').textContent=phase===2?'확인 ✓':'다음 →';
+    for(let i=0;i<3;i++){
+      document.getElementById('tpd'+i).style.background=i<phase?'#FF3B00':i===phase?'#ffb4a2':'#353535';
+    }
+  }
+
+  function tryNext(){
+    const val=document.getElementById('tpInput').value.trim();
+    if(!val){document.getElementById('tpErr').textContent='입력해주세요';return;}
+    const pw=getPw();
+    if(val!==pw[phases[phase].key]){
+      document.getElementById('tpErr').textContent='틀렸습니다';
+      document.getElementById('tpInput').style.borderColor='#FF3B00';
+      setTimeout(()=>{document.getElementById('tpInput').value='';document.getElementById('tpInput').style.borderColor='#353535';},400);
+      return;
+    }
+    phase++;
+    if(phase>=3){
+      document.body.removeChild(overlay);
+      isUnlocked=true;
+      cb();
+    }else{updatePhase();}
+  }
+
+  document.getElementById('tpNext').onclick=tryNext;
+  document.getElementById('tpInput').onkeydown=e=>{if(e.key==='Enter')tryNext();if(e.key==='Escape')document.body.removeChild(overlay);};
+  setTimeout(()=>document.getElementById('tpInput').focus(),100);
 }
 function doOpenApp(a){
   if(a==='memo'){curMemoFolder=null;document.getElementById('memoFolderView').style.display='';document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';renderMemoFolders();}
