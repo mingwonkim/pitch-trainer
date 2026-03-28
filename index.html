@@ -645,7 +645,7 @@
 <div class="page min-h-screen pt-24 pb-40 px-6" id="page-music">
   <div class="max-w-4xl mx-auto">
     <div class="flex items-center gap-5 mb-10">
-      <button class="app-back-btn" onclick="goHub()"><span class="material-symbols-outlined text-[18px]">arrow_back</span></button>
+      <button class="app-back-btn" onclick="musicSmartBack()"><span class="material-symbols-outlined text-[18px]">arrow_back</span></button>
       <div>
         <div class="app-page-label">03 — Music</div>
         <h1 class="app-page-title">Studio</h1>
@@ -737,14 +737,13 @@
 
       <div id="favWhyDetailView" style="display:none;">
         <div class="flex items-center gap-4 mb-6">
-          <button class="app-ghost-btn" onclick="closeFavDetail()">← 목록</button>
           <div>
             <div class="font-headline text-xl font-bold tracking-tight" id="favDetailTitle"></div>
             <div class="text-sm text-outline mt-0.5" id="favDetailArtist"></div>
           </div>
         </div>
         <div class="fav-yt-wrap mb-5">
-          <iframe id="favDetailFrame" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          <iframe id="favDetailFrame" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
         <div id="favDetailReason" class="fav-song-reason"></div>
       </div>
@@ -1437,7 +1436,19 @@ function closeMusicSubView(){
   });
   document.getElementById('musicHome').style.display='';
 }
-window.openMusicApp=openMusicApp;window.closeMusicApp=closeMusicApp;window.closeMusicSubView=closeMusicSubView;
+function musicSmartBack(){
+  // 상세뷰(favDetail)가 열려있으면 목록으로
+  const detailView=document.getElementById('favWhyDetailView');
+  if(detailView&&detailView.style.display!=='none'){closeFavDetail();return;}
+  // iframe 앱이 열려있으면 홈으로
+  if(document.getElementById('musicAppView').style.display!=='none'){closeMusicApp();return;}
+  // 서브뷰가 열려있으면 홈으로
+  const subViews=['musicNotesView','musicFavWhyView','musicPlaylistView'];
+  if(subViews.some(id=>{const el=document.getElementById(id);return el&&el.style.display!=='none';})){closeMusicSubView();return;}
+  // 홈이면 Hub로
+  goHub();
+}
+window.openMusicApp=openMusicApp;window.closeMusicApp=closeMusicApp;window.closeMusicSubView=closeMusicSubView;window.musicSmartBack=musicSmartBack;
 
 // ---- Music Notes ----
 const musicNotesCol=collection(db,'mk_app','data','music_notes');
@@ -1546,7 +1557,7 @@ async function openFavDetail(id){
     // API key 있으면 실제 검색 후 embed
     fetchYTVideoId(s.title,s.artist).then(videoId=>{
       if(videoId){
-        wrap.innerHTML=`<iframe id="favDetailFrame" src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+        wrap.innerHTML=`<iframe id="favDetailFrame" src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
       }else{
         showYTFallback(wrap,s.title,s.artist,ytUrl);
       }
