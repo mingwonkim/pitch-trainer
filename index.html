@@ -550,10 +550,7 @@
     </div>
 
     <!-- Lightbox -->
-      <button class="gallery-lb-close" onclick="closeLightbox()"><span class="material-symbols-outlined">close</span></button>
-      <button class="gallery-lb-nav gallery-lb-prev" onclick="event.stopPropagation();lbNav(-1)"><span class="material-symbols-outlined">arrow_back</span></button>
       <img class="gallery-lb-img" id="galleryLbImg" src="" alt="">
-      <button class="gallery-lb-nav gallery-lb-next" onclick="event.stopPropagation();lbNav(1)"><span class="material-symbols-outlined">arrow_forward</span></button>
       <div class="gallery-lb-counter" id="galleryLbCounter"></div>
     </div>
 
@@ -937,11 +934,10 @@ document.addEventListener('keydown',e=>{if(document.getElementById('pinOverlay')
 window.pinAdd=pinAdd;window.pinDel=pinDel;window.cancelPin=cancelPin;
 
 /* ===== 3-step Password System ===== */
-// pw structure: {s1: alphanumeric ≤13, s2: 6-digit birthdate, s3: korean free text}
 function getPw(){
-  const raw=localStorage.getItem('mk_pw3');
-  if(raw)try{return JSON.parse(raw);}catch(e){}
-  return {s1:'5940',s2:'000000',s3:'음악'};
+  try{const r=localStorage.getItem('mk_pw3');if(r)return JSON.parse(r);}catch(e){}
+  // 기본: 1단계만 5940, 2/3단계는 미설정(null)
+  return {s1:'5940',s2:null,s3:null};
 }
 function setPwLocal(pw){localStorage.setItem('mk_pw3',JSON.stringify(pw));}
 
@@ -1031,6 +1027,14 @@ function pwNextStep(){
   if(cfg.pattern&&!cfg.pattern.test(val)){showPwError(cfg.hint+' 형식으로 입력하세요');return;}
 
   if(pwChangeMode==='verify'){
+    const correct=getPw()[['s1','s2','s3'][pwChangePhase]];
+    // 미설정 단계면 스킵
+    if(correct===null||correct===undefined||correct===''){
+      pwVerified[pwChangePhase]=val;
+      if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
+      else{pwChangeMode='set';pwChangePhase=0;renderPwChange();}
+      return;
+    }
     if(!checkPwStep(pwChangePhase,val)){showPwError('비밀번호가 틀렸습니다');return;}
     pwVerified[pwChangePhase]=val;
     if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
@@ -1116,6 +1120,12 @@ function showTextPin(cb){
   let phase=0;
 
   function updatePhase(){
+    // 미설정 단계 자동 스킵
+    const pw=getPw();
+    while(phase<3 && (pw[phases[phase].key]===null||pw[phases[phase].key]===undefined||pw[phases[phase].key]=='')){
+      phase++;
+    }
+    if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;cb();return;}
     const cfg=phases[phase];
     document.getElementById('tpSub').textContent=cfg.sub;
     document.getElementById('tpInput').type=cfg.type;
@@ -1130,20 +1140,25 @@ function showTextPin(cb){
 
   function tryNext(){
     const val=document.getElementById('tpInput').value.trim();
-    if(!val){document.getElementById('tpErr').textContent='입력해주세요';return;}
     const pw=getPw();
-    if(val!==pw[phases[phase].key]){
+    const correct=pw[phases[phase].key];
+    // 미설정 단계면 스킵
+    if(correct===null||correct===undefined||correct===''){
+      phase++;
+      if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;cb();}
+      else{updatePhase();}
+      return;
+    }
+    if(!val){document.getElementById('tpErr').textContent='입력해주세요';return;}
+    if(val!==correct){
       document.getElementById('tpErr').textContent='틀렸습니다';
       document.getElementById('tpInput').style.borderColor='#FF3B00';
       setTimeout(()=>{document.getElementById('tpInput').value='';document.getElementById('tpInput').style.borderColor='#353535';},400);
       return;
     }
     phase++;
-    if(phase>=3){
-      document.body.removeChild(overlay);
-      isUnlocked=true;
-      cb();
-    }else{updatePhase();}
+    if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;cb();}
+    else{updatePhase();}
   }
 
   document.getElementById('tpNext').onclick=tryNext;
