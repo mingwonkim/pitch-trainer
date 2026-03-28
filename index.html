@@ -2022,21 +2022,27 @@ renderGallery();
   if(!overlay)return;
 
   function onScroll(){
+    // hub 페이지가 아닐 때는 오버레이 숨김
+    const hubPage=document.getElementById('page-hub');
+    if(!hubPage||!hubPage.classList.contains('active')){
+      overlay.style.opacity=0;
+      return;
+    }
     const marquee=document.getElementById('galleryMarqueeWrap');
-    if(!marquee)return;
+    if(!marquee){overlay.style.opacity=0;return;}
     const rect=marquee.getBoundingClientRect();
     const vh=window.innerHeight;
-
-    // 시작: 마퀴 상단이 화면 하단에 들어오는 순간 (rect.top === vh)
-    // 완료: 마퀴 상단이 화면 중간보다 살짝 위 (rect.top === vh * 0.4)
-    const startY=vh;          // 화면 하단
-    const endY=vh*0.4;        // 화면 40% 지점 (중간보다 살짝 위)
-
+    const startY=vh;
+    const endY=vh*0.4;
     const progress=Math.max(0,Math.min(1,(startY-rect.top)/(startY-endY)));
     overlay.style.opacity=progress;
   }
 
   window.addEventListener('scroll',onScroll,{passive:true});
+  // 페이지 전환 시에도 체크
+  const observer=new MutationObserver(onScroll);
+  const hubPage=document.getElementById('page-hub');
+  if(hubPage)observer.observe(hubPage,{attributes:true,attributeFilter:['class']});
   onScroll();
 })();
 </script>
