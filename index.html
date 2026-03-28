@@ -726,7 +726,7 @@
     <!-- Fav Songs -->
     <div id="musicFavWhyView" style="display:none;">
       <div class="app-subpage-header">
-        <button class="app-ghost-btn" onclick="closeMusicSubView()">← Back</button>
+        <button class="app-ghost-btn" onclick="favWhyBack()">← Back</button>
         <h2 class="app-subpage-title">좋아하는 노래</h2>
       </div>
 
@@ -1436,19 +1436,18 @@ function closeMusicSubView(){
   });
   document.getElementById('musicHome').style.display='';
 }
-function musicSmartBack(){
-  // 상세뷰(favDetail)가 열려있으면 목록으로
+// 좋아하는 노래: Back = 상세뷰면 목록으로, 목록이면 Music 홈으로
+function favWhyBack(){
   const detailView=document.getElementById('favWhyDetailView');
-  if(detailView&&detailView.style.display!=='none'){closeFavDetail();return;}
-  // iframe 앱이 열려있으면 홈으로
-  if(document.getElementById('musicAppView').style.display!=='none'){closeMusicApp();return;}
-  // 서브뷰가 열려있으면 홈으로
-  const subViews=['musicNotesView','musicFavWhyView','musicPlaylistView'];
-  if(subViews.some(id=>{const el=document.getElementById(id);return el&&el.style.display!=='none';})){closeMusicSubView();return;}
-  // 홈이면 Hub로
-  goHub();
+  if(detailView&&detailView.style.display!=='none'){
+    closeFavDetail();
+  }else{
+    closeMusicSubView();
+  }
 }
-window.openMusicApp=openMusicApp;window.closeMusicApp=closeMusicApp;window.closeMusicSubView=closeMusicSubView;window.musicSmartBack=musicSmartBack;
+// 상단 뒤로가기(←)는 항상 Hub
+function musicSmartBack(){goHub();}
+window.openMusicApp=openMusicApp;window.closeMusicApp=closeMusicApp;window.closeMusicSubView=closeMusicSubView;window.musicSmartBack=musicSmartBack;window.favWhyBack=favWhyBack;
 
 // ---- Music Notes ----
 const musicNotesCol=collection(db,'mk_app','data','music_notes');
