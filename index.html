@@ -834,16 +834,35 @@
 </div>
 
 <!-- Password Change Overlay -->
-<div class="pin-overlay" id="pwChangeOverlay" style="display:none;">
-  <div class="font-['Space_Grotesk'] text-[10px] tracking-[.3em] text-outline uppercase mb-2">Security Protocol</div>
-  <div class="font-['Space_Grotesk'] text-lg font-bold tracking-tight text-[#ffb4a2] uppercase mb-1" id="pwChangeTitle">Current Password</div>
-  <div class="text-xs text-outline mb-6 font-['Space_Grotesk'] tracking-[.08em] uppercase" id="pwChangeSub">Enter your current PIN</div>
-  <div class="pin-dots" id="pwChangeDots"></div>
-  <div class="numpad" id="pwChangeNumpad"></div>
-  <div class="flex gap-6 mt-5">
-    <div class="text-[10px] text-outline cursor-pointer hover:text-[#FF3B00] transition-colors font-['Space_Grotesk'] tracking-[.15em] uppercase" onclick="cancelPwChange()">Cancel</div>
+<!-- 3-step Password Change Overlay -->
+<div style="position:fixed;inset:0;background:rgba(10,10,14,.97);z-index:9995;display:none;align-items:center;justify-content:center;backdrop-filter:blur(16px);" id="pwChangeOverlay">
+  <div style="width:100%;max-width:420px;padding:40px 32px;display:flex;flex-direction:column;align-items:center;gap:0;">
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.3em;color:#a08d88;text-transform:uppercase;margin-bottom:8px;">Security Protocol</div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#ffb4a2;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;" id="pwChangeTitle">비밀번호 확인</div>
+    <div style="font-size:12px;color:#a08d88;margin-bottom:28px;text-align:center;font-family:'Space Grotesk',sans-serif;" id="pwChangeSub">현재 비밀번호 1단계를 입력하세요</div>
+
+    <!-- Step indicators -->
+    <div style="display:flex;gap:8px;margin-bottom:28px;" id="pwStepDots">
+      <div style="width:28px;height:4px;border-radius:2px;background:#ffb4a2;" id="psd0"></div>
+      <div style="width:28px;height:4px;border-radius:2px;background:#353535;" id="psd1"></div>
+      <div style="width:28px;height:4px;border-radius:2px;background:#353535;" id="psd2"></div>
+    </div>
+
+    <!-- Input area -->
+    <div style="width:100%;position:relative;margin-bottom:8px;">
+      <input id="pwChangeInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        style="width:100%;padding:16px 20px;background:rgba(255,255,255,.04);border:1px solid #353535;border-radius:12px;color:#e5e2e1;font-size:16px;font-family:'Space Grotesk',sans-serif;outline:none;letter-spacing:.05em;transition:border-color .2s;"
+        placeholder="" oninput="pwInputHandler()" onkeydown="pwKeydownHandler(event)">
+      <div style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:11px;color:#524340;font-family:'Space Grotesk',sans-serif;" id="pwCharCount"></div>
+    </div>
+    <div style="font-size:11px;color:#FF3B00;font-family:'Space Grotesk',sans-serif;min-height:18px;margin-bottom:20px;" id="pwChangeError"></div>
+
+    <!-- Buttons -->
+    <div style="display:flex;gap:12px;width:100%;">
+      <button onclick="cancelPwChange()" style="flex:1;padding:14px;background:transparent;border:1px solid #353535;border-radius:10px;color:#a08d88;font-size:13px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:.2s;">취소</button>
+      <button onclick="pwNextStep()" id="pwNextBtn" style="flex:2;padding:14px;background:#ffb4a2;border:none;border-radius:10px;color:#360e05;font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:.2s;">다음 →</button>
+    </div>
   </div>
-  <div class="mt-4 text-[10px] text-[#FF3B00] font-['Space_Grotesk'] tracking-[.1em] uppercase" id="pwChangeError" style="display:none;"></div>
 </div>
 
 <!-- Icon Picker -->
@@ -902,7 +921,7 @@ function showPin(title,cb){
   document.getElementById('pinOverlay').style.display='grid';
 }
 function pinAdd(n){
-  const pw=getPw();pinInput+=n;
+  const pw=getPwForPin();pinInput+=n;
   const dots=document.querySelectorAll('#pinDots .pin-dot');dots.forEach((d,i)=>d.classList.toggle('filled',i<pinInput.length));
   if(pinInput.length>=pw.length){
     if(pinInput===pw){
@@ -921,76 +940,134 @@ function cancelPin(){document.getElementById('pinOverlay').style.display='none';
 document.addEventListener('keydown',e=>{if(document.getElementById('pinOverlay').style.display!=='grid')return;if(e.key>='0'&&e.key<='9')pinAdd(e.key);else if(e.key==='Backspace')pinDel();else if(e.key==='Escape')cancelPin();});
 window.pinAdd=pinAdd;window.pinDel=pinDel;window.cancelPin=cancelPin;
 
-/* ===== Change Password UI ===== */
-let pwStep=0,pwInput='',pwNewVal='';
-const PW_LABELS=[['Current Password','Enter your current PIN'],['New Password','Choose a new PIN'],['Confirm Password','Re-enter the new PIN']];
+/* ===== 3-step Password System ===== */
+// pw structure: {s1: alphanumeric ≤13, s2: 6-digit birthdate, s3: korean free text}
+function getPw(){
+  const raw=localStorage.getItem('mk_pw3');
+  if(raw)try{return JSON.parse(raw);}catch(e){}
+  return {s1:'5940',s2:'000000',s3:'음악'};
+}
+function setPwLocal(pw){localStorage.setItem('mk_pw3',JSON.stringify(pw));}
+
+// Check if input matches current password for given step
+function checkPwStep(step, val){
+  const pw=getPw();
+  if(step===0)return val===pw.s1;
+  if(step===1)return val===pw.s2;
+  if(step===2)return val===pw.s3;
+}
+
+// Combined pw check for main PIN lock (use s1 as primary)
+function getPwForPin(){return getPw().s1;}
+
+// 3-step change flow
+// mode: 'verify' = verify current pw (3 steps), 'set' = set new pw (3 steps), 'confirm' = confirm new pw (3 steps)
+let pwChangeMode='verify'; // verify → set → confirm
+let pwChangePhase=0; // 0,1,2 within each mode
+let pwVerified=[null,null,null];
+let pwNew=[null,null,null];
+let pwNewConfirm=[null,null,null];
+
+const PW_CONFIG=[
+  {title:'1단계 인증',sub:'영문·숫자 조합 최대 13자리',placeholder:'영문+숫자 입력',maxLen:13,type:'text',pattern:/^[a-zA-Z0-9]{1,13}$/,hint:'영문+숫자, 최대 13자'},
+  {title:'2단계 인증',sub:'생년월일 6자리 숫자 (예: 990101)',placeholder:'YYMMDD',maxLen:6,type:'tel',pattern:/^[0-9]{6}$/,hint:'숫자 6자리'},
+  {title:'3단계 인증',sub:'궁극적으로 만들고 싶은 것 (한글)',placeholder:'한글로 자유롭게 입력',maxLen:999,type:'text',pattern:null,hint:'글자 수 제한 없음'},
+];
+
+const MODE_TITLES={
+  verify:['현재 비밀번호 확인','현재 비밀번호 확인','현재 비밀번호 확인'],
+  set:['새 비밀번호 설정','새 비밀번호 설정','새 비밀번호 설정'],
+  confirm:['새 비밀번호 확인','새 비밀번호 확인','새 비밀번호 확인'],
+};
+
 function changePw(){
-  pwStep=0;pwInput='';pwNewVal='';
+  pwChangeMode='verify';pwChangePhase=0;
+  pwVerified=[null,null,null];pwNew=[null,null,null];pwNewConfirm=[null,null,null];
   renderPwChange();
   document.getElementById('pwChangeOverlay').style.display='flex';
+  setTimeout(()=>document.getElementById('pwChangeInput').focus(),100);
 }
+
 function renderPwChange(){
-  document.getElementById('pwChangeTitle').textContent=PW_LABELS[pwStep][0];
-  document.getElementById('pwChangeSub').textContent=PW_LABELS[pwStep][1];
-  document.getElementById('pwChangeDots').innerHTML=Array(6).fill('<div class="pin-dot"></div>').join('');
-  document.getElementById('pwChangeError').style.display='none';
-  pwInput='';
-  const pad=document.getElementById('pwChangeNumpad');pad.innerHTML='';
-  const GREEK=['Alpha','Beta','Gamma','Delta','Epsilon','Zeta','Eta','Theta','Iota','','Kappa',''];
-  [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach((k,i)=>{
-    if(k===''&&i===9){pad.innerHTML+='<div></div>';return;}
-    if(k==='⌫'){pad.innerHTML+=`<div class="nk del" onclick="pwKeyDel()" style="background:#1c1b1b;border-color:#353535;"><span class="material-symbols-outlined text-base text-outline">backspace</span></div>`;return;}
-    pad.innerHTML+=`<div class="nk" onclick="pwKeyAdd('${k}')" style="flex-direction:column;gap:2px;height:64px;"><span style="font-size:20px;">${k}</span><span style="font-size:8px;letter-spacing:.12em;color:#a08d88;text-transform:uppercase;">${GREEK[i]||''}</span></div>`;
-  });
-}
-function pwKeyAdd(n){
-  pwInput+=n;
-  const dots=document.querySelectorAll('#pwChangeDots .pin-dot');
-  dots.forEach((d,i)=>d.classList.toggle('filled',i<pwInput.length));
-  if(pwInput.length>=4){
-    setTimeout(()=>processPwStep(),200);
+  const cfg=PW_CONFIG[pwChangePhase];
+  const modeTitle=pwChangeMode==='verify'?'현재 비밀번호 확인':pwChangeMode==='set'?'새 비밀번호 설정':'새 비밀번호 확인';
+  document.getElementById('pwChangeTitle').textContent=modeTitle+' — '+cfg.title;
+  document.getElementById('pwChangeSub').textContent=cfg.sub;
+  const inp=document.getElementById('pwChangeInput');
+  inp.value='';
+  inp.type=cfg.type;
+  inp.placeholder=cfg.placeholder;
+  inp.maxLength=cfg.maxLen===999?9999:cfg.maxLen;
+  inp.style.borderColor='#353535';
+  document.getElementById('pwChangeError').textContent='';
+  document.getElementById('pwCharCount').textContent=cfg.maxLen===999?'':('0/'+cfg.maxLen);
+  // Step dots
+  for(let i=0;i<3;i++){
+    const d=document.getElementById('psd'+i);
+    d.style.background=i<pwChangePhase?'#FF3B00':i===pwChangePhase?'#ffb4a2':'#353535';
   }
+  // Btn label
+  const isLast=(pwChangePhase===2&&pwChangeMode==='confirm');
+  document.getElementById('pwNextBtn').textContent=isLast?'변경 완료 ✓':'다음 →';
+  setTimeout(()=>inp.focus(),50);
 }
-function pwKeyDel(){
-  pwInput=pwInput.slice(0,-1);
-  document.querySelectorAll('#pwChangeDots .pin-dot').forEach((d,i)=>{d.classList.toggle('filled',i<pwInput.length);d.classList.remove('wrong');});
-  document.getElementById('pwChangeError').style.display='none';
+
+function pwInputHandler(){
+  const inp=document.getElementById('pwChangeInput');
+  const cfg=PW_CONFIG[pwChangePhase];
+  if(cfg.maxLen!==999){
+    document.getElementById('pwCharCount').textContent=inp.value.length+'/'+cfg.maxLen;
+  }
+  document.getElementById('pwChangeError').textContent='';
+  inp.style.borderColor='#353535';
 }
-function processPwStep(){
-  if(pwStep===0){
-    if(pwInput!==getPw()){
-      showPwError('Wrong password');
-      return;
+
+function pwKeydownHandler(e){
+  if(e.key==='Enter')pwNextStep();
+  if(e.key==='Escape')cancelPwChange();
+}
+
+function pwNextStep(){
+  const val=document.getElementById('pwChangeInput').value.trim();
+  const cfg=PW_CONFIG[pwChangePhase];
+  // Validate
+  if(!val){showPwError('입력해주세요');return;}
+  if(cfg.pattern&&!cfg.pattern.test(val)){showPwError(cfg.hint+' 형식으로 입력하세요');return;}
+
+  if(pwChangeMode==='verify'){
+    if(!checkPwStep(pwChangePhase,val)){showPwError('비밀번호가 틀렸습니다');return;}
+    pwVerified[pwChangePhase]=val;
+    if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
+    else{pwChangeMode='set';pwChangePhase=0;renderPwChange();}
+  }else if(pwChangeMode==='set'){
+    pwNew[pwChangePhase]=val;
+    if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
+    else{pwChangeMode='confirm';pwChangePhase=0;renderPwChange();}
+  }else if(pwChangeMode==='confirm'){
+    if(val!==pwNew[pwChangePhase]){showPwError('입력이 일치하지 않습니다');return;}
+    pwNewConfirm[pwChangePhase]=val;
+    if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
+    else{
+      // Save new password
+      setPwLocal({s1:pwNew[0],s2:pwNew[1],s3:pwNew[2]});
+      isUnlocked=false;
+      document.getElementById('pwChangeOverlay').style.display='none';
+      toast('비밀번호가 변경됐습니다');
     }
-    pwStep=1;renderPwChange();
-  }else if(pwStep===1){
-    if(!/^\d+$/.test(pwInput)){showPwError('Numbers only');return;}
-    pwNewVal=pwInput;
-    pwStep=2;renderPwChange();
-  }else if(pwStep===2){
-    if(pwInput!==pwNewVal){showPwError('Does not match');return;}
-    setPwLocal(pwInput);isUnlocked=false;
-    document.getElementById('pwChangeOverlay').style.display='none';
-    toast('Password changed');
   }
 }
+
 function showPwError(msg){
-  const dots=document.querySelectorAll('#pwChangeDots .pin-dot');
-  dots.forEach(d=>d.classList.add('wrong'));
-  document.getElementById('pwChangeDots').classList.add('shake');
-  const err=document.getElementById('pwChangeError');err.textContent=msg;err.style.display='block';
-  setTimeout(()=>{pwInput='';dots.forEach(d=>{d.classList.remove('filled','wrong');});document.getElementById('pwChangeDots').classList.remove('shake');},500);
+  const err=document.getElementById('pwChangeError');
+  err.textContent=msg;
+  const inp=document.getElementById('pwChangeInput');
+  inp.style.borderColor='#FF3B00';
+  inp.classList.add('shake');
+  setTimeout(()=>{inp.classList.remove('shake');inp.value='';pwInputHandler();},400);
 }
 function cancelPwChange(){document.getElementById('pwChangeOverlay').style.display='none';}
-window.changePw=changePw;window.pwKeyAdd=pwKeyAdd;window.pwKeyDel=pwKeyDel;window.cancelPwChange=cancelPwChange;
-// Keyboard support for pw change
-document.addEventListener('keydown',e=>{
-  if(document.getElementById('pwChangeOverlay').style.display!=='flex')return;
-  if(e.key>='0'&&e.key<='9')pwKeyAdd(e.key);
-  else if(e.key==='Backspace')pwKeyDel();
-  else if(e.key==='Escape')cancelPwChange();
-  else if(e.key==='Enter'&&pwInput.length>=4)processPwStep();
-});
+window.changePw=changePw;window.cancelPwChange=cancelPwChange;
+window.pwInputHandler=pwInputHandler;window.pwKeydownHandler=pwKeydownHandler;window.pwNextStep=pwNextStep;
 
 /* ===== Navigation ===== */
 let curPage='hub';

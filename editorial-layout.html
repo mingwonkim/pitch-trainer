@@ -341,39 +341,7 @@
     height: 18px;
   }
 
-  /* ── 안내 배너 ── */
-  .guide-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 200;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(10px);
-    color: #fff;
-    text-align: center;
-    padding: 12px 20px;
-    font-size: 13px;
-    letter-spacing: 0.3px;
-    opacity: 0.95;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
 
-  .guide-banner .close-guide {
-    background: rgba(255,255,255,0.15);
-    border: none;
-    color: #fff;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 14px;
-    line-height: 1;
-    flex-shrink: 0;
-  }
 
   /* ── 레이블도 편집 가능하게 ── */
   .label-editable {
@@ -406,11 +374,7 @@
 </head>
 <body>
 
-<!-- 안내 배너 -->
-<div class="guide-banner" id="guideBanner">
-  <span>📷 이미지 영역을 클릭하면 내 사진으로 교체할 수 있습니다 · 텍스트도 클릭하여 편집 가능</span>
-  <button class="close-guide" onclick="document.getElementById('guideBanner').style.display='none'">✕</button>
-</div>
+
 
 <!-- 숨겨진 파일 인풋들 -->
 <input type="file" accept="image/*" class="file-input" id="input-1">
@@ -426,49 +390,49 @@
   <div class="col col-left">
     <div class="slot-1-wrap">
       <div class="dot-deco"></div>
-      <div class="img-slot slot-1" data-slot="1" onclick="document.getElementById('input-1').click()">
+      <div class="img-slot slot-1" data-slot="1" onclick=\"edRequestUnlock(()=>document.getElementById('input-\1').click())\">
         <div class="slot-1-placeholder" id="placeholder-1">🎤</div>
       </div>
-      <span class="label-raw label-editable" contenteditable="true">RAW</span>
-      <span class="label-nostalgic label-editable" contenteditable="true">NOSTALGIC</span>
+      <span class="label-raw label-editable" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">RAW</span>
+      <span class="label-nostalgic label-editable" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">NOSTALGIC</span>
     </div>
   </div>
 
   <!-- 중앙 컬럼 -->
   <div class="col col-center">
-    <p class="text-intro" contenteditable="true">At LowTheory, we thrive at the intersection of art, fashion and cultural tension. This means our creative direction will feel native to your identity and push it into bold territories Western audiences respond to.</p>
+    <p class="text-intro" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">At LowTheory, we thrive at the intersection of art, fashion and cultural tension. This means our creative direction will feel native to your identity and push it into bold territories Western audiences respond to.</p>
 
     <div class="slot-2-wrap">
-      <span class="label-vhs label-editable" contenteditable="true">VHS</span>
-      <div class="img-slot slot-2" data-slot="2" onclick="document.getElementById('input-2').click()">
+      <span class="label-vhs label-editable" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">VHS</span>
+      <div class="img-slot slot-2" data-slot="2" onclick=\"edRequestUnlock(()=>document.getElementById('input-\1').click())\">
         <div class="slot-2-placeholder" id="placeholder-2">🌿</div>
       </div>
     </div>
 
     <div class="text-bottom">
-      <p class="sub" contenteditable="true">We also have direct access to the top studios in europe for a more simplified campaign look or a detailed composition.</p>
-      <p class="quote" contenteditable="true"><em>Everything we create passes through touch and tape.</em></p>
+      <p class="sub" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">We also have direct access to the top studios in europe for a more simplified campaign look or a detailed composition.</p>
+      <p class="quote" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})"><em>Everything we create passes through touch and tape.</em></p>
     </div>
   </div>
 
   <!-- 우측 컬럼 -->
   <div class="col col-right">
     <div class="right-stack">
-      <div class="img-slot slot-3" data-slot="3" onclick="document.getElementById('input-3').click()">
+      <div class="img-slot slot-3" data-slot="3" onclick=\"edRequestUnlock(()=>document.getElementById('input-\1').click())\">
         <div class="slot-3-placeholder" id="placeholder-3">👠</div>
       </div>
-      <div class="img-slot slot-4" data-slot="4" onclick="document.getElementById('input-4').click()">
+      <div class="img-slot slot-4" data-slot="4" onclick=\"edRequestUnlock(()=>document.getElementById('input-\1').click())\">
         <div class="slot-4-placeholder" id="placeholder-4">👗</div>
       </div>
     </div>
 
     <div class="polaroid-wrap">
       <div class="polaroid">
-        <div class="img-slot slot-5" data-slot="5" onclick="document.getElementById('input-5').click()">
+        <div class="img-slot slot-5" data-slot="5" onclick=\"edRequestUnlock(()=>document.getElementById('input-\1').click())\">
           <div class="slot-5-placeholder" id="placeholder-5">🎈</div>
         </div>
       </div>
-      <span class="label-polaroid label-editable" contenteditable="true">Polaroid / Spectra</span>
+      <span class="label-polaroid label-editable" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">Polaroid / Spectra</span>
     </div>
   </div>
 
@@ -485,6 +449,64 @@
 </button>
 
 <script>
+  // ── PIN 잠금 시스템 ──
+  let edUnlocked = false;
+
+  function getEdPw(){
+    try{const r=localStorage.getItem('mk_pw3');if(r)return JSON.parse(r);}catch(e){}
+    return {s1:'5940',s2:'000000',s3:'음악'};
+  }
+
+  function edRequestUnlock(cb){
+    if(edUnlocked){cb();return;}
+    // 3단계 인증
+    const phases=[
+      {label:'1단계: 영문·숫자 13자 이내',type:'text',maxLen:13},
+      {label:'2단계: 생년월일 6자리',type:'tel',maxLen:6},
+      {label:'3단계: 궁극적으로 만들고 싶은 것',type:'text',maxLen:9999},
+    ];
+    let phase=0;
+    const overlay=document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(16px);';
+    function renderPhase(){
+      const cfg=phases[phase];
+      const pw=getEdPw();
+      overlay.innerHTML=`
+        <div style="width:360px;padding:36px 28px;display:flex;flex-direction:column;align-items:center;gap:16px;">
+          <div style="font-family:sans-serif;font-size:11px;letter-spacing:.2em;color:#a08d88;text-transform:uppercase;">MK.HUB — Editorial</div>
+          <div style="font-family:sans-serif;font-size:18px;font-weight:700;color:#ffb4a2;">${cfg.label}</div>
+          <div style="display:flex;gap:6px;margin-bottom:4px;">
+            ${[0,1,2].map(i=>`<div style="width:24px;height:3px;border-radius:2px;background:${i<phase?'#FF3B00':i===phase?'#ffb4a2':'#353535'};"></div>`).join('')}
+          </div>
+          <input id="edPinInput" type="${cfg.type}" maxlength="${cfg.maxLen}" autocomplete="off" autocorrect="off"
+            style="width:100%;padding:14px 16px;background:rgba(255,255,255,.05);border:1px solid #353535;border-radius:10px;color:#e5e2e1;font-size:16px;font-family:sans-serif;outline:none;"
+            placeholder="${cfg.label}">
+          <div id="edPinErr" style="font-size:12px;color:#FF3B00;min-height:16px;"></div>
+          <div style="display:flex;gap:10px;width:100%;">
+            <button onclick="document.body.removeChild(document.querySelector('[data-edoverlay]'))" style="flex:1;padding:12px;background:transparent;border:1px solid #353535;border-radius:8px;color:#a08d88;font-size:13px;cursor:pointer;">취소</button>
+            <button id="edPinNext" style="flex:2;padding:12px;background:#ffb4a2;border:none;border-radius:8px;color:#360e05;font-size:13px;font-weight:700;cursor:pointer;">${phase===2?'확인 ✓':'다음 →'}</button>
+          </div>
+        </div>`;
+      overlay.dataset.edoverlay='1';
+      document.getElementById('edPinInput').focus();
+      document.getElementById('edPinNext').onclick=()=>{
+        const val=document.getElementById('edPinInput').value.trim();
+        const pw=getEdPw();
+        const correct=[pw.s1,pw.s2,pw.s3][phase];
+        if(val!==correct){document.getElementById('edPinErr').textContent='틀렸습니다';return;}
+        phase++;
+        if(phase>=3){
+          edUnlocked=true;
+          document.body.removeChild(overlay);
+          cb();
+        }else{renderPhase();}
+      };
+      document.getElementById('edPinInput').onkeydown=e=>{if(e.key==='Enter')document.getElementById('edPinNext').click();if(e.key==='Escape')document.body.removeChild(overlay);};
+    }
+    renderPhase();
+    document.body.appendChild(overlay);
+  }
+
   // ── 파일 선택 시 이미지 교체 ──
   document.querySelectorAll('.file-input').forEach(input => {
     input.addEventListener('change', function(e) {
@@ -537,8 +559,7 @@
     btn.innerHTML = '⏳ 렌더링 중...';
     btn.style.pointerEvents = 'none';
 
-    // 배너, 버튼 숨기기
-    if (banner) banner.style.display = 'none';
+    // 버튼 숨기기
     btn.style.visibility = 'hidden';
 
     // hover 오버레이 제거
