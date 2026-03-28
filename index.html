@@ -49,13 +49,12 @@
 .folder-card:hover::before{opacity:1;}
 .folder-card .fc-del{
   position:absolute;top:10px;right:12px;
-  font-size:12px;color:rgba(255,255,255,.2);cursor:pointer;
-  transition:color .2s,background .2s;line-height:1;
+  font-size:11px;color:transparent;cursor:pointer;
+  transition:color .2s;line-height:1;
   font-family:'Space Grotesk',sans-serif;
-  padding:4px 6px;border-radius:6px;
 }
-.folder-card:hover .fc-del{color:rgba(255,255,255,.45);}
-.folder-card .fc-del:hover,.folder-card .fc-del:active{color:#FF3B00 !important;background:rgba(255,59,0,.1);}
+.folder-card:hover .fc-del{color:#353535;}
+.folder-card .fc-del:hover{color:#FF3B00 !important;}
 .folder-card .fc-icon{
   width:36px;height:36px;border-radius:10px;
   background:rgba(255,180,162,.08);
@@ -99,7 +98,34 @@
 .icon-picker h3{font-size:16px;font-weight:700;margin-bottom:10px;color:#e5e2e1;}
 .icon-picker .icon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:14px;max-height:240px;overflow-y:auto;}
 .icon-picker .icon-opt{padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;transition:.15s;border:1.5px solid transparent;}.icon-picker .icon-opt:hover{background:#252525;border-color:rgba(255,180,162,.2);}.icon-picker .icon-opt.sel{border-color:#ffb4a2;background:rgba(255,180,162,.08);}
-.music-frame{flex:1;border:none;border-radius:12px;min-height:85vh;background:#1c1b1b;}
+.music-frame{
+  position:fixed;
+  top:var(--nav-h,64px);
+  left:0;right:0;bottom:0;
+  width:100%;
+  height:calc(100vh - var(--nav-h,64px));
+  border:none;
+  background:#08080e;
+  z-index:200;
+}
+.music-app-back{
+  position:fixed;
+  top:calc(var(--nav-h,64px) + 12px);
+  left:16px;
+  z-index:201;
+  display:flex;align-items:center;gap:7px;
+  padding:7px 16px;
+  background:rgba(14,14,14,.88);
+  backdrop-filter:blur(12px);
+  border:1px solid #353535;
+  border-radius:9999px;
+  color:#ffb4a2;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:11px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;transition:.2s;
+}
+.music-app-back:hover{border-color:#ffb4a2;}
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#FF3B00;color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}.toast.show{opacity:1;}
 /* ===== NEW PIN OVERLAY ===== */
 .pin-overlay{position:fixed;inset:0;background:#0a0a0e;z-index:9990;display:grid;grid-template-columns:1fr 1fr 1fr;overflow:hidden;}
@@ -700,11 +726,7 @@
       </div>
     </div>
 
-    <!-- Pitch trainer iframe -->
-    <div id="musicAppView" style="display:none;flex:1;flex-direction:column;">
-      <div class="mb-5"><button class="app-ghost-btn" onclick="closeMusicApp()">← 목록</button></div>
-      <iframe class="music-frame" id="musicFrame" style="flex:1;"></iframe>
-    </div>
+    <!-- Pitch trainer: full-screen overlay (handled outside container) -->
 
     <!-- Music Notes -->
     <div id="musicNotesView" style="display:none;">
@@ -826,7 +848,7 @@
       <div class="app-settings-tag">YouTube API</div>
       <p class="text-xs text-outline mb-4 leading-relaxed">YouTube Data API v3 키를 등록하면 좋아하는 노래 탭에서 앱 안에서 바로 영상이 재생됩니다. <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:#FF3B00;">Google Cloud Console</a>에서 무료로 발급하세요.</p>
       <div class="flex gap-3 items-center">
-        <input type="text" class="mk-input flex-1" id="ytApiKeyInput" placeholder="AIza…" style="font-family:'JetBrains Mono','Space Grotesk',monospace;letter-spacing:.05em;" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+        <input type="password" class="mk-input flex-1" id="ytApiKeyInput" placeholder="AIza…" style="font-family:'Space Grotesk',sans-serif;">
         <button class="app-action-btn !py-2.5 !px-5 !text-xs shrink-0" onclick="saveYTKey()">Save</button>
       </div>
       <div class="font-['Space_Grotesk'] text-[10px] text-outline/40 mt-2 tracking-[.1em] uppercase" id="ytKeyStatus"></div>
@@ -1269,16 +1291,14 @@ function doOpenApp(a){
   if(a==='music'){document.getElementById('musicHome').style.display='';document.getElementById('musicAppView').style.display='none';}
   if(a==='settings'){
     updateSettingsStorage();
-    renderBgImages();
+    renderBgImages(); // full load from Firestore on open
     const keyEl=document.getElementById('ytApiKeyInput');
     const statusEl=document.getElementById('ytKeyStatus');
     if(keyEl&&statusEl){
       statusEl.textContent='Loading…';
       getYTKey().then(k=>{
-        // 저장된 키 있으면 길이만큼 * 로 마스킹
-        keyEl.value=k?'*'.repeat(k.length):'';
-        keyEl.dataset.masked=k?'1':'0';
-        statusEl.textContent=k?`✓ 저장됨 · ${k.length}자`:'키 없음 — embed 검색으로 재생';
+        keyEl.value=k?'••••••••••••••••••••':'';
+        statusEl.textContent=k?'API key saved ✓ (Cloud)':'No key — using fallback';
       });
     }
   }
@@ -1415,7 +1435,7 @@ function openMusicApp(a){
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
   if(a==='pitch'){
-    document.getElementById('musicAppView').style.display='flex';
+    document.getElementById('musicAppView').style.display='block';
     document.getElementById('musicFrame').src='pitch-trainer.html';
   }else if(a==='notes'){
     document.getElementById('musicNotesView').style.display='';
@@ -1512,6 +1532,25 @@ async function getYTKey(){
   return '';
 }
 
+// Invidious 무료 인스턴스 목록 (API 키 불필요)
+const INVIDIOUS=[
+  'https://yt.artemislena.eu',
+  'https://invidious.tiekoetter.com',
+  'https://inv.tux.pizza',
+];
+async function fetchVideoIdFree(title,artist){
+  const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
+  for(const base of INVIDIOUS){
+    try{
+      const res=await fetch(`${base}/api/v1/search?q=${q}&type=video&fields=videoId,title&page=1`,{signal:AbortSignal.timeout(4000)});
+      if(!res.ok)continue;
+      const data=await res.json();
+      if(Array.isArray(data)&&data.length>0&&data[0].videoId)return data[0].videoId;
+    }catch(e){continue;}
+  }
+  return null;
+}
+
 async function fetchYTVideoId(title,artist){
   const key=await getYTKey();
   if(!key)return null;
@@ -1519,22 +1558,16 @@ async function fetchYTVideoId(title,artist){
   try{
     const res=await fetch(
       `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${key}`,
-      {method:'GET'}
+      {signal:AbortSignal.timeout(6000)}
     );
     if(!res.ok){
       const err=await res.json().catch(()=>({}));
-      const msg=err?.error?.message||'API error '+res.status;
-      toast('YT API: '+msg.substring(0,40));
+      toast('YT API: '+(err?.error?.message||'error').substring(0,40));
       return null;
     }
     const data=await res.json();
     if(data.items&&data.items.length>0)return data.items[0].id.videoId;
-    toast('검색 결과 없음');
-  }catch(e){
-    // file:// 환경에서는 CORS로 차단됨 — GitHub Pages에서는 정상 작동
-    toast('GitHub Pages에서 실행하면 재생됩니다');
-    console.error('YT fetch error:',e);
-  }
+  }catch(e){console.error('YT API error:',e);}
   return null;
 }
 
@@ -1544,29 +1577,27 @@ async function openFavDetail(id){
   document.getElementById('favWhyDetailView').style.display='';
   document.getElementById('favDetailTitle').textContent=s.title||'Untitled';
   document.getElementById('favDetailArtist').textContent=s.artist||'';
-  const q=encodeURIComponent((s.title||'')+(s.artist?' '+s.artist:''));
-  const ytUrl=`https://www.youtube.com/results?search_query=${q}`;
   const wrap=document.getElementById('favDetailFrame').parentElement;
 
-  // Show loading state first
   wrap.innerHTML=`<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(135deg,#0e0e14,#181820);">
     <div style="width:32px;height:32px;border:2px solid #252525;border-top-color:#ffb4a2;border-radius:50%;animation:spin .8s linear infinite;"></div>
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#524340;letter-spacing:.12em;text-transform:uppercase;">Loading…</div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#524340;letter-spacing:.12em;text-transform:uppercase;">검색 중…</div>
   </div>`;
 
-  const key=await getYTKey();
-  if(key){
-    // API key 있으면 실제 검색 후 embed
-    fetchYTVideoId(s.title,s.artist).then(videoId=>{
-      if(videoId){
-        wrap.innerHTML=`<iframe id="favDetailFrame" src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
-      }else{
-        showYTFallback(wrap,s.title,s.artist,ytUrl);
-      }
-    });
+  // 1순위: YouTube Data API
+  // 2순위: Invidious 무료 API
+  let videoId = await fetchYTVideoId(s.title, s.artist);
+  if(!videoId) videoId = await fetchVideoIdFree(s.title, s.artist);
+
+  if(videoId){
+    wrap.innerHTML=`<iframe id="favDetailFrame"
+      src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+      style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
   }else{
-    // API key 없으면 안내 + 버튼
-    showYTFallback(wrap,s.title,s.artist,ytUrl);
+    showYTFallback(wrap,s.title,s.artist);
   }
 
   const reasonEl=document.getElementById('favDetailReason');
@@ -1574,19 +1605,23 @@ async function openFavDetail(id){
   else{reasonEl.style.display='none';}
 }
 
-async function showYTFallback(wrap,title,artist,ytUrl){
-  const hasKey=!!(await getYTKey());
+function showYTFallback(wrap,title,artist){
+  // 직접 watch URL — 검색 후 첫 번째 결과로 바로 이동하는 가장 정확한 쿼리
+  const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
+  const watchUrl=`https://www.youtube.com/results?search_query=${q}&sp=EgIQAQ%3D%3D`; // 동영상 필터
   wrap.innerHTML=`
-    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(135deg,#0e0e14,#181820);padding:24px;text-align:center;">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:linear-gradient(135deg,#0e0e14,#181820);padding:24px;text-align:center;">
       <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,59,0,.12);border:1.5px solid rgba(255,59,0,.25);display:flex;align-items:center;justify-content:center;">
         <span style="font-size:22px;color:#FF3B00;">▶</span>
       </div>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:800;color:#e5e2e1;letter-spacing:-.3px;">${title||''}</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:800;color:#e5e2e1;">${title||''}</div>
       <div style="font-family:'Inter',sans-serif;font-size:12px;color:#a08d88;">${artist||''}</div>
-      ${!hasKey?`<div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#524340;letter-spacing:.1em;text-transform:uppercase;max-width:220px;line-height:1.6;">Settings에서 YouTube API 키를 등록하면<br>앱 안에서 바로 재생됩니다</div>`:''}
-      <a href="${ytUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#FF3B00;color:#fff;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.filter='brightness(1.12)'" onmouseout="this.style.filter='none'">▶ YouTube에서 재생</a>
-    </div>`;
-}
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#524340;letter-spacing:.1em;text-transform:uppercase;line-height:1.7;">서버 연결 실패<br>아래 버튼으로 YouTube에서 직접 재생</div>
+      <a href="${watchUrl}" target="_blank"
+        style="display:inline-flex;align-items:center;gap:8px;padding:13px 30px;background:#FF3B00;color:#fff;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;">
+        ▶ YouTube 바로 재생
+      </a>
+    </div>`;\n}
 
 function closeFavDetail(){
   const wrap=document.getElementById('favDetailFrame');
@@ -1595,29 +1630,17 @@ function closeFavDetail(){
   document.getElementById('favWhyListView').style.display='';
 }
 async function saveYTKey(){
-  const inp=document.getElementById('ytApiKeyInput');
-  const val=inp.value.trim();
-  // 마스킹 상태(*만 있으면) 그대로 저장 안 함
-  if(!val||/^\*+$/.test(val))return;
+  const val=document.getElementById('ytApiKeyInput').value.trim();
+  if(!val||val.startsWith('•'))return;
   try{
     await setDoc(ytKeyDoc,{yt_api_key:val},{merge:true});
     _ytKeyCache=val;
-    inp.value='*'.repeat(val.length);
-    inp.dataset.masked='1';
-    document.getElementById('ytKeyStatus').textContent=`✓ 저장됨 · ${val.length}자`;
+    document.getElementById('ytApiKeyInput').value='••••••••••••••••••••';
+    document.getElementById('ytKeyStatus').textContent='API key saved ✓ (Cloud)';
     toast('YouTube API key saved');
   }catch(e){toast('Save failed');}
 }
 window.saveYTKey=saveYTKey;
-// 마스킹된 인풋 클릭하면 초기화해서 새 키 입력 가능
-document.addEventListener('DOMContentLoaded',()=>{
-  const inp=document.getElementById('ytApiKeyInput');
-  if(inp){
-    inp.addEventListener('focus',()=>{
-      if(inp.dataset.masked==='1'){inp.value='';inp.dataset.masked='0';}
-    });
-  }
-});
 
 function newFavSong(){
   editFavSongId=null;
@@ -1860,6 +1883,13 @@ async function rmFile(id){if(!confirm('Delete this file?'))return;const f=cached
 window.dlFile=dlFile;window.rmFile=rmFile;
 
 /* ===== Init ===== */
+// nav 높이를 CSS 변수로 설정해서 iframe top 위치 정확하게 맞춤
+function setNavHeight(){
+  const nav=document.querySelector('nav.fixed.top-0');
+  if(nav)document.documentElement.style.setProperty('--nav-h',nav.offsetHeight+'px');
+}
+setNavHeight();
+window.addEventListener('resize',setNavHeight);
 loadBgImages().then(()=>renderBgGrid());
 // Hub storage bar
 async function updateHubStorage(){
@@ -2071,5 +2101,11 @@ renderGallery();
   onScroll();
 })();
 </script>
+<!-- Music App Full-Screen Overlay -->
+<div id="musicAppView" style="display:none;">
+  <button class="music-app-back" onclick="closeMusicApp()">← 목록</button>
+  <iframe class="music-frame" id="musicFrame"></iframe>
+</div>
+
 </body>
 </html>
