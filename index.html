@@ -1,349 +1,1718 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html class="dark" lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>MK</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>MK.HUB</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+(function initTW(){
+  if(typeof tailwind!=='undefined'){
+    tailwind.config={darkMode:"class",theme:{extend:{colors:{"secondary":"#ffb4a4","surface-variant":"#353535","surface-bright":"#393939","on-primary-fixed":"#360e05","primary-fixed":"#ffdad2","outline-variant":"#524340","surface-container-lowest":"#0e0e0e","surface-dim":"#131313","surface-container":"#201f1f","secondary-container":"#7f2f1e","on-primary-container":"#7a4336","primary-fixed-dim":"#ffb4a2","inverse-surface":"#e5e2e1","on-secondary-container":"#ff9f8a","on-error-container":"#ffdad6","error-container":"#93000a","on-error":"#690005","on-primary":"#512317","background":"#131313","surface-tint":"#ffb4a2","on-background":"#e5e2e1","error":"#ffb4ab","surface-container-low":"#1c1b1b","primary-container":"#ffb4a2","on-surface-variant":"#d7c2bd","surface":"#131313","surface-container-high":"#2a2a2a","primary":"#ffdad2","surface-container-highest":"#353535","on-surface":"#e5e2e1","on-secondary":"#5e1708","outline":"#a08d88"},fontFamily:{"headline":["Space Grotesk"],"body":["Inter"],"label":["Space Grotesk"]},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"}}}};
+  }else{setTimeout(initTW,50);}
+})();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>
-:root{
-  --bg:#fafafa;--sf:#ffffff;--sf2:#f5f5f8;--bd:#e8e8ec;
-  --tx:#333;--txd:#aaa;
-  --accent:#7c8cf8;--green:#5cd9a4;--purple:#c7b8f5;--pink:#f29ac3;--red:#f87171;--redd:rgba(248,113,113,.08);
-  --grad:linear-gradient(135deg,#a8b4f8,#c7b8f5,#f0c4de);
-  --shadow:0 1px 4px rgba(0,0,0,.04);--shadow2:0 4px 16px rgba(0,0,0,.06);
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
+.hide-scrollbar::-webkit-scrollbar{display:none;}.hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}
+.page{display:none;opacity:0;transition:opacity .35s ease;}.page.active{display:flex;flex-direction:column;opacity:1;}
+.mk-input{width:100%;padding:13px 18px;background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:10px;color:#e5e2e1;font-size:14px;outline:none;font-family:'Inter',sans-serif;transition:border-color .2s;}.mk-input:focus{border-color:rgba(255,180,162,.5);background:rgba(255,180,162,.03);}
+.mk-textarea{width:100%;min-height:300px;padding:16px 18px;background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:10px;color:#e5e2e1;font-size:14px;line-height:1.8;outline:none;resize:none;font-family:'Inter',sans-serif;transition:border-color .2s;}.mk-textarea:focus{border-color:rgba(255,180,162,.5);}
+.mk-btn{padding:10px 24px;border:none;border-radius:9999px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .2s;letter-spacing:.08em;text-transform:uppercase;}
+.mk-btn-primary{background:#ffb4a2;color:#360e05;}.mk-btn-primary:hover{filter:brightness(1.08);}
+.mk-btn-outline{background:transparent;color:#ffb4a2;border:1px solid #353535;}.mk-btn-outline:hover{border-color:#ffb4a2;}
+.mk-btn-danger{background:transparent;color:#ffb4ab;border:1px solid #353535;}.mk-btn-danger:hover{border-color:#ffb4ab;}
+/* ===== Folder cards — complete redesign ===== */
+.folder-card{
+  background:#0e0e12;
+  border:1px solid #1e1e26;
+  border-radius:16px;
+  padding:20px 16px 16px;
+  text-align:left;
+  cursor:pointer;
+  transition:all .3s cubic-bezier(.22,.68,0,1.2);
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  min-height:120px;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);min-height:100dvh;overflow-x:hidden;}
+.folder-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,180,162,.05) 0%,transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.folder-card:hover{border-color:rgba(255,180,162,.35);transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.5);}
+.folder-card:hover::before{opacity:1;}
+.folder-card .fc-del{
+  position:absolute;top:10px;right:12px;
+  font-size:11px;color:transparent;cursor:pointer;
+  transition:color .2s;line-height:1;
+  font-family:'Space Grotesk',sans-serif;
+}
+.folder-card:hover .fc-del{color:#353535;}
+.folder-card .fc-del:hover{color:#FF3B00 !important;}
+.folder-card .fc-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(255,180,162,.08);
+  border:1px solid rgba(255,180,162,.1);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:12px;flex-shrink:0;
+}
+.folder-card .fc-icon .material-symbols-outlined{font-size:18px;color:#ffb4a2;font-variation-settings:'FILL' 1,'wght' 300;}
+.folder-card .fc-name{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;font-weight:700;
+  color:#e5e2e1;
+  letter-spacing:-.2px;
+  margin-bottom:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.folder-card .fc-meta{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:9px;letter-spacing:.16em;
+  text-transform:uppercase;color:#353535;
+  margin-top:auto;
+}
+.folder-card.add-card{
+  background:transparent;
+  border-style:dashed;border-color:#1e1e26;
+  align-items:center;justify-content:center;gap:6px;
+}
+.folder-card.add-card:hover{border-color:rgba(255,180,162,.3);}
+.folder-card.add-card .material-symbols-outlined{font-size:20px;color:#353535;transition:color .2s;}
+.folder-card.add-card:hover .material-symbols-outlined{color:rgba(255,180,162,.5);}
+.folder-card.add-card .fc-add-label{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#353535;transition:color .2s;}
+.folder-card.add-card:hover .fc-add-label{color:rgba(255,180,162,.4);}
 
-/* Lock */
-.lock{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s,transform .4s;}
-.lock.hide{opacity:0;transform:scale(1.03);pointer-events:none;}
-.lock .logo-lock{font-size:42px;font-weight:900;margin-bottom:4px;color:#e8e8ec;position:relative;display:inline-block;}
-.lock .logo-lock::before{content:'✦';position:absolute;top:-8px;right:-16px;font-size:14px;color:#fff3a0;animation:twinkle 1.5s ease-in-out infinite;}
-.lock .logo-lock::after{content:'✦';position:absolute;bottom:0px;left:-14px;font-size:10px;color:#fff8c4;animation:twinkle 2s ease-in-out infinite .5s;}
-.lock .sparkle-top{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:12px;color:#ffefa0;animation:twinkle 1.8s ease-in-out infinite .3s;}
-@keyframes twinkle{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.2;transform:scale(.4);}}
-.lock .sub{font-size:14px;color:var(--txd);margin-bottom:28px;}
-.lock .pin-row{display:flex;gap:14px;margin-bottom:28px;}
-.lock .pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--bd);transition:.2s;}
-.lock .pin-dot.filled{background:var(--accent);border-color:var(--accent);}
-.lock .pin-dot.wrong{background:var(--red);border-color:var(--red);animation:shake .3s;}
-.lock .numpad{display:grid;grid-template-columns:repeat(3,76px);gap:8px;}
-.lock .nk{width:76px;height:60px;border:1px solid var(--bd);border-radius:16px;background:#fff;color:var(--tx);font-size:24px;font-family:'JetBrains Mono',monospace;font-weight:600;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;}
-.lock .nk:hover{background:var(--sf2);}.lock .nk:active{background:#eee;transform:scale(.95);}
-.lock .nk.del{font-size:15px;color:var(--txd);}
-.lock .kb-hint{margin-top:16px;font-size:11px;color:var(--txd);}
-@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+/* Memo/file item cards */
+.mk-card{background:rgba(255,255,255,.025);border:1px solid #252525;border-radius:14px;padding:20px 22px;transition:all .25s;cursor:pointer;}
+.mk-card:hover{border-color:rgba(255,180,162,.25);transform:translateX(4px);background:rgba(255,180,162,.03);}
+/* Drop zone */
+.drop-zone{border:1.5px dashed #2a2a2a;border-radius:16px;padding:44px;text-align:center;color:#a08d88;font-size:14px;transition:.2s;cursor:pointer;background:rgba(255,255,255,.015);}.drop-zone:hover,.drop-zone.over{border-color:rgba(255,180,162,.35);color:#ffb4a2;background:rgba(255,180,162,.03);}.drop-zone input{display:none;}
+.icon-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.icon-picker{background:#201f1f;border:1px solid #353535;border-radius:20px;padding:24px;max-width:340px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.icon-picker h3{font-size:16px;font-weight:700;margin-bottom:10px;color:#e5e2e1;}
+.icon-picker .icon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:14px;max-height:240px;overflow-y:auto;}
+.icon-picker .icon-opt{padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;transition:.15s;border:1.5px solid transparent;}.icon-picker .icon-opt:hover{background:#252525;border-color:rgba(255,180,162,.2);}.icon-picker .icon-opt.sel{border-color:#ffb4a2;background:rgba(255,180,162,.08);}
+.music-frame{flex:1;border:none;border-radius:12px;min-height:85vh;background:#1c1b1b;}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#FF3B00;color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}.toast.show{opacity:1;}
+/* ===== NEW PIN OVERLAY ===== */
+.pin-overlay{position:fixed;inset:0;background:#0a0a0e;z-index:9990;display:grid;grid-template-columns:1fr 1fr 1fr;overflow:hidden;}
+/* Left panel */
+.pin-left{display:flex;flex-direction:column;padding:32px 28px;border-right:1px solid rgba(255,180,162,.08);position:relative;}
+.pin-left-logo{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;letter-spacing:.2em;color:#ffb4a2;text-transform:uppercase;margin-bottom:40px;}
+.pin-left-nav{display:flex;flex-direction:column;gap:2px;margin-bottom:auto;}
+.pin-left-navitem{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:20px 16px;border-radius:10px;cursor:pointer;transition:.2s;opacity:.35;}
+.pin-left-navitem.active{opacity:1;border-left:2px solid #ffb4a2;background:rgba(255,180,162,.04);}
+.pin-left-navitem .ni-icon{font-size:20px;color:#ffb4a2;}
+.pin-left-navitem .ni-label{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#e5e2e1;margin-top:2px;}
+.pin-left-bottom{margin-top:auto;border-top:1px solid rgba(255,255,255,.04);padding-top:20px;}
+.pin-left-bottom .lb-item{display:flex;flex-direction:column;align-items:center;gap:3px;opacity:.3;cursor:pointer;padding:10px;}
+.pin-left-bottom .lb-item .lb-icon{font-size:18px;color:#ffb4a2;}
+.pin-left-bottom .lb-item .lb-label{font-family:'Space Grotesk',sans-serif;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:#a08d88;}
+/* Center panel */
+.pin-center{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;position:relative;border-right:1px solid rgba(255,180,162,.08);}
+.pin-fp-wrap{width:90px;height:90px;border:1px solid rgba(255,180,162,.25);border-radius:6px;display:flex;align-items:center;justify-content:center;margin-bottom:28px;position:relative;}
+.pin-fp-wrap::before,.pin-fp-wrap::after{content:'';position:absolute;width:12px;height:12px;border-color:#ffb4a2;border-style:solid;}
+.pin-fp-wrap::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
+.pin-fp-wrap::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
+.pin-fp-icon{font-size:44px;color:#ffb4a2;opacity:.6;}
+.pin-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:900;letter-spacing:-.5px;color:#e5e2e1;text-transform:uppercase;margin-bottom:4px;font-style:italic;}
+.pin-sub{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:.28em;color:#a08d88;text-transform:uppercase;margin-bottom:32px;}
+.pin-numpad{display:grid;grid-template-columns:repeat(3,80px);gap:6px;}
+.pnk{width:80px;height:64px;border:1px solid #252525;border-radius:4px;background:#111116;color:#e5e2e1;font-size:24px;font-family:'Space Grotesk',sans-serif;font-weight:600;cursor:pointer;transition:.15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative;overflow:hidden;}
+.pnk:hover{border-color:rgba(255,180,162,.3);background:#181820;}
+.pnk:active{background:#252530;transform:scale(.96);}
+.pnk .pk-sub{font-size:8px;letter-spacing:.16em;color:#524340;text-transform:uppercase;font-weight:500;}
+.pnk.pk-del{background:transparent;border-color:#1e1e24;color:#a08d88;}
+.pnk.pk-del:hover{border-color:#FF3B00;color:#FF3B00;}
+.pnk.pk-enter{background:#ffb4a2;border-color:#ffb4a2;color:#360e05;}
+.pnk.pk-enter:hover{filter:brightness(1.08);}
+.pin-dots-row{display:flex;gap:10px;margin-bottom:24px;}
+.pin-dot{width:13px;height:13px;border-radius:2px;border:1.5px solid #353535;transition:.2s;}
+.pin-dot.filled{background:#FF3B00;border-color:#FF3B00;box-shadow:0 0 8px rgba(255,59,0,.4);}
+.pin-dot.wrong{background:#ffb4ab;border-color:#ffb4ab;}
+.pin-cancel-btn{margin-top:16px;font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#524340;cursor:pointer;transition:.2s;}
+.pin-cancel-btn:hover{color:#FF3B00;}
+/* Right panel */
+.pin-right{display:flex;flex-direction:column;padding:32px 28px;position:relative;}
+.pin-right-top{display:flex;flex-direction:column;align-items:flex-end;margin-bottom:auto;}
+.pin-right-badge{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#a08d88;text-align:right;line-height:1.8;}
+.pin-right-badge span{display:block;color:#ffb4a2;font-size:11px;font-weight:700;letter-spacing:.1em;}
+.pin-right-bottom{margin-top:auto;}
+.pin-terminal{background:#0e0e14;border:1px solid #252525;border-radius:6px;padding:14px 16px;margin-bottom:16px;}
+.pin-terminal .pt-line{font-family:'Space Grotesk',sans-serif;font-size:10px;color:#524340;line-height:1.9;letter-spacing:.04em;}
+.pin-terminal .pt-line em{font-style:normal;color:#a08d88;}
+.pin-terminal .pt-cursor{display:inline-block;width:6px;height:10px;background:#ffb4a2;margin-left:2px;animation:cursorBlink .85s step-end infinite;vertical-align:middle;}
+.pin-warning{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.14em;color:#a08d88;text-transform:uppercase;text-align:right;margin-bottom:4px;}
+.pin-access-denied{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:900;color:#FF3B00;letter-spacing:.06em;text-transform:uppercase;text-align:right;}
+/* Scanline overlay */
+.pin-scanlines{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.012) 2px,rgba(255,255,255,.012) 4px);z-index:1;}
+/* Encryption badge top-left */
+.pin-enc-badge{display:flex;align-items:center;gap:8px;margin-bottom:32px;}
+.pin-enc-badge .enc-dot{width:8px;height:8px;background:#FF3B00;border-radius:1px;animation:encPulse 1.4s ease-in-out infinite;}
+@keyframes encPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.pin-enc-badge .enc-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#ffb4a2;font-weight:600;}
+/* Mobile: single column */
+@media(max-width:767px){
+  .pin-overlay{grid-template-columns:1fr;}
+  .pin-left,.pin-right{display:none;}
+  .pin-center{border:none;padding:32px 20px;}
+}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}.shake{animation:shake .3s ease-in-out;}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #353535;}.setting-row:last-child{border-bottom:none;}
+.setting-label{font-size:14px;font-weight:500;color:#e5e2e1;}.setting-sub{font-size:11px;color:#a08d88;margin-top:2px;}
+.setting-btn{padding:8px 20px;border:1px solid #524340;border-radius:10px;background:transparent;color:#ffb4a2;font-size:12px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:.2s;}.setting-btn:hover{border-color:#ffb4a2;background:rgba(255,180,162,.06);}
+/* Writing lines (Notepad card) */
+.writing-line{display:flex;align-items:center;gap:8px;padding:15px 0;border-bottom:1px solid rgba(255,255,255,.04);position:relative;}
+.writing-line-blank{border-bottom:1px solid rgba(255,180,162,.12);}
+.writing-dot{width:5px;height:5px;border-radius:50%;background:#FF3B00;flex-shrink:0;opacity:.7;}
+.writing-dot-blink{background:#ffb4a2;animation:dotblink 1.1s ease-in-out infinite;}
+@keyframes dotblink{0%,100%{opacity:.3;}50%{opacity:1;}}
+.writing-text{font-family:'Inter',sans-serif;font-size:12px;color:rgba(229,226,225,.45);white-space:nowrap;overflow:hidden;animation:typeIn .6s ease-out both;}
+@keyframes typeIn{from{opacity:0;transform:translateX(-4px);}to{opacity:1;transform:translateX(0);}}
+.writing-text-cursor{width:2px;height:13px;background:#ffb4a2;border-radius:1px;animation:cursorBlink .85s step-end infinite;}
+@keyframes cursorBlink{0%,100%{opacity:1;}50%{opacity:0;}}
+/* Music visualizer bars */
+.viz-bar{flex:1;min-width:0;border-radius:3px 3px 0 0;opacity:.9;height:var(--h);animation:vizPulse 0.8s ease-in-out infinite alternate;animation-delay:var(--d);}
+.viz-bar:nth-child(1){background:#ff3b00;}
+.viz-bar:nth-child(2){background:#ff6d00;}
+.viz-bar:nth-child(3){background:#ffb4a2;}
+.viz-bar:nth-child(4){background:#00e5ff;}
+.viz-bar:nth-child(5){background:#ff3b00;}
+.viz-bar:nth-child(6){background:#d500f9;}
+.viz-bar:nth-child(7){background:#00e676;}
+.viz-bar:nth-child(8){background:#ffb4a2;}
+.viz-bar:nth-child(9){background:#2979ff;}
+.viz-bar:nth-child(10){background:#ff6d00;}
+.viz-bar:nth-child(11){background:#00e5ff;}
+.viz-bar:nth-child(12){background:#d500f9;}
+.viz-bar:nth-child(13){background:#00e676;}
+.viz-bar:nth-child(14){background:#ff3b00;}
+.viz-bar:nth-child(15){background:#ffab40;}
+.viz-bar:nth-child(16){background:#69f0ae;}
+@keyframes vizPulse{0%{height:var(--h);opacity:.75;}100%{height:calc(var(--h) * 1.8 + 8px);opacity:1;}}
+@keyframes vizPulse{0%{height:var(--h);opacity:.5;}100%{height:calc(var(--h) * 0.35 + 10%);opacity:.9;}}
+/* ===== Inner page design system ===== */
+/* Back button */
+.app-back-btn{width:40px;height:40px;border-radius:10px;border:1px solid #252525;background:transparent;color:#a08d88;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.app-back-btn:hover{border-color:#ffb4a2;color:#ffb4a2;}
+/* Page heading */
+.app-page-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#FF3B00;margin-bottom:2px;}
+.app-page-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:-.04em;text-transform:uppercase;color:#e5e2e1;line-height:1;}
+/* Action button */
+.app-action-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;background:#ffb4a2;color:#360e05;border:none;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.app-action-btn:hover{filter:brightness(1.08);}
+/* Ghost button */
+.app-ghost-btn{display:inline-flex;align-items:center;gap:5px;padding:10px 20px;background:transparent;color:#a08d88;border:1px solid #252525;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.app-ghost-btn:hover{border-color:#ffb4a2;color:#ffb4a2;}
+/* Search */
+.app-search-wrap{display:flex;align-items:center;gap:8px;background:#1c1b1b;border:1px solid #252525;border-radius:10px;padding:8px 14px;transition:border-color .2s;}.app-search-wrap:focus-within{border-color:rgba(255,180,162,.4);}
+.app-search{background:none;border:none;outline:none;color:#e5e2e1;font-family:'Inter',sans-serif;font-size:13px;width:180px;}
+.app-search::placeholder{color:#524340;}
+/* Drop zone */
+.app-dropzone{border:1.5px dashed #353535;border-radius:16px;padding:40px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.015);}
+.app-dropzone:hover,.app-dropzone.over{border-color:rgba(255,180,162,.4);background:rgba(255,180,162,.03);}
+.app-dropzone input[type="file"]{display:none !important;}
+/* Music module cards */
+.app-module-card{background:#1c1b1b;border:1px solid #252525;border-radius:20px;padding:28px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+.app-module-card:hover{border-color:rgba(255,180,162,.25);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.4);}
+.app-module-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,180,162,.04),transparent);opacity:0;transition:opacity .3s;}
+.app-module-card:hover::before{opacity:1;}
+.app-module-dim{opacity:.3;pointer-events:none;}
+.amc-num{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.2em;color:#FF3B00;margin-bottom:14px;}
+.amc-icon{font-size:28px;margin-bottom:12px;line-height:1;color:#ffb4a2;}
+.amc-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:-.3px;color:#e5e2e1;margin-bottom:8px;}
+.amc-desc{font-family:'Inter',sans-serif;font-size:13px;color:#a08d88;line-height:1.6;margin-bottom:16px;}
+.amc-arrow{font-family:'Space Grotesk',sans-serif;font-size:18px;color:#ffb4a2;font-weight:700;}
+.amc-badge{display:inline-block;padding:4px 12px;background:#252525;color:#524340;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+/* Subpage headers */
+.app-subpage-header{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+.app-subpage-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:-.3px;}
+/* Editor card */
+.app-editor-card{background:#1c1b1b;border:1px solid #252525;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px;}
+.app-editor-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#FF3B00;}
+/* Settings sections */
+.app-settings-section{background:#1c1b1b;border:1px solid #252525;border-radius:20px;padding:24px;margin-bottom:16px;}
+.app-settings-tag{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#FF3B00;margin-bottom:16px;}
+/* Fav song list items */
+.fav-list-item{display:flex;align-items:center;gap:14px;padding:16px 20px;background:#1c1b1b;border:1px solid #252525;border-radius:14px;cursor:pointer;transition:all .2s;}
+.fav-list-item:hover{border-color:rgba(255,180,162,.3);transform:translateX(4px);}
+.fav-list-num{font-family:'Space Grotesk',sans-serif;font-size:16px;color:#FF3B00;flex-shrink:0;width:20px;}
+.fav-list-info{flex:1;min-width:0;}
+.fav-list-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#e5e2e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fav-list-artist{font-family:'Inter',sans-serif;font-size:12px;color:#a08d88;margin-top:2px;}
+.fav-list-reason-preview{font-family:'Inter',sans-serif;font-size:11px;color:#524340;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;}
+.fav-list-del{font-size:12px;color:#353535;cursor:pointer;transition:color .2s;flex-shrink:0;padding:4px;}.fav-list-del:hover{color:#FF3B00;}
+/* Fav song detail YouTube embed */
+.fav-yt-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;}
+.fav-yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+.fav-song-reason{padding:16px 20px;background:#1c1b1b;border:1px solid #252525;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;color:#a08d88;line-height:1.75;}
+.fav-reason-label{display:inline-block;font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FF3B00;margin-right:8px;vertical-align:middle;}
+/* Music cards (old — keep for safety) */
+.music-card{background:#1c1b1b;border:1px solid #252525;border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:14px;cursor:pointer;transition:all .25s;}
+.music-card:hover{border-color:rgba(255,180,162,.3);transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.3);}
+.music-card-dim{opacity:.35;pointer-events:none;}
+.mc-icon{font-size:36px;line-height:1;}.mc-body{flex:1;}
+.mc-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:-.3px;margin-bottom:5px;color:#e5e2e1;}
+.mc-desc{font-family:'Inter',sans-serif;font-size:13px;color:#a08d88;line-height:1.6;}
+.mc-btn{padding:10px 20px;border:none;border-radius:9999px;background:#ffb4a2;color:#360e05;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:all .2s;align-self:flex-start;}
+.mc-btn:hover{filter:brightness(1.1);}.mc-btn-dim{background:#252525;color:#524340;}
+/* BG image grid */
+.bg-grid{position:fixed;inset:0;z-index:0;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px;pointer-events:none;overflow:hidden;}
+@media(min-width:768px){.bg-grid{grid-template-columns:repeat(6,1fr);gap:12px;padding:12px;}}
+.bg-grid .bg-cell{border-radius:8px;overflow:hidden;opacity:.18;}.bg-grid .bg-cell img{width:100%;height:100%;object-fit:cover;}
+/* Settings bg image manager */
+.bg-thumb{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1;border:1px solid #353535;cursor:pointer;transition:.2s;}
+.bg-thumb:hover{border-color:#FF3B00;}
+.bg-thumb img{width:100%;height:100%;object-fit:cover;}
+.bg-thumb .bg-del{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.7);color:#FF3B00;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:.2s;}
+.bg-thumb:hover .bg-del{opacity:1;}
+/* ===== Photo Gallery — lowtheory polaroid wall ===== */
+.gallery-section{margin:0 -24px;}
+@media(min-width:768px){.gallery-section{margin:0 -32px;}}
+.gallery-marquee-wrap{overflow:hidden;border-top:1px solid #1e1e1e;border-bottom:1px solid #1e1e1e;padding:14px 0;}
+.gallery-marquee{display:flex;white-space:nowrap;animation:marqueeScroll 22s linear infinite;}
+.gallery-marquee-item{font-family:'Space Grotesk',sans-serif;font-size:clamp(44px,7vw,90px);font-weight:900;letter-spacing:-.03em;text-transform:uppercase;color:#e5e2e1;padding:0 28px;line-height:1;flex-shrink:0;}
+.gallery-marquee-item span{color:#FF3B00;font-style:italic;}
+@keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.gallery-upload-bar{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;}
+@media(min-width:768px){.gallery-upload-bar{padding:18px 40px;}}
+.gallery-upload-bar-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#6b6050;}
+.gallery-upload-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 22px;background:transparent;border:1px solid #c8bfb0;border-radius:9999px;color:#6b6050;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.gallery-upload-btn:hover{border-color:#8b7355;color:#4a3728;}
+.gallery-upload-btn input{display:none;}
 
-/* Dashboard */
-.dashboard{max-width:960px;margin:0 auto;padding:24px 20px;min-height:100dvh;display:none;flex-direction:column;}
-.dashboard.show{display:flex;}
-.dash-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-.dash-hd h1{font-size:26px;font-weight:900;color:#e8e8ec;position:relative;display:inline-block;}
-.dash-hd h1::before{content:'✦';position:absolute;top:-6px;right:-14px;font-size:11px;color:#fff3a0;animation:twinkle 1.5s ease-in-out infinite;}
-.dash-hd h1::after{content:'✦';position:absolute;bottom:2px;left:-12px;font-size:8px;color:#fff8c4;animation:twinkle 2s ease-in-out infinite .7s;}
-.dash-sparkle{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:9px;color:#ffefa0;animation:twinkle 1.8s ease-in-out infinite .4s;}
-.dash-hd .lock-btn{padding:8px 18px;border:1px solid var(--bd);border-radius:20px;background:#fff;color:var(--txd);font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:.2s;}
-.dash-hd .lock-btn:hover{border-color:var(--red);color:var(--red);}
-.storage-card{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:18px 22px;margin-bottom:20px;box-shadow:var(--shadow);}
-.storage-card .sc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.storage-card .sc-title{font-size:14px;font-weight:700;color:var(--tx);}
-.storage-card .sc-val{font-size:12px;color:var(--txd);font-family:'JetBrains Mono',monospace;}
-.storage-card .sc-bar{height:6px;background:var(--sf2);border-radius:3px;overflow:hidden;}
-.storage-card .sc-fill{height:100%;background:var(--grad);border-radius:3px;transition:width .3s;}
-.storage-card .sc-detail{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--txd);}
-.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-@media(max-width:768px){.dash-grid{grid-template-columns:1fr;}}
-.dash-card{background:#fff;border:1px solid var(--bd);border-radius:18px;padding:28px 24px;cursor:pointer;transition:.3s;position:relative;overflow:hidden;box-shadow:var(--shadow);}
-.dash-card:hover{transform:translateY(-3px);box-shadow:var(--shadow2);}
-.dash-card .card-icon{font-size:44px;margin-bottom:14px;display:block;}
-.dash-card h2{font-size:20px;font-weight:900;margin-bottom:4px;color:var(--tx);}
-.dash-card p{font-size:13px;color:var(--txd);line-height:1.5;}
-.dash-card .card-badge{position:absolute;top:16px;right:18px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#fff;padding:4px 10px;border-radius:12px;}
-.dash-card.memo .card-badge{background:var(--accent);}
-.dash-card.files .card-badge{background:var(--green);}
-.dash-card.music .card-badge{background:var(--pink);}
+/* 벽 — 이미지1 정확한 파치먼트 색상 */
+.gallery-wall{
+  position:relative;
+  min-height:900px;
+  background-color:#ede6d6;
+  background-image:
+    radial-gradient(ellipse at 30% 20%,rgba(205,190,165,.6) 0%,transparent 50%),
+    radial-gradient(ellipse at 70% 80%,rgba(195,182,158,.5) 0%,transparent 45%),
+    radial-gradient(ellipse at 60% 40%,rgba(218,208,188,.3) 0%,transparent 60%);
+  padding:80px 50px 140px;
+  overflow:hidden;
+}
 
-/* App Pages */
-.app-page{display:none;flex-direction:column;max-width:960px;margin:0 auto;padding:20px;min-height:100dvh;width:100%;}
-.app-page.show{display:flex;}
-.app-hd{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bd);}
-.back-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:#fff;color:var(--tx);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
-.back-btn:hover{background:var(--sf2);}
-.app-hd h1{font-size:20px;font-weight:900;flex:1;}
+/* 폴라로이드 */
+.polaroid{
+  position:absolute;
+  background:#ffffff;
+  padding:8px 8px 34px;
+  box-shadow:0 1px 3px rgba(0,0,0,.1),0 4px 12px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.06);
+  cursor:pointer;
+  transition:transform .25s cubic-bezier(.22,.68,0,1.3),box-shadow .25s;
+  transform-origin:center center;
+}
+.polaroid:hover{
+  box-shadow:0 4px 16px rgba(0,0,0,.2),0 12px 36px rgba(0,0,0,.14);
+  z-index:999!important;
+}
+.polaroid img{display:block;width:100%;height:100%;object-fit:cover;}
 
-/* Pill button */
-.pill-btn{padding:10px 22px;border:none;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:.2s;color:#fff;}
-.pill-btn:hover{opacity:.85;}
-.pill-btn.blue{background:var(--accent);}.pill-btn.green{background:var(--green);}.pill-btn.sec{background:#fff;color:var(--tx);border:1px solid var(--bd);}
-.pill-btn.sec:hover{border-color:var(--accent);color:var(--accent);}
-.pill-input{flex:1;min-width:120px;padding:10px 16px;border:1px solid var(--bd);border-radius:20px;background:#fff;color:var(--tx);font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;}
-.pill-input:focus{border-color:var(--accent);}
+/* 은색 페이퍼클립 — 이미지1,2,6에서 확인 */
+.pol-clip{
+  position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+  width:20px;height:40px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 40'%3E%3Cpath d='M10 3 C6.5 3 4 5.8 4 9 L4 30 C4 35 7 38 10 38 C13 38 16 35 16 30 L16 11 C16 8.5 14.5 7 12.5 7 C10.5 7 9 8.5 9 11 L9 28 C9 29.2 9.4 30 10 30 C10.6 30 11 29.2 11 28 L11 11' stroke='%23b8b8b8' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.15));
+  z-index:10;
+}
 
-/* Folder grid (shared) */
-.folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
-.folder-card{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:22px 16px;text-align:center;cursor:pointer;transition:.3s;box-shadow:var(--shadow);position:relative;}
-.folder-card:hover{transform:translateY(-2px);box-shadow:var(--shadow2);border-color:var(--accent);}
-.folder-card .fc-icon{font-size:40px;margin-bottom:8px;display:block;}
-.folder-card .fc-name{font-size:14px;font-weight:700;margin-bottom:4px;color:var(--tx);}
-.folder-card .fc-count{font-size:11px;color:var(--txd);font-family:'JetBrains Mono',monospace;}
-.folder-card .fc-del{position:absolute;top:8px;right:10px;font-size:11px;color:var(--txd);cursor:pointer;padding:4px 8px;border-radius:12px;opacity:0;transition:.2s;}
-.folder-card:hover .fc-del{opacity:1;}.folder-card .fc-del:hover{color:var(--red);background:var(--redd);}
-.folder-card.add-card{border-style:dashed;background:var(--sf2);}
-.folder-card.add-card:hover{border-color:var(--accent);background:#fff;}
-.folder-card.add-card .fc-icon{color:var(--txd);}
-.breadcrumb{display:flex;align-items:center;gap:6px;margin-bottom:14px;font-size:13px;color:var(--txd);}
-.breadcrumb span{cursor:pointer;transition:.2s;}.breadcrumb span:hover{color:var(--accent);}
-.breadcrumb .bc-cur{color:var(--tx);font-weight:700;cursor:default;}.breadcrumb .bc-sep{color:var(--bd);}
-.toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+/* 투명 테이프 */
+.pol-tape{
+  position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+  width:46px;height:19px;
+  background:rgba(220,210,175,.6);
+  border:1px solid rgba(190,175,140,.2);
+  z-index:10;
+}
 
-/* Memo */
-.memo-list{display:flex;flex-direction:column;gap:10px;}
-.memo-item{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:16px 20px;cursor:pointer;transition:.2s;box-shadow:var(--shadow);}
-.memo-item:hover{border-color:var(--accent);box-shadow:var(--shadow2);}
-.memo-item .mt{font-size:15px;font-weight:700;margin-bottom:4px;}.memo-item .mp{font-size:13px;color:var(--txd);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.memo-item .md{font-size:11px;color:var(--txd);margin-top:6px;font-family:'JetBrains Mono',monospace;}
-.memo-item .mdel{float:right;color:var(--red);font-size:12px;cursor:pointer;padding:4px 10px;border-radius:20px;transition:.2s;}.memo-item .mdel:hover{background:var(--redd);}
-.memo-editor{display:none;flex-direction:column;gap:12px;flex:1;}.memo-editor.show{display:flex;}
-.memo-editor input{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:14px 16px;color:var(--tx);font-size:18px;font-weight:700;font-family:'Noto Sans KR',sans-serif;outline:none;}.memo-editor input:focus{border-color:var(--accent);}
-.memo-editor textarea{flex:1;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;color:var(--tx);font-size:14px;line-height:1.8;font-family:'Noto Sans KR',sans-serif;outline:none;resize:none;min-height:300px;}.memo-editor textarea:focus{border-color:var(--accent);}
-.memo-editor .ebtns{display:flex;gap:8px;}
-.memo-editor .ebtns button{padding:12px 28px;border:none;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:.2s;}
-.memo-editor .sv{background:var(--accent);color:#fff;}.memo-editor .cn{background:var(--sf2);color:var(--txd);border:1px solid var(--bd);}
+/* 삭제 */
+.pol-del{
+  position:absolute;bottom:8px;right:8px;
+  width:17px;height:17px;border-radius:50%;
+  background:rgba(0,0,0,.05);border:none;
+  color:rgba(0,0,0,.18);font-size:9px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;opacity:0;transition:opacity .2s;font-family:sans-serif;
+}
+.polaroid:hover .pol-del{opacity:1;}
+.pol-del:hover{color:#8b1a1a!important;background:rgba(139,26,26,.1)!important;}
 
-/* Files */
-.drop-zone{border:2px dashed var(--bd);border-radius:18px;padding:44px;text-align:center;color:var(--txd);font-size:15px;margin-bottom:16px;transition:.2s;cursor:pointer;background:#fff;}
-.drop-zone:hover,.drop-zone.over{border-color:var(--green);color:var(--green);background:rgba(92,217,164,.04);}
-.drop-zone input{display:none;}
-.file-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
-.file-item{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:18px;transition:.2s;box-shadow:var(--shadow);}
-.file-item:hover{border-color:var(--green);box-shadow:var(--shadow2);}
-.file-item .fi{font-size:36px;margin-bottom:10px;}.file-item .fn{font-size:14px;font-weight:700;word-break:break-all;margin-bottom:4px;}
-.file-item .fs{font-size:11px;color:var(--txd);font-family:'JetBrains Mono',monospace;}
-.file-item .fa{display:flex;gap:6px;margin-top:10px;}
-.file-item .fa button{padding:6px 14px;border:1px solid var(--bd);border-radius:20px;background:#fff;color:var(--tx);font-size:11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:.2s;}
-.file-item .fa button:hover{border-color:var(--green);color:var(--green);}
-.file-item .fa .db:hover{border-color:var(--red);color:var(--red);}
-
-/* Music */
-.music-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
-@media(max-width:600px){.music-grid{grid-template-columns:1fr;}}
-.music-card{background:#fff;border:1px solid var(--bd);border-radius:20px;padding:36px 28px;text-align:center;cursor:pointer;transition:.3s;box-shadow:var(--shadow);}
-.music-card:hover{transform:translateY(-3px);box-shadow:var(--shadow2);}
-.music-card .mc-icon{font-size:64px;margin-bottom:16px;display:block;}
-.music-card .mc-title{font-size:18px;font-weight:900;margin-bottom:6px;}.music-card .mc-desc{font-size:13px;color:var(--txd);line-height:1.5;margin-bottom:16px;}
-.music-card .mc-btn{display:inline-block;padding:10px 28px;border-radius:20px;font-size:13px;font-weight:700;color:#fff;border:none;cursor:pointer;}
-.music-card.active .mc-btn{background:var(--grad);}
-.music-card.soon{opacity:.4;cursor:default;pointer-events:none;}.music-card.soon .mc-btn{background:var(--bd);}
-.music-card.c1{background:linear-gradient(145deg,#f5f0ff,#ede6ff);border-color:rgba(199,184,245,.2);}
-.music-card.c2{background:linear-gradient(145deg,#fff8f0,#fffcf5);border-color:rgba(252,175,69,.12);}
-.music-card.c3{background:linear-gradient(145deg,#f0f4ff,#f7f9ff);border-color:rgba(124,140,248,.12);}
-.music-card.c4{background:linear-gradient(145deg,#fff5f8,#fffafb);border-color:rgba(242,154,195,.12);}
-.music-frame{flex:1;border:none;border-radius:16px;min-height:85vh;background:#fff;box-shadow:var(--shadow);}
-.empty{text-align:center;padding:60px 20px;color:var(--txd);}.empty .ei{font-size:48px;margin-bottom:12px;}.empty p{font-size:14px;}
-.loading{text-align:center;padding:40px;color:var(--txd);font-size:13px;}
-.usage-label{font-size:12px;color:var(--txd);font-family:'JetBrains Mono',monospace;margin-left:auto;}
-/* Icon picker overlay */
-.icon-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:9998;display:flex;align-items:center;justify-content:center;}
-.icon-picker{background:#fff;border-radius:20px;padding:24px;max-width:340px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.12);}
-.icon-picker h3{font-size:16px;font-weight:900;margin-bottom:6px;}
-.icon-picker input{width:100%;padding:10px 14px;border:1px solid var(--bd);border-radius:12px;font-size:15px;margin-bottom:14px;outline:none;font-family:'Noto Sans KR',sans-serif;}
-.icon-picker input:focus{border-color:var(--accent);}
-.icon-picker .icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;max-height:200px;overflow-x:hidden;overflow-y:auto;}
-.icon-picker .icon-opt{font-size:28px;padding:8px;border-radius:12px;text-align:center;cursor:pointer;transition:.15s;border:2px solid transparent;}
-.icon-picker .icon-opt:hover{background:var(--sf2);border-color:var(--accent);}
-.icon-picker .icon-opt.sel{border-color:var(--accent);background:rgba(124,140,248,.1);}
-.icon-picker .ip-btns{display:flex;gap:8px;justify-content:flex-end;}
-.icon-picker .ip-btns button{padding:10px 22px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
-.icon-picker .ip-ok{background:var(--accent);color:#fff;}.icon-picker .ip-cn{background:var(--sf2);color:var(--txd);}
+/* 라이트박스 */
+.gallery-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.gallery-lightbox.open{display:flex;}
+.gallery-lb-img{max-width:88vw;max-height:88vh;object-fit:contain;display:block;box-shadow:0 40px 100px rgba(0,0,0,.9);}
+.gallery-lb-close{position:fixed;top:20px;right:20px;width:44px;height:44px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:50%;color:#e5e2e1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}.gallery-lb-close:hover{border-color:#FF3B00;color:#FF3B00;}
+.gallery-lb-nav{position:fixed;top:50%;transform:translateY(-50%);width:44px;height:44px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:50%;color:#e5e2e1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}.gallery-lb-nav:hover{border-color:rgba(255,180,162,.4);color:#ffb4a2;}
+.gallery-lb-prev{left:16px;}.gallery-lb-next{right:16px;}
+.gallery-lb-counter{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.3);}
+.gallery-lb-del{position:fixed;bottom:24px;right:20px;display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:rgba(255,59,0,.08);border:1px solid rgba(255,59,0,.25);border-radius:9999px;color:#FF3B00;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.2s;}.gallery-lb-del:hover{background:rgba(255,59,0,.2);}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
-<body>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
 
-<div class="lock" id="lockScreen">
-  <span class="logo-lock">MK<span class="sparkle-top">✦</span></span>
-  <span class="sub">비밀번호를 입력하세요</span>
-  <div class="pin-row" id="pinDots"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
-  <div class="numpad" id="numpad"></div>
-  <div class="kb-hint">키보드로도 입력할 수 있어요</div>
-</div>
+<!-- Top Nav -->
+<nav class="fixed top-0 w-full z-50 bg-[#131313]/85 backdrop-blur-2xl flex justify-between items-center px-6 md:px-8 py-5 border-b border-white/[.03]">
+  <div class="text-sm font-bold tracking-[.2em] text-[#ffb4a2] font-['Space_Grotesk'] uppercase cursor-pointer" onclick="goHub()">MONOLITH_OS</div>
+  <div class="hidden md:flex gap-8 items-center">
+    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="hub" onclick="goHub()">Hub</a>
+    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="memo" onclick="openApp('memo')">Notepad</a>
+    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="files" onclick="openApp('files')">Vault</a>
+    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="music" onclick="openApp('music')">Music</a>
+  </div>
+  <div class="flex gap-5 items-center">
+    <span class="material-symbols-outlined text-[20px] text-[#ffb4a2]/50 cursor-pointer hover:text-[#FF3B00] transition-colors duration-300" onclick="openApp('settings')">settings</span>
+  </div>
+</nav>
 
-<div class="dashboard" id="dashboard">
-  <div class="dash-hd"><h1>MK<span class="dash-sparkle">✦</span></h1><button class="lock-btn" onclick="lockApp()">🔒 잠금</button></div>
-  <div class="storage-card">
-    <div class="sc-top"><span class="sc-title">💾 저장 공간</span><span class="sc-val" id="dashStorage">계산 중...</span></div>
-    <div class="sc-bar"><div class="sc-fill" id="dashStorageBar" style="width:0%"></div></div>
-    <div class="sc-detail"><span>📝 메모: <span id="dashMemoSize">-</span></span><span>📁 파일: <span id="dashFileSize">-</span></span><span>무제한 · 5GB 무료 · $0.10/GB/월</span></div>
+<!-- Bottom Nav -->
+<nav class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
+  <div class="bg-[#131313]/60 backdrop-blur-3xl rounded-2xl px-5 py-2.5 shadow-2xl shadow-black/30 flex gap-7 md:gap-10 items-center justify-center border border-[#252525]">
+    <a class="bnav flex flex-col items-center justify-center transition-all duration-400 cursor-pointer py-1 px-2 text-[#ffb4a2]" data-page="hub" onclick="goHub()"><span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1;">grid_view</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Hub</span></a>
+    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="memo" onclick="openApp('memo')"><span class="material-symbols-outlined text-[20px]">edit_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Note</span></a>
+    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="files" onclick="openApp('files')"><span class="material-symbols-outlined text-[20px]">folder</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Vault</span></a>
+    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="music" onclick="openApp('music')"><span class="material-symbols-outlined text-[20px]">music_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Music</span></a>
   </div>
-  <div class="dash-grid">
-    <div class="dash-card memo" onclick="openApp('memo')"><span class="card-icon">📝</span><span class="card-badge" id="memoCount">-</span><h2>메모장</h2><p>폴더별 메모 · 검색 · 클라우드</p></div>
-    <div class="dash-card files" onclick="openApp('files')"><span class="card-icon">📁</span><span class="card-badge" id="fileCount">-</span><h2>저장소</h2><p>폴더별 파일 · 업로드 · 50MB/파일</p></div>
-    <div class="dash-card music" onclick="openApp('music')"><span class="card-icon">🎵</span><span class="card-badge">도구</span><h2>음악</h2><p>절대음감 트레이너 · 악기 도구</p></div>
-  </div>
-</div>
+</nav>
 
-<!-- Memo -->
-<div class="app-page" id="app-memo">
-  <div class="app-hd"><button class="back-btn" onclick="closeApp()">←</button><h1>📝 메모장</h1></div>
-  <div id="memoFolderView">
-    <div class="toolbar"><button class="pill-btn blue" onclick="newMemoFolder()">+ 새 폴더</button><input class="pill-input" id="memoFolderSearch" placeholder="🔍 폴더 검색..." oninput="renderMemoFolders()"></div>
-    <div class="folder-grid" id="memoFolderGrid"></div>
-  </div>
-  <div id="memoInsideFolder" style="display:none;">
-    <div class="breadcrumb" id="memoBreadcrumb"></div>
-    <div class="toolbar"><button class="pill-btn blue" onclick="newMemo()">+ 새 메모</button><input class="pill-input" id="memoSearch" placeholder="🔍 검색..." oninput="renderMemos()"></div>
-    <div class="memo-list" id="memoList"></div>
-  </div>
-  <div class="memo-editor" id="memoEditor">
-    <input type="text" id="memoTitleInput" placeholder="제목">
-    <textarea id="memoBodyInput" placeholder="내용을 입력하세요..."></textarea>
-    <div class="ebtns"><button class="sv" onclick="saveMemo()">저장</button><button class="cn" onclick="cancelMemo()">취소</button></div>
-  </div>
-</div>
+<div class="toast" id="toast"></div>
 
-<!-- Files -->
-<div class="app-page" id="app-files">
-  <div class="app-hd"><button class="back-btn" onclick="closeApp()">←</button><h1>📁 저장소</h1></div>
-  <div id="fileFolderView">
-    <div class="toolbar"><button class="pill-btn green" onclick="newFileFolder()">+ 새 폴더</button><input class="pill-input" id="fileFolderSearch" placeholder="🔍 폴더 검색..." oninput="renderFileFolders()"><span class="usage-label" id="storageUsage">-</span></div>
-    <div class="folder-grid" id="fileFolderGrid"></div>
-  </div>
-  <div id="fileInsideFolder" style="display:none;">
-    <div class="breadcrumb" id="fileBreadcrumb"></div>
-    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-      📂 파일을 드래그하거나 클릭하여 업로드<br><span style="font-size:12px;">(파일당 최대 50MB)</span>
-      <input type="file" id="fileInput" multiple onchange="handleFiles(this.files)">
+<!-- PIN Lock -->
+<div class="pin-overlay" id="pinOverlay" style="display:none;">
+  <div class="pin-scanlines"></div>
+  <!-- Left panel -->
+  <div class="pin-left">
+    <div class="pin-left-logo">MK.HUB</div>
+    <div class="pin-enc-badge"><div class="enc-dot"></div><span class="enc-label">Encryption_Active</span></div>
+    <div class="pin-left-nav" id="pinLeftNav">
+      <div class="pin-left-navitem active" id="pinNavNotepad"><span class="material-symbols-outlined ni-icon">edit_note</span><span class="ni-label">Notepad</span></div>
+      <div class="pin-left-navitem" id="pinNavVault"><span class="material-symbols-outlined ni-icon">inventory_2</span><span class="ni-label">Vault</span></div>
+      <div class="pin-left-navitem" id="pinNavMusic"><span class="material-symbols-outlined ni-icon">music_note</span><span class="ni-label">Music</span></div>
     </div>
-    <div class="toolbar"><button class="pill-btn green" onclick="document.getElementById('fileInput').click()">+ 파일 추가</button><span class="usage-label" id="folderFileUsage">-</span></div>
-    <div class="file-list" id="fileList"></div>
-  </div>
-</div>
-
-<!-- Music -->
-<div class="app-page" id="app-music">
-  <div class="app-hd"><button class="back-btn" onclick="closeApp()">←</button><h1>🎵 음악</h1></div>
-  <div id="musicHome">
-    <div class="music-grid">
-      <div class="music-card active c1" onclick="openMusicApp('pitch')"><span class="mc-icon">🎹</span><div class="mc-title">절대음감 트레이너</div><div class="mc-desc">에구치 메소드 + Wong 2025<br>성인 최적화 훈련</div><button class="mc-btn" onclick="event.stopPropagation();openMusicApp('pitch')">시작하기 →</button></div>
-      <div class="music-card soon c2"><span class="mc-icon">🎸</span><div class="mc-title">코드 사전</div><div class="mc-desc">기타 · 피아노 코드<br>준비 중</div><button class="mc-btn">준비 중</button></div>
-      <div class="music-card soon c3"><span class="mc-icon">🥁</span><div class="mc-title">리듬 트레이너</div><div class="mc-desc">박자 훈련 · 메트로놈<br>준비 중</div><button class="mc-btn">준비 중</button></div>
-      <div class="music-card soon c4"><span class="mc-icon">🎤</span><div class="mc-title">보컬 트레이너</div><div class="mc-desc">음역대 · 피치 분석<br>준비 중</div><button class="mc-btn">준비 중</button></div>
+    <div class="pin-left-bottom">
     </div>
   </div>
-  <div id="musicAppView" style="display:none;flex:1;flex-direction:column;">
-    <div style="margin-bottom:12px;"><button class="back-btn" onclick="closeMusicApp()" style="font-size:13px;width:auto;padding:8px 20px;border-radius:20px;display:inline-flex;gap:6px;align-items:center;">← 음악 목록</button></div>
-    <iframe class="music-frame" id="musicFrame" style="flex:1;"></iframe>
+  <!-- Center panel -->
+  <div class="pin-center">
+    <div class="pin-fp-wrap"><span class="material-symbols-outlined pin-fp-icon">fingerprint</span></div>
+    <div class="pin-title" id="pinAppTitle">NOTEPAD_VAULT</div>
+    <div class="pin-sub">Identity Verification Required</div>
+    <div class="pin-dots-row" id="pinDots"></div>
+    <div class="pin-numpad" id="numpad"></div>
+    <div class="pin-cancel-btn" onclick="cancelPin()">Emergency_Override_Terminal</div>
   </div>
+  <!-- Right panel -->
+  <div class="pin-right">
+    <div class="pin-right-top">
+      <div class="pin-right-badge">Security Protocol<span>MK_SEC_v.4.2</span></div>
+    </div>
+    <div class="pin-right-bottom">
+      <div class="pin-terminal">
+        <div class="pt-line">NODE_LOCATION: <em>INTERNAL_CORE</em></div>
+        <div class="pt-line">AUTH_TYPE: <em>BIOMETRIC_NUMERIC_HYBRID</em></div>
+        <div class="pt-line">ATTEMPTS_REMAINING: <em id="pinAttemptsLeft">03</em></div>
+        <div class="pt-line"><span id="pinTerminalUser" style="color:#ffb4a2;">_.01-ALPHA // USER: VERIFIED_ADMIN</span><span class="pt-cursor"></span></div>
+      </div>
+      <div class="pin-warning">Warning</div>
+      <div class="pin-access-denied">Access_Restricted</div>
+    </div>
+  </div>
+</div>
+
+<!-- Background Image Grid (dynamic) -->
+<div class="bg-grid" id="bgGrid"></div>
+
+<!-- ============ HUB PAGE ============ -->
+<main class="page active relative min-h-screen pt-28 pb-40 px-6 overflow-hidden" id="page-hub">
+  <div class="relative z-10 max-w-7xl mx-auto space-y-24 md:space-y-32">
+    <section class="grid grid-cols-1 md:grid-cols-12 gap-10 items-end">
+      <div class="md:col-span-8">
+        <h1 class="font-headline text-7xl md:text-[10rem] font-bold tracking-tighter uppercase leading-[.85] text-on-surface">MK.HUB</h1>
+      </div>
+      <div class="md:col-span-4 pb-4">
+        <p class="font-body text-lg md:text-xl text-on-surface-variant max-w-sm leading-relaxed">A curated intersection of brutalist architecture and cinematic rhythm. MK.HUB is your obsidian landscape for technical precision.</p>
+        <div class="flex items-center gap-4 mt-4"><span class="font-label text-[10px] tracking-[.15em] uppercase text-outline">Status: Online</span><span class="text-[#353535]">——</span><span class="font-label text-[10px] tracking-[.15em] uppercase text-outline">V.1.0.0</span></div>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Notepad -->
+      <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-500 cursor-pointer group relative overflow-hidden" onclick="openApp('memo')">
+        <div>
+          <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]">edit_note</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">01</span></div>
+          <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter">Notepad</h2>
+          <div class="space-y-0 mb-1" style="position:relative;">
+            <div class="writing-line" style="animation-delay:0s;">
+              <span class="writing-dot" style="background:#FF3B00;"></span>
+              <div class="writing-text" style="width:88%;animation-delay:0.1s;color:rgba(229,226,225,.55);">Visual Architecture Breakdown</div>
+            </div>
+            <div class="writing-line" style="animation-delay:0.15s;">
+              <span class="writing-dot" style="background:#FF3B00;"></span>
+              <div class="writing-text" style="width:72%;animation-delay:0.25s;color:rgba(229,226,225,.55);">Manifesto of Quiet Luxury</div>
+            </div>
+            <div class="writing-line" style="animation-delay:0.3s;">
+              <span class="writing-dot" style="background:#FF3B00;"></span>
+              <div class="writing-text" style="width:80%;animation-delay:0.4s;color:rgba(229,226,225,.55);">Typography Tension Guidelines</div>
+            </div>
+            <div class="writing-line writing-line-blank" style="animation-delay:0.45s;border-bottom-color:rgba(255,59,0,.2);">
+              <span class="writing-dot writing-dot-blink" style="background:#FF3B00;"></span>
+              <div class="writing-text-cursor" style="animation-delay:0.55s;background:#FF3B00;"></div>
+            </div>
+          </div>
+        </div>
+        <button class="w-full bg-[#ffb4a2] text-[#360e05] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:brightness-110 transition-all">Open Records →</button>
+      </section>
+
+      <!-- Vault -->
+      <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] md:-translate-y-8 shadow-2xl shadow-black/30 hover:translate-y-[-16px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-500 cursor-pointer group relative overflow-hidden" onclick="openApp('files')">
+        <div>
+          <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]" style="font-variation-settings:'FILL' 1;">inventory_2</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">02</span></div>
+          <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter">Vault</h2>
+          <div class="vault-storage-block mb-8">
+            <div class="flex justify-between items-center mb-2">
+              <span class="font-label text-[10px] uppercase tracking-[.15em] text-outline/60">Storage Used</span>
+              <span class="font-label text-[10px] text-[#ffb4a2]/70" id="hubStorageLabel">— / 5 GB</span>
+            </div>
+            <div class="h-1.5 rounded-full overflow-hidden" style="background:rgba(255,255,255,.06);">
+              <div id="hubStorageBar" class="h-full rounded-full transition-all duration-700" style="width:0%;background:linear-gradient(90deg,#ffb4a2,#FF3B00);"></div>
+            </div>
+            <div class="flex justify-between mt-2">
+              <span class="font-label text-[9px] text-outline/40" id="hubStorageSub">Calculating…</span>
+              <span class="font-label text-[9px] text-outline/40" id="hubStoragePct">0%</span>
+            </div>
+          </div>
+          <div class="space-y-8">
+            <div class="flex items-center gap-4 text-on-surface/60"><span class="material-symbols-outlined text-base text-[#FF3B00]">folder</span><span class="font-body text-sm">Project Archives</span></div>
+            <div class="flex items-center gap-4 text-on-surface/60"><span class="material-symbols-outlined text-base text-[#FF3B00]">image</span><span class="font-body text-sm">Visual References</span></div>
+            <div class="flex items-center gap-4 text-on-surface/60"><span class="material-symbols-outlined text-base text-[#FF3B00]">description</span><span class="font-body text-sm">Documents & Assets</span></div>
+          </div>
+        </div>
+        <button class="w-full border border-[#353535] text-[#ffb4a2] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:bg-[#ffb4a2] group-hover:text-[#360e05] group-hover:border-[#ffb4a2] transition-all">Enter Vault →</button>
+      </section>
+
+      <!-- Music -->
+      <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-500 cursor-pointer group relative overflow-hidden" onclick="openApp('music')">
+        <div>
+          <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]">music_note</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">03</span></div>
+          <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter">Music</h2>
+          <div class="flex items-end gap-[4px] mb-10" style="height:56px;" id="hubVizBars">
+            <div class="viz-bar" style="--h:35%;--d:0s;"></div><div class="viz-bar" style="--h:65%;--d:.07s;"></div><div class="viz-bar" style="--h:50%;--d:.14s;"></div><div class="viz-bar" style="--h:85%;--d:.21s;"></div><div class="viz-bar" style="--h:40%;--d:.28s;"></div><div class="viz-bar" style="--h:70%;--d:.10s;"></div><div class="viz-bar" style="--h:55%;--d:.17s;"></div><div class="viz-bar" style="--h:90%;--d:.04s;"></div><div class="viz-bar" style="--h:45%;--d:.24s;"></div><div class="viz-bar" style="--h:60%;--d:.12s;"></div><div class="viz-bar" style="--h:75%;--d:.32s;"></div><div class="viz-bar" style="--h:30%;--d:.08s;"></div><div class="viz-bar" style="--h:80%;--d:.19s;"></div><div class="viz-bar" style="--h:55%;--d:.26s;"></div><div class="viz-bar" style="--h:42%;--d:.05s;"></div><div class="viz-bar" style="--h:68%;--d:.15s;"></div>
+          </div>
+          <ul class="space-y-8">
+            <li class="flex items-center gap-4 text-on-surface/60"><span class="w-1.5 h-1.5 rounded-full bg-[#FF3B00] shrink-0"></span><span class="font-body text-sm">Absolute Pitch Training</span></li>
+            <li class="flex items-center gap-4 text-on-surface/60"><span class="w-1.5 h-1.5 rounded-full bg-[#FF3B00] shrink-0"></span><span class="font-body text-sm">Chord Color Method</span></li>
+            <li class="flex items-center gap-4 text-on-surface/60"><span class="w-1.5 h-1.5 rounded-full bg-[#FF3B00] shrink-0"></span><span class="font-body text-sm">Wong 2025 Protocol</span></li>
+          </ul>
+        </div>
+        <button class="w-full bg-[#252525] text-on-surface py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg flex items-center justify-center gap-2 group-hover:bg-[#ffb4a2]/10 transition-all"><span class="material-symbols-outlined text-sm text-[#ffb4a2]">music_note</span>Open Studio →</button>
+    </div>
+
+    <!-- Bottom Bento -->
+    <section class="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <div class="md:col-span-4 bg-[#FF3B00] p-8 md:p-10 rounded-2xl flex flex-col justify-center cursor-pointer hover:brightness-110 transition-all" onclick="openApp('memo')">
+        <span class="font-label text-[10px] tracking-[.2em] uppercase text-white/50 mb-3">Quick_Action</span>
+        <h3 class="font-headline text-4xl md:text-5xl font-bold text-white leading-[.95] uppercase">New<br/>Fragment</h3>
+      </div>
+      <div class="md:col-span-8 grid grid-cols-2 gap-6">
+        <div class="bg-[#1c1b1b] border border-[#252525] backdrop-blur-md p-7 rounded-2xl"><span class="font-label text-[#FF3B00] text-[10px] tracking-[0.25em] uppercase block mb-3">Integrations</span><h4 class="font-headline text-xl font-semibold uppercase tracking-tight">Seamless Workflow</h4></div>
+        <div class="bg-[#1c1b1b] border border-[#252525] backdrop-blur-md p-7 rounded-2xl"><span class="font-label text-[#FF3B00] text-[10px] tracking-[0.25em] uppercase block mb-3">Performance</span><h4 class="font-headline text-xl font-semibold uppercase tracking-tight">Zero Friction</h4></div>
+      </div>
+    </section>
+
+    <!-- ===== Photo Gallery ===== -->
+    <div class="gallery-section">
+      <!-- Scrolling marquee divider -->
+      <div class="gallery-marquee-wrap">
+        <div class="gallery-marquee">
+          <span class="gallery-marquee-item">Visual <span>Archive</span></span>
+          <span class="gallery-marquee-item">·</span>
+          <span class="gallery-marquee-item">My <span>Fragments</span></span>
+          <span class="gallery-marquee-item">·</span>
+          <span class="gallery-marquee-item">Visual <span>Archive</span></span>
+          <span class="gallery-marquee-item">·</span>
+          <span class="gallery-marquee-item">My <span>Fragments</span></span>
+          <span class="gallery-marquee-item">·</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="gallery-lightbox" id="galleryLightbox" onclick="closeLightbox()">
+      <button class="gallery-lb-close" onclick="closeLightbox()"><span class="material-symbols-outlined">close</span></button>
+      <button class="gallery-lb-nav gallery-lb-prev" onclick="event.stopPropagation();lbNav(-1)"><span class="material-symbols-outlined">arrow_back</span></button>
+      <img class="gallery-lb-img" id="galleryLbImg" src="" alt="">
+      <button class="gallery-lb-nav gallery-lb-next" onclick="event.stopPropagation();lbNav(1)"><span class="material-symbols-outlined">arrow_forward</span></button>
+      <div class="gallery-lb-counter" id="galleryLbCounter"></div>
+      <button class="gallery-lb-del" onclick="event.stopPropagation();lbDel()"><span class="material-symbols-outlined" style="font-size:14px;">delete</span> Delete</button>
+    </div>
+
+  </div>
+</main>
+
+<!-- ============ MEMO PAGE ============ -->
+<div class="page min-h-screen pt-24 pb-40 px-6" id="page-memo">
+  <div class="max-w-4xl mx-auto">
+    <!-- Page header -->
+    <div class="flex items-center gap-5 mb-10">
+      <button class="app-back-btn" onclick="goHub()"><span class="material-symbols-outlined text-[18px]">arrow_back</span></button>
+      <div>
+        <div class="app-page-label">01 — Notepad</div>
+        <h1 class="app-page-title">Records</h1>
+      </div>
+    </div>
+    <div id="memoFolderView">
+      <div class="flex gap-3 mb-8 flex-wrap items-center">
+        <button class="app-action-btn" onclick="newMemoFolder()"><span class="material-symbols-outlined text-base">create_new_folder</span> New Folder</button>
+        <div class="app-search-wrap"><span class="material-symbols-outlined text-[16px] text-outline/50">search</span><input class="app-search" id="memoFolderSearch" placeholder="Search folders…" oninput="renderMemoFolders()"></div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="memoFolderGrid"></div>
+    </div>
+    <div id="memoInsideFolder" style="display:none;">
+      <div class="flex items-center gap-2 mb-6 text-sm text-outline font-label" id="memoBreadcrumb"></div>
+      <div class="flex gap-3 mb-8 flex-wrap items-center">
+        <button class="app-action-btn" onclick="newMemo()"><span class="material-symbols-outlined text-base">edit_note</span> New Note</button>
+        <div class="app-search-wrap"><span class="material-symbols-outlined text-[16px] text-outline/50">search</span><input class="app-search" id="memoSearch" placeholder="Search…" oninput="renderMemos()"></div>
+      </div>
+      <div class="space-y-3" id="memoList"></div>
+    </div>
+    <div id="memoEditor" style="display:none;" class="flex flex-col gap-4 flex-1">
+      <input type="text" class="mk-input text-lg font-bold" id="memoTitleInput" placeholder="Title">
+      <textarea class="mk-textarea flex-1" id="memoBodyInput" placeholder="Write something…"></textarea>
+      <div class="flex gap-3">
+        <button class="app-action-btn" onclick="saveMemo()"><span class="material-symbols-outlined text-base">save</span> Save</button>
+        <button class="app-ghost-btn" onclick="cancelMemo()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FILES PAGE ============ -->
+<div class="page min-h-screen pt-24 pb-40 px-6" id="page-files">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex items-center gap-5 mb-10">
+      <button class="app-back-btn" onclick="goHub()"><span class="material-symbols-outlined text-[18px]">arrow_back</span></button>
+      <div class="flex-1">
+        <div class="app-page-label">02 — Vault</div>
+        <h1 class="app-page-title">Storage</h1>
+      </div>
+      <span class="font-label text-xs text-outline uppercase tracking-widest" id="storageUsage">-</span>
+    </div>
+    <div id="fileFolderView">
+      <div class="flex gap-3 mb-8 flex-wrap items-center">
+        <button class="app-action-btn" onclick="newFileFolder()"><span class="material-symbols-outlined text-base">create_new_folder</span> New Folder</button>
+        <div class="app-search-wrap"><span class="material-symbols-outlined text-[16px] text-outline/50">search</span><input class="app-search" id="fileFolderSearch" placeholder="Search folders…" oninput="renderFileFolders()"></div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="fileFolderGrid"></div>
+    </div>
+    <div id="fileInsideFolder" style="display:none;">
+      <div class="flex items-center gap-2 mb-6 text-sm text-outline font-label" id="fileBreadcrumb"></div>
+      <div class="app-dropzone mb-6" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <span class="material-symbols-outlined text-3xl mb-3 block text-outline/40">cloud_upload</span>
+        <div class="font-label text-sm font-semibold text-outline/70 uppercase tracking-widest mb-1">Drop files or click to upload</div>
+        <div class="font-body text-xs text-outline/40">Max 50MB per file</div>
+        <input type="file" id="fileInput" multiple onchange="handleFiles(this.files)" style="display:none;">
+      </div>
+      <div class="flex gap-3 mb-6 flex-wrap items-center">
+        <button class="app-action-btn" onclick="document.getElementById('fileInput').click()"><span class="material-symbols-outlined text-base">upload</span> Upload</button>
+        <span class="font-label text-xs text-outline ml-auto" id="folderFileUsage">-</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="fileList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MUSIC PAGE ============ -->
+<div class="page min-h-screen pt-24 pb-40 px-6" id="page-music">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex items-center gap-5 mb-10">
+      <button class="app-back-btn" onclick="goHub()"><span class="material-symbols-outlined text-[18px]">arrow_back</span></button>
+      <div>
+        <div class="app-page-label">03 — Music</div>
+        <h1 class="app-page-title">Studio</h1>
+      </div>
+    </div>
+
+    <div id="musicHome">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="app-module-card" onclick="openMusicApp('notes')">
+          <div class="amc-num">01</div>
+          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">music_note</span></div>
+          <h3 class="amc-title">Music Notes</h3>
+          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">음악 이론 노트 & 개인 메모<br>코드 · 스케일 · 분석 기록</p>
+          <div class="amc-arrow">→</div>
+        </div>
+        <div class="app-module-card" onclick="openMusicApp('pitch')">
+          <div class="amc-num">02</div>
+          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">piano</span></div>
+          <h3 class="amc-title">Absolute Pitch Trainer</h3>
+          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">에구치 메소드 + Wong 2025<br>성인 최적화 훈련</p>
+          <div class="amc-arrow">→</div>
+        </div>
+        <div class="app-module-card app-module-dim">
+          <div class="amc-num">03</div>
+          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">guitar_chord</span></div>
+          <h3 class="amc-title">Chord Progression</h3>
+          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">화성학 기반 코드 진행 훈련<br>준비 중</p>
+          <div class="amc-badge">Soon</div>
+        </div>
+        <div class="app-module-card app-module-dim">
+          <div class="amc-num">04</div>
+          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">equalizer</span></div>
+          <h3 class="amc-title">Music Analysis</h3>
+          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">앨범 · 곡 구조 분석<br>준비 중</p>
+          <div class="amc-badge">Soon</div>
+        </div>
+        <div class="app-module-card" onclick="openMusicApp('favwhy')">
+          <div class="amc-num">05</div>
+          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">favorite</span></div>
+          <h3 class="amc-title">Favorite Songs</h3>
+          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">내가 좋아하는 곡과<br>그 이유를 기록하는 공간</p>
+          <div class="amc-arrow">→</div>
+        </div>
+        <div class="app-module-card" onclick="openMusicApp('playlist')">
+          <div class="amc-num">06</div>
+          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">headphones</span></div>
+          <h3 class="amc-title">My Playlist</h3>
+          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">좋아하는 노래 모음<br>플레이리스트 생성 · 관리</p>
+          <div class="amc-arrow">→</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pitch trainer iframe -->
+    <div id="musicAppView" style="display:none;flex:1;flex-direction:column;">
+      <div class="mb-5"><button class="app-ghost-btn" onclick="closeMusicApp()">← 목록</button></div>
+      <iframe class="music-frame" id="musicFrame" style="flex:1;"></iframe>
+    </div>
+
+    <!-- Music Notes -->
+    <div id="musicNotesView" style="display:none;">
+      <div class="app-subpage-header">
+        <button class="app-ghost-btn" onclick="closeMusicSubView()">← Back</button>
+        <h2 class="app-subpage-title">Music Notes</h2>
+      </div>
+      <div class="mb-6"><button class="app-action-btn" onclick="newMusicNote()"><span class="material-symbols-outlined text-base">edit_note</span> New Note</button></div>
+      <div id="musicNotesList" class="space-y-3"></div>
+      <div id="musicNoteEditor" style="display:none;" class="flex flex-col gap-4 mt-4">
+        <input type="text" class="mk-input text-base font-bold" id="musicNoteTitleInput" placeholder="Title">
+        <textarea class="mk-textarea" id="musicNoteBodyInput" placeholder="Write notes…"></textarea>
+        <div class="flex gap-3">
+          <button class="app-action-btn" onclick="saveMusicNote()"><span class="material-symbols-outlined text-base">save</span> Save</button>
+          <button class="app-ghost-btn" onclick="cancelMusicNote()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fav Songs -->
+    <div id="musicFavWhyView" style="display:none;">
+      <div class="app-subpage-header">
+        <button class="app-ghost-btn" onclick="closeMusicSubView()">← Back</button>
+        <h2 class="app-subpage-title">좋아하는 노래</h2>
+      </div>
+
+      <div id="favWhyListView">
+        <div class="mb-6"><button class="app-action-btn" onclick="newFavSong()"><span class="material-symbols-outlined text-base">add</span> Add Song</button></div>
+        <div id="favSongList" class="space-y-3"></div>
+      </div>
+
+      <div id="favWhyDetailView" style="display:none;">
+        <div class="flex items-center gap-4 mb-6">
+          <button class="app-ghost-btn" onclick="closeFavDetail()">← 목록</button>
+          <div>
+            <div class="font-headline text-xl font-bold tracking-tight" id="favDetailTitle"></div>
+            <div class="text-sm text-outline mt-0.5" id="favDetailArtist"></div>
+          </div>
+        </div>
+        <div class="fav-yt-wrap mb-5">
+          <iframe id="favDetailFrame" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div id="favDetailReason" class="fav-song-reason"></div>
+      </div>
+
+      <div id="favSongEditor" style="display:none;" class="app-editor-card mt-4">
+        <div class="app-editor-label">New Song</div>
+        <input type="text" class="mk-input" id="favSongTitle" placeholder="노래 제목">
+        <input type="text" class="mk-input" id="favSongArtist" placeholder="가수 / 아티스트">
+        <textarea class="mk-textarea !min-h-[110px]" id="favSongReason" placeholder="이 노래를 좋아하는 이유…"></textarea>
+        <div class="flex gap-3">
+          <button class="app-action-btn" onclick="saveFavSong()"><span class="material-symbols-outlined text-base">save</span> Save</button>
+          <button class="app-ghost-btn" onclick="cancelFavSong()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Playlist -->
+    <div id="musicPlaylistView" style="display:none;">
+      <div class="app-subpage-header">
+        <button class="app-ghost-btn" onclick="closeMusicSubView()">← Back</button>
+        <h2 class="app-subpage-title">My Playlist</h2>
+      </div>
+      <div id="playlistHome">
+        <div class="mb-6"><button class="app-action-btn" onclick="newPlaylist()"><span class="material-symbols-outlined text-base">add</span> New Playlist</button></div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="playlistGrid"></div>
+      </div>
+      <div id="playlistInside" style="display:none;">
+        <div class="flex items-center gap-2 mb-5 text-sm text-outline font-label" id="playlistBreadcrumb"></div>
+        <div class="mb-5"><button class="app-action-btn" onclick="addSongToPlaylist()"><span class="material-symbols-outlined text-base">add</span> Add Song</button></div>
+        <div id="playlistSongList" class="space-y-2"></div>
+        <div id="addSongForm" style="display:none;" class="app-editor-card mt-4">
+          <div class="app-editor-label">Add to Playlist</div>
+          <input type="text" class="mk-input" id="plSongTitle" placeholder="Song title — Artist">
+          <input type="text" class="mk-input" id="plSongLink" placeholder="Link (optional)">
+          <div class="flex gap-3">
+            <button class="app-action-btn" onclick="saveSongToPlaylist()"><span class="material-symbols-outlined text-base">add</span> Add</button>
+            <button class="app-ghost-btn" onclick="document.getElementById('addSongForm').style.display='none'">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ SETTINGS PAGE ============ -->
+<div class="page min-h-screen pt-24 pb-40 px-6" id="page-settings">
+  <div class="max-w-lg mx-auto">
+    <div class="flex items-center gap-5 mb-10">
+      <button class="app-back-btn" onclick="goHub()"><span class="material-symbols-outlined text-[18px]">arrow_back</span></button>
+      <div>
+        <div class="app-page-label">System</div>
+        <h1 class="app-page-title">Settings</h1>
+      </div>
+    </div>
+
+    <div class="app-settings-section">
+      <div class="app-settings-tag">Storage</div>
+      <div class="flex justify-between items-center mb-2"><span class="font-label text-xs text-outline" id="setStorage">Calculating…</span></div>
+      <div class="h-1.5 bg-[#252525] rounded-full overflow-hidden mb-2"><div class="h-full bg-gradient-to-r from-[#ffb4a2] to-[#FF3B00] rounded-full transition-all duration-500" id="setStorageBar" style="width:0%"></div></div>
+      <div class="flex justify-between text-[11px] text-outline font-label"><span>📝 Memo: <span id="setMemoSize">-</span></span><span>📁 Files: <span id="setFileSize">-</span></span></div>
+    </div>
+
+    <div class="app-settings-section">
+      <div class="app-settings-tag">Security</div>
+      <div class="setting-row"><div><div class="setting-label">Password</div><div class="setting-sub">Protects Notepad, Vault & Settings</div></div><button class="app-action-btn !py-2 !px-5 !text-xs" onclick="changePw()">Change</button></div>
+    </div>
+
+    <div class="app-settings-section">
+      <div class="app-settings-tag">Background</div>
+      <p class="text-xs text-outline mb-4 leading-relaxed">Add images to create the editorial background mosaic. They appear with automatic transparency.</p>
+      <div class="grid grid-cols-3 md:grid-cols-4 gap-3 mb-4" id="bgImageGrid"></div>
+      <div class="app-dropzone !py-5" id="bgDropZone" onclick="document.getElementById('bgFileInput').click()">
+        <span class="material-symbols-outlined text-xl mb-1 block text-outline/40">add_photo_alternate</span>
+        <div class="font-label text-xs text-outline/60 uppercase tracking-widest">Add Image</div>
+        <input type="file" id="bgFileInput" accept="image/*" multiple onchange="handleBgUpload(this.files)" style="display:none;">
+      </div>
+    </div>
+
+    <div class="app-settings-section">
+      <div class="app-settings-tag">YouTube API</div>
+      <p class="text-xs text-outline mb-4 leading-relaxed">YouTube Data API v3 키를 등록하면 좋아하는 노래 탭에서 앱 안에서 바로 영상이 재생됩니다. <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:#FF3B00;">Google Cloud Console</a>에서 무료로 발급하세요.</p>
+      <div class="flex gap-3 items-center">
+        <input type="password" class="mk-input flex-1" id="ytApiKeyInput" placeholder="AIza…" style="font-family:'Space Grotesk',sans-serif;">
+        <button class="app-action-btn !py-2.5 !px-5 !text-xs shrink-0" onclick="saveYTKey()">Save</button>
+      </div>
+      <div class="font-['Space_Grotesk'] text-[10px] text-outline/40 mt-2 tracking-[.1em] uppercase" id="ytKeyStatus"></div>
+    </div>
+
+    <div class="app-settings-section">
+      <div class="app-settings-tag">About</div>
+      <div class="text-sm text-on-surface-variant leading-relaxed">MK.HUB — Editorial Magnitude<br>Personal hub for notes, files, and music tools.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Password Change Overlay -->
+<div class="pin-overlay" id="pwChangeOverlay" style="display:none;">
+  <div class="font-['Space_Grotesk'] text-[10px] tracking-[.3em] text-outline uppercase mb-2">Security Protocol</div>
+  <div class="font-['Space_Grotesk'] text-lg font-bold tracking-tight text-[#ffb4a2] uppercase mb-1" id="pwChangeTitle">Current Password</div>
+  <div class="text-xs text-outline mb-6 font-['Space_Grotesk'] tracking-[.08em] uppercase" id="pwChangeSub">Enter your current PIN</div>
+  <div class="pin-dots" id="pwChangeDots"></div>
+  <div class="numpad" id="pwChangeNumpad"></div>
+  <div class="flex gap-6 mt-5">
+    <div class="text-[10px] text-outline cursor-pointer hover:text-[#FF3B00] transition-colors font-['Space_Grotesk'] tracking-[.15em] uppercase" onclick="cancelPwChange()">Cancel</div>
+  </div>
+  <div class="mt-4 text-[10px] text-[#FF3B00] font-['Space_Grotesk'] tracking-[.1em] uppercase" id="pwChangeError" style="display:none;"></div>
 </div>
 
 <!-- Icon Picker -->
 <div class="icon-overlay" id="iconOverlay" style="display:none;" onclick="if(event.target===this)closeIconPicker()">
-  <div class="icon-picker">
-    <h3 id="ipTitle">새 폴더</h3>
-    <input type="text" id="ipName" placeholder="폴더 이름">
-    <div class="icon-grid" id="ipGrid"></div>
-    <div class="ip-btns"><button class="ip-cn" onclick="closeIconPicker()">취소</button><button class="ip-ok" onclick="confirmIconPicker()">만들기</button></div>
-  </div>
+  <div class="icon-picker"><h3 id="ipTitle">New Folder</h3><input type="text" class="mk-input mb-3" id="ipName" placeholder="Folder name"><div class="icon-grid" id="ipGrid"></div><div class="flex gap-3 justify-end mt-2"><button class="mk-btn mk-btn-outline" onclick="closeIconPicker()">Cancel</button><button class="mk-btn mk-btn-primary" onclick="confirmIconPicker()">Create</button></div></div>
 </div>
 
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getFirestore,collection,doc,getDocs,addDoc,updateDoc,deleteDoc,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-import{getStorage,ref as sRef,uploadBytes,getDownloadURL,deleteObject}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
+import{getFirestore,collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import{getStorage,ref as sRef,uploadBytes,getDownloadURL,deleteObject,listAll}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 const app=initializeApp({apiKey:"AIzaSyDWXJ1nIQIZXSMruwFhyoMSU3gf3omiyMc",authDomain:"mingwon-hub.firebaseapp.com",projectId:"mingwon-hub",storageBucket:"mingwon-hub.firebasestorage.app",messagingSenderId:"108345228898",appId:"1:108345228898:web:81aa09a240d48e54081b3b"});
 const db=getFirestore(app),stg=getStorage(app);
 const memosCol=collection(db,'mk_app','data','memos'),memoFoldersCol=collection(db,'mk_app','data','folders');
 const filesCol=collection(db,'mk_app','data','files'),fileFoldersCol=collection(db,'mk_app','data','file_folders');
+const bgImagesDoc=doc(db,'mk_app','bg_images');
 
-// Lock
-const PIN='5940';let pinInput='';
-function buildNumpad(){const pad=document.getElementById('numpad');[1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(k=>{if(k===''){pad.innerHTML+='<div></div>';return;}if(k==='⌫'){pad.innerHTML+=`<div class="nk del" onclick="pinDel()">⌫</div>`;return;}pad.innerHTML+=`<div class="nk" onclick="pinAdd('${k}')">${k}</div>`;});}
-function pinAdd(n){if(pinInput.length>=4)return;pinInput+=n;updateDots();if(pinInput.length===4){if(pinInput===PIN){setTimeout(()=>{document.getElementById('lockScreen').classList.add('hide');document.getElementById('dashboard').classList.add('show');updateCounts();},200);}else{document.querySelectorAll('.pin-dot').forEach(d=>d.classList.add('wrong'));setTimeout(()=>{pinInput='';updateDots();document.querySelectorAll('.pin-dot').forEach(d=>d.classList.remove('wrong'));},500);}}}
-function pinDel(){pinInput=pinInput.slice(0,-1);updateDots();}
-function updateDots(){document.querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinInput.length));}
-function lockApp(){pinInput='';updateDots();document.getElementById('lockScreen').classList.remove('hide');document.getElementById('dashboard').classList.remove('show');closeApp();}
-document.addEventListener('keydown',e=>{if(!document.getElementById('lockScreen').classList.contains('hide')){if(e.key>='0'&&e.key<='9')pinAdd(e.key);else if(e.key==='Backspace')pinDel();}});
-window.pinAdd=pinAdd;window.pinDel=pinDel;window.lockApp=lockApp;
+/* ===== Passwords ===== */
+const DEF_PW='5940';
+function getPw(){return localStorage.getItem('mk_pw')||DEF_PW;}
+function setPwLocal(pw){localStorage.setItem('mk_pw',pw);}
+let isUnlocked=false;
 
-// Nav
-let curApp=null;
-function openApp(a){document.getElementById('dashboard').classList.remove('show');document.getElementById('app-'+a).classList.add('show');curApp=a;
-  if(a==='memo'){curMemoFolder=null;document.getElementById('memoFolderView').style.display='';document.getElementById('memoInsideFolder').style.display='none';renderMemoFolders();}
-  if(a==='files'){curFileFolder=null;document.getElementById('fileFolderView').style.display='';document.getElementById('fileInsideFolder').style.display='none';renderFileFolders();}}
-function closeApp(){if(curApp){if(curApp==='music')closeMusicApp();if(curApp==='memo'){document.getElementById('memoEditor').classList.remove('show');document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoFolderView').style.display='';}if(curApp==='files'){document.getElementById('fileInsideFolder').style.display='none';document.getElementById('fileFolderView').style.display='';}document.getElementById('app-'+curApp).classList.remove('show');document.getElementById('dashboard').classList.add('show');curApp=null;updateCounts();}}
-window.openApp=openApp;window.closeApp=closeApp;
+/* ===== PIN Lock ===== */
+let pinInput='',pinCallback=null,pinAttempts=3;
+const GREEK_SUB=['Alpha','Beta','Gamma','Delta','Epsilon','Zeta','Eta','Theta','Iota','','Kappa',''];
+function showPin(title,cb){
+  pinInput='';pinCallback=cb;pinAttempts=3;
+  // Update title & nav highlight
+  const appMap={memo:'Notepad',files:'Vault',settings:'Notepad'};
+  const titleMap={NOTEPAD:'NOTEPAD_VAULT',VAULT:'VAULT_ACCESS',SETTINGS:'SETTINGS_ACCESS'};
+  document.getElementById('pinAppTitle').textContent=titleMap[title]||title+'_VAULT';
+  // Nav highlight
+  document.querySelectorAll('.pin-left-navitem').forEach(el=>el.classList.remove('active'));
+  if(title==='NOTEPAD')document.getElementById('pinNavNotepad').classList.add('active');
+  else if(title==='VAULT')document.getElementById('pinNavVault').classList.add('active');
+  else if(title==='SETTINGS')document.getElementById('pinNavMusic').classList.add('active');
+  // Dots
+  document.getElementById('pinDots').innerHTML=Array(6).fill('<div class="pin-dot"></div>').join('');
+  document.getElementById('pinAttemptsLeft').textContent='0'+pinAttempts;
+  // Numpad
+  const pad=document.getElementById('numpad');pad.innerHTML='';
+  [1,2,3,4,5,6,7,8,9,'home',0,'⌫'].forEach((k,i)=>{
+    if(k==='home'){
+      pad.innerHTML+=`<div class="pnk" onclick="cancelPin();goHub();" style="border-color:#252525;"><span class="material-symbols-outlined" style="font-size:20px;color:#a08d88;">home</span></div>`;
+      return;
+    }
+    if(k==='⌫'){pad.innerHTML+=`<div class="pnk pk-del" onclick="pinDel()"><span style="font-size:18px;">×</span></div>`;return;}
+    pad.innerHTML+=`<div class="pnk" onclick="pinAdd('${k}')"><span>${k}</span><span class="pk-sub">${GREEK_SUB[i]||''}</span></div>`;
+  });
+  // Enter button replaces last empty slot — replace last div with enter arrow
+  pad.lastElementChild.outerHTML; // no-op
+  // Add enter key at bottom-right
+  const cells=pad.children;
+  // slot 11 (index 11) is the enter/backspace — already done above
+  document.getElementById('pinOverlay').style.display='grid';
+}
+function pinAdd(n){
+  const pw=getPw();pinInput+=n;
+  const dots=document.querySelectorAll('#pinDots .pin-dot');dots.forEach((d,i)=>d.classList.toggle('filled',i<pinInput.length));
+  if(pinInput.length>=pw.length){
+    if(pinInput===pw){
+      setTimeout(()=>{document.getElementById('pinOverlay').style.display='none';isUnlocked=true;if(pinCallback)pinCallback();pinCallback=null;},180);
+    }else{
+      pinAttempts=Math.max(0,pinAttempts-1);
+      document.getElementById('pinAttemptsLeft').textContent='0'+pinAttempts;
+      dots.forEach(d=>d.classList.add('wrong'));
+      document.getElementById('pinDots').classList.add('shake');
+      setTimeout(()=>{pinInput='';dots.forEach(d=>{d.classList.remove('filled','wrong');});document.getElementById('pinDots').classList.remove('shake');},500);
+    }
+  }
+}
+function pinDel(){pinInput=pinInput.slice(0,-1);document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>{d.classList.toggle('filled',i<pinInput.length);d.classList.remove('wrong');});}
+function cancelPin(){document.getElementById('pinOverlay').style.display='none';pinCallback=null;}
+document.addEventListener('keydown',e=>{if(document.getElementById('pinOverlay').style.display!=='grid')return;if(e.key>='0'&&e.key<='9')pinAdd(e.key);else if(e.key==='Backspace')pinDel();else if(e.key==='Escape')cancelPin();});
+window.pinAdd=pinAdd;window.pinDel=pinDel;window.cancelPin=cancelPin;
 
-async function updateCounts(){try{const mS=await getDocs(memosCol),fS=await getDocs(filesCol);document.getElementById('memoCount').textContent=mS.size+'개';document.getElementById('fileCount').textContent=fS.size+'개';let mb=0;mS.forEach(d=>{mb+=JSON.stringify(d.data()).length;});let fb=0;fS.forEach(d=>{fb+=(d.data().size||0);});const tMB=((mb+fb)/1048576).toFixed(2);const overGB=Math.max(parseFloat(tMB)/1024-5,0);const cost=(overGB*0.10).toFixed(2);const costStr=overGB>0?' · 예상 $'+cost+'/월':' · $0/월';document.getElementById('dashStorage').textContent=(tMB<0.01?'0 KB':tMB+' MB')+' 사용 중'+costStr;document.getElementById('dashStorageBar').style.width=Math.max(Math.min((parseFloat(tMB)/5120)*100,100),0.5)+'%';document.getElementById('dashMemoSize').textContent=(mb/1024).toFixed(1)+' KB';document.getElementById('dashFileSize').textContent=(fb/1048576).toFixed(1)+' MB';}catch(e){}}
+/* ===== Change Password UI ===== */
+let pwStep=0,pwInput='',pwNewVal='';
+const PW_LABELS=[['Current Password','Enter your current PIN'],['New Password','Choose a new PIN'],['Confirm Password','Re-enter the new PIN']];
+function changePw(){
+  pwStep=0;pwInput='';pwNewVal='';
+  renderPwChange();
+  document.getElementById('pwChangeOverlay').style.display='flex';
+}
+function renderPwChange(){
+  document.getElementById('pwChangeTitle').textContent=PW_LABELS[pwStep][0];
+  document.getElementById('pwChangeSub').textContent=PW_LABELS[pwStep][1];
+  document.getElementById('pwChangeDots').innerHTML=Array(6).fill('<div class="pin-dot"></div>').join('');
+  document.getElementById('pwChangeError').style.display='none';
+  pwInput='';
+  const pad=document.getElementById('pwChangeNumpad');pad.innerHTML='';
+  const GREEK=['Alpha','Beta','Gamma','Delta','Epsilon','Zeta','Eta','Theta','Iota','','Kappa',''];
+  [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach((k,i)=>{
+    if(k===''&&i===9){pad.innerHTML+='<div></div>';return;}
+    if(k==='⌫'){pad.innerHTML+=`<div class="nk del" onclick="pwKeyDel()" style="background:#1c1b1b;border-color:#353535;"><span class="material-symbols-outlined text-base text-outline">backspace</span></div>`;return;}
+    pad.innerHTML+=`<div class="nk" onclick="pwKeyAdd('${k}')" style="flex-direction:column;gap:2px;height:64px;"><span style="font-size:20px;">${k}</span><span style="font-size:8px;letter-spacing:.12em;color:#a08d88;text-transform:uppercase;">${GREEK[i]||''}</span></div>`;
+  });
+}
+function pwKeyAdd(n){
+  pwInput+=n;
+  const dots=document.querySelectorAll('#pwChangeDots .pin-dot');
+  dots.forEach((d,i)=>d.classList.toggle('filled',i<pwInput.length));
+  if(pwInput.length>=4){
+    setTimeout(()=>processPwStep(),200);
+  }
+}
+function pwKeyDel(){
+  pwInput=pwInput.slice(0,-1);
+  document.querySelectorAll('#pwChangeDots .pin-dot').forEach((d,i)=>{d.classList.toggle('filled',i<pwInput.length);d.classList.remove('wrong');});
+  document.getElementById('pwChangeError').style.display='none';
+}
+function processPwStep(){
+  if(pwStep===0){
+    if(pwInput!==getPw()){
+      showPwError('Wrong password');
+      return;
+    }
+    pwStep=1;renderPwChange();
+  }else if(pwStep===1){
+    if(!/^\d+$/.test(pwInput)){showPwError('Numbers only');return;}
+    pwNewVal=pwInput;
+    pwStep=2;renderPwChange();
+  }else if(pwStep===2){
+    if(pwInput!==pwNewVal){showPwError('Does not match');return;}
+    setPwLocal(pwInput);isUnlocked=false;
+    document.getElementById('pwChangeOverlay').style.display='none';
+    toast('Password changed');
+  }
+}
+function showPwError(msg){
+  const dots=document.querySelectorAll('#pwChangeDots .pin-dot');
+  dots.forEach(d=>d.classList.add('wrong'));
+  document.getElementById('pwChangeDots').classList.add('shake');
+  const err=document.getElementById('pwChangeError');err.textContent=msg;err.style.display='block';
+  setTimeout(()=>{pwInput='';dots.forEach(d=>{d.classList.remove('filled','wrong');});document.getElementById('pwChangeDots').classList.remove('shake');},500);
+}
+function cancelPwChange(){document.getElementById('pwChangeOverlay').style.display='none';}
+window.changePw=changePw;window.pwKeyAdd=pwKeyAdd;window.pwKeyDel=pwKeyDel;window.cancelPwChange=cancelPwChange;
+// Keyboard support for pw change
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('pwChangeOverlay').style.display!=='flex')return;
+  if(e.key>='0'&&e.key<='9')pwKeyAdd(e.key);
+  else if(e.key==='Backspace')pwKeyDel();
+  else if(e.key==='Escape')cancelPwChange();
+  else if(e.key==='Enter'&&pwInput.length>=4)processPwStep();
+});
 
-// Music
-function openMusicApp(a){if(a==='pitch'){document.getElementById('musicHome').style.display='none';document.getElementById('musicAppView').style.display='flex';document.getElementById('musicFrame').src='pitch-trainer.html';}}
-function closeMusicApp(){document.getElementById('musicAppView').style.display='none';document.getElementById('musicHome').style.display='';document.getElementById('musicFrame').src='';}
-window.openMusicApp=openMusicApp;window.closeMusicApp=closeMusicApp;
+/* ===== Navigation ===== */
+let curPage='hub';
+function setPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  const pg=document.getElementById('page-'+p);if(pg)pg.classList.add('active');curPage=p;
+  document.querySelectorAll('.nav-link').forEach(a=>{const act=a.dataset.page===p;a.className=`nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer ${act?'text-[#ffb4a2] font-bold':'text-[#ffb4a2]/40 hover:text-[#ffb4a2]'}`;});
+  document.querySelectorAll('.bnav').forEach(a=>{const act=a.dataset.page===p;a.classList.toggle('text-[#ffb4a2]',act);a.classList.toggle('text-[#ffb4a2]/30',!act);a.classList.remove('text-white/40','scale-110');if(act)a.classList.add('scale-105');const ic=a.querySelector('.material-symbols-outlined');if(ic)ic.style.fontVariationSettings=act?"'FILL' 1":"'FILL' 0";});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goHub(){setPage('hub');}
+function openApp(a){
+  if((a==='memo'||a==='files'||a==='settings')&&!isUnlocked){
+    showPin(a==='settings'?'SETTINGS':a==='memo'?'NOTEPAD':'VAULT',()=>doOpenApp(a));
+    return;
+  }
+  doOpenApp(a);
+}
+function doOpenApp(a){
+  if(a==='memo'){curMemoFolder=null;document.getElementById('memoFolderView').style.display='';document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';renderMemoFolders();}
+  if(a==='files'){curFileFolder=null;document.getElementById('fileFolderView').style.display='';document.getElementById('fileInsideFolder').style.display='none';renderFileFolders();}
+  if(a==='music'){document.getElementById('musicHome').style.display='';document.getElementById('musicAppView').style.display='none';}
+  if(a==='settings'){
+    updateSettingsStorage();
+    renderBgImages(); // full load from Firestore on open
+    const keyEl=document.getElementById('ytApiKeyInput');
+    const statusEl=document.getElementById('ytKeyStatus');
+    if(keyEl&&statusEl){
+      statusEl.textContent='Loading…';
+      getYTKey().then(k=>{
+        keyEl.value=k?'••••••••••••••••••••':'';
+        statusEl.textContent=k?'API key saved ✓ (Cloud)':'No key — using fallback';
+      });
+    }
+  }
+  setPage(a);
+}
+window.goHub=goHub;window.openApp=openApp;
 
-// ===== MEMO FOLDERS =====
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+
+/* ===== Storage ===== */
+async function updateSettingsStorage(){
+  try{
+    const mS=await getDocs(memosCol),fS=await getDocs(filesCol);
+    let mb=0;mS.forEach(d=>{mb+=JSON.stringify(d.data()).length;});
+    let fb=0;fS.forEach(d=>{fb+=(d.data().size||0);});
+    const tMB=((mb+fb)/1048576).toFixed(2);
+    document.getElementById('setStorage').textContent=(tMB<0.01?'0 KB':tMB+' MB')+' used';
+    document.getElementById('setStorageBar').style.width=Math.max(Math.min((parseFloat(tMB)/5120)*100,100),0.5)+'%';
+    document.getElementById('setMemoSize').textContent=(mb/1024).toFixed(1)+' KB';
+    document.getElementById('setFileSize').textContent=(fb/1048576).toFixed(1)+' MB';
+  }catch(e){}
+}
+
+/* ===== Background Images ===== */
+let bgImages=[];
+const DEFAULT_BG=[];
+const BG_VERSION='v3';
+async function loadBgImages(){
+  try{
+    const snap=await getDoc(bgImagesDoc);
+    if(snap.exists()&&snap.data().ver===BG_VERSION&&snap.data().urls&&snap.data().urls.length){
+      bgImages=snap.data().urls;
+    }else{
+      bgImages=[...DEFAULT_BG];
+      await setDoc(bgImagesDoc,{urls:bgImages,ver:BG_VERSION});
+    }
+  }catch(e){bgImages=[...DEFAULT_BG];}
+}
+function renderBgGrid(){
+  const el=document.getElementById('bgGrid');
+  if(!bgImages.length){el.innerHTML='';return;}
+  el.innerHTML=bgImages.map(url=>`<div class="bg-cell"><img src="${url}" loading="lazy"></div>`).join('');
+}
+function renderBgImagesLocal(){
+  // renders from in-memory bgImages without re-fetching Firestore
+  const el=document.getElementById('bgImageGrid');
+  if(!el)return;
+  if(!bgImages.length){el.innerHTML='<div class="col-span-full text-center text-xs text-outline py-6">No background images</div>';renderBgGrid();return;}
+  el.innerHTML=bgImages.map((url,i)=>`<div class="bg-thumb"><img src="${url}"><div class="bg-del" onclick="removeBgImage(${i})">✕</div></div>`).join('');
+  renderBgGrid();
+}
+async function renderBgImages(){
+  await loadBgImages();
+  renderBgImagesLocal();
+}
+async function handleBgUpload(fl){
+  for(const f of Array.from(fl)){
+    if(!f.type.startsWith('image/')){toast('Images only');continue;}
+    if(f.size>10*1024*1024){toast('Max 10MB');continue;}
+    try{
+      const fid='bg_'+Date.now()+'_'+Math.random().toString(36).substr(2,4);
+      const fr=sRef(stg,'mk_bg/'+fid+'_'+f.name);
+      toast('Uploading...');
+      await uploadBytes(fr,f);const url=await getDownloadURL(fr);
+      bgImages.push(url);
+      await setDoc(bgImagesDoc,{urls:bgImages,ver:BG_VERSION});
+      toast('Image added');
+    }catch(e){toast('Upload failed');}
+  }
+  renderBgImagesLocal();
+}
+window.handleBgUpload=handleBgUpload;
+async function removeBgImage(i){
+  if(!confirm('Delete this background image?'))return;
+  bgImages.splice(i,1);
+  try{await setDoc(bgImagesDoc,{urls:bgImages,ver:BG_VERSION});}catch(e){}
+  renderBgImagesLocal();
+}
+window.removeBgImage=removeBgImage;
+// Settings bg drop zone
+setTimeout(()=>{
+  const bdz=document.getElementById('bgDropZone');
+  if(bdz){bdz.addEventListener('dragover',e=>{e.preventDefault();bdz.classList.add('over');});bdz.addEventListener('dragleave',()=>bdz.classList.remove('over'));bdz.addEventListener('drop',e=>{e.preventDefault();bdz.classList.remove('over');handleBgUpload(e.dataTransfer.files);});}
+},100);
+
+/* ===== Music ===== */
+function openMusicApp(a){
+  // Hide all sub-views first
+  ['musicHome','musicAppView','musicNotesView','musicFavWhyView','musicPlaylistView'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  if(a==='pitch'){
+    document.getElementById('musicAppView').style.display='flex';
+    document.getElementById('musicFrame').src='pitch-trainer.html';
+  }else if(a==='notes'){
+    document.getElementById('musicNotesView').style.display='';
+    renderMusicNotes();
+  }else if(a==='favwhy'){
+    document.getElementById('musicFavWhyView').style.display='';
+    renderFavSongs();
+  }else if(a==='playlist'){
+    document.getElementById('musicPlaylistView').style.display='';
+    renderPlaylists();
+  }
+}
+function closeMusicApp(){
+  document.getElementById('musicAppView').style.display='none';
+  document.getElementById('musicHome').style.display='';
+  document.getElementById('musicFrame').src='';
+}
+function closeMusicSubView(){
+  ['musicNotesView','musicFavWhyView','musicPlaylistView'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  document.getElementById('musicHome').style.display='';
+}
+window.openMusicApp=openMusicApp;window.closeMusicApp=closeMusicApp;window.closeMusicSubView=closeMusicSubView;
+
+// ---- Music Notes ----
+const musicNotesCol=collection(db,'mk_app','data','music_notes');
+let cachedMusicNotes=[],editMusicNoteId=null;
+async function renderMusicNotes(){
+  const el=document.getElementById('musicNotesList');el.innerHTML='<div class="text-center py-8 text-outline text-sm">Loading...</div>';
+  try{const s=await getDocs(query(musicNotesCol,orderBy('u','desc')));cachedMusicNotes=[];s.forEach(d=>cachedMusicNotes.push({id:d.id,...d.data()}));}catch(e){cachedMusicNotes=[];}
+  document.getElementById('musicNoteEditor').style.display='none';
+  if(!cachedMusicNotes.length){el.innerHTML='<div class="text-center py-12 text-outline text-sm">No notes yet. Create one!</div>';return;}
+  el.innerHTML=cachedMusicNotes.map(m=>{
+    const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
+    return`<div class="mk-card" onclick="editMusicNoteItem('${m.id}')"><div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-label font-bold text-sm mb-1">${m.t||'Untitled'}</div><div class="text-xs text-on-surface-variant truncate">${(m.b||'').substring(0,80)||'—'}</div><div class="text-[11px] text-outline mt-2">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMusicNote('${m.id}')">Delete</span></div></div>`;
+  }).join('');
+}
+function newMusicNote(){editMusicNoteId=null;document.getElementById('musicNoteTitleInput').value='';document.getElementById('musicNoteBodyInput').value='';document.getElementById('musicNotesList').style.display='none';document.getElementById('musicNoteEditor').style.display='flex';}
+function editMusicNoteItem(id){const m=cachedMusicNotes.find(x=>x.id===id);if(!m)return;editMusicNoteId=id;document.getElementById('musicNoteTitleInput').value=m.t||'';document.getElementById('musicNoteBodyInput').value=m.b||'';document.getElementById('musicNotesList').style.display='none';document.getElementById('musicNoteEditor').style.display='flex';}
+async function saveMusicNote(){const t=document.getElementById('musicNoteTitleInput').value.trim(),b=document.getElementById('musicNoteBodyInput').value;try{if(editMusicNoteId)await updateDoc(doc(db,'mk_app','data','music_notes',editMusicNoteId),{t,b,u:Date.now()});else await addDoc(musicNotesCol,{t,b,c:Date.now(),u:Date.now()});}catch(e){toast('Save failed');return;}toast('Saved');cancelMusicNote();}
+function cancelMusicNote(){editMusicNoteId=null;document.getElementById('musicNoteEditor').style.display='none';document.getElementById('musicNotesList').style.display='';renderMusicNotes();}
+async function delMusicNote(id){if(!confirm('Delete?'))return;try{await deleteDoc(doc(db,'mk_app','data','music_notes',id));}catch(e){}renderMusicNotes();}
+window.newMusicNote=newMusicNote;window.editMusicNoteItem=editMusicNoteItem;window.saveMusicNote=saveMusicNote;window.cancelMusicNote=cancelMusicNote;window.delMusicNote=delMusicNote;
+
+// ---- Fav Songs ----
+const favSongsCol=collection(db,'mk_app','data','fav_songs');
+let cachedFavSongs=[],editFavSongId=null;
+
+async function renderFavSongs(){
+  document.getElementById('favWhyListView').style.display='';
+  document.getElementById('favWhyDetailView').style.display='none';
+  document.getElementById('favSongEditor').style.display='none';
+  const el=document.getElementById('favSongList');
+  el.innerHTML='<div class="text-center py-8 text-outline text-sm">Loading...</div>';
+  try{const s=await getDocs(query(favSongsCol,orderBy('c','desc')));cachedFavSongs=[];s.forEach(d=>cachedFavSongs.push({id:d.id,...d.data()}));}catch(e){cachedFavSongs=[];}
+  if(!cachedFavSongs.length){el.innerHTML='<div class="text-center py-12 text-outline text-sm">아직 없어요. 추가해보세요!</div>';return;}
+  el.innerHTML=cachedFavSongs.map(s=>`
+    <div class="fav-list-item" onclick="openFavDetail('${s.id}')">
+      <div class="fav-list-num">♪</div>
+      <div class="fav-list-info">
+        <div class="fav-list-title">${s.title||'Untitled'}</div>
+        <div class="fav-list-artist">${s.artist||''}</div>
+      </div>
+      ${s.reason?`<div class="fav-list-reason-preview">${s.reason.substring(0,28)}${s.reason.length>28?'…':''}</div>`:''}
+      <span class="fav-list-del" onclick="event.stopPropagation();delFavSong('${s.id}')">✕</span>
+    </div>`).join('');
+}
+
+// YouTube Data API v3 — Firestore에 저장 (시크릿/다기기 모두 동작)
+const ytKeyDoc=doc(db,'mk_app','settings');
+let _ytKeyCache='';
+
+async function getYTKey(){
+  if(_ytKeyCache)return _ytKeyCache;
+  try{
+    const snap=await getDoc(ytKeyDoc);
+    if(snap.exists()&&snap.data().yt_api_key){
+      _ytKeyCache=snap.data().yt_api_key;
+      return _ytKeyCache;
+    }
+  }catch(e){}
+  return '';
+}
+
+async function fetchYTVideoId(title,artist){
+  const key=await getYTKey();
+  if(!key)return null;
+  const q=encodeURIComponent((title||'')+(artist?' '+artist:''));
+  try{
+    const res=await fetch(
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${key}`,
+      {method:'GET'}
+    );
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      const msg=err?.error?.message||'API error '+res.status;
+      toast('YT API: '+msg.substring(0,40));
+      return null;
+    }
+    const data=await res.json();
+    if(data.items&&data.items.length>0)return data.items[0].id.videoId;
+    toast('검색 결과 없음');
+  }catch(e){
+    // file:// 환경에서는 CORS로 차단됨 — GitHub Pages에서는 정상 작동
+    toast('GitHub Pages에서 실행하면 재생됩니다');
+    console.error('YT fetch error:',e);
+  }
+  return null;
+}
+
+async function openFavDetail(id){
+  const s=cachedFavSongs.find(x=>x.id===id);if(!s)return;
+  document.getElementById('favWhyListView').style.display='none';
+  document.getElementById('favWhyDetailView').style.display='';
+  document.getElementById('favDetailTitle').textContent=s.title||'Untitled';
+  document.getElementById('favDetailArtist').textContent=s.artist||'';
+  const q=encodeURIComponent((s.title||'')+(s.artist?' '+s.artist:''));
+  const ytUrl=`https://www.youtube.com/results?search_query=${q}`;
+  const wrap=document.getElementById('favDetailFrame').parentElement;
+
+  // Show loading state first
+  wrap.innerHTML=`<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(135deg,#0e0e14,#181820);">
+    <div style="width:32px;height:32px;border:2px solid #252525;border-top-color:#ffb4a2;border-radius:50%;animation:spin .8s linear infinite;"></div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#524340;letter-spacing:.12em;text-transform:uppercase;">Loading…</div>
+  </div>`;
+
+  const key=await getYTKey();
+  if(key){
+    // API key 있으면 실제 검색 후 embed
+    fetchYTVideoId(s.title,s.artist).then(videoId=>{
+      if(videoId){
+        wrap.innerHTML=`<iframe id="favDetailFrame" src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+      }else{
+        showYTFallback(wrap,s.title,s.artist,ytUrl);
+      }
+    });
+  }else{
+    // API key 없으면 안내 + 버튼
+    showYTFallback(wrap,s.title,s.artist,ytUrl);
+  }
+
+  const reasonEl=document.getElementById('favDetailReason');
+  if(s.reason){reasonEl.style.display='';reasonEl.innerHTML=`<span class="fav-reason-label">이유</span>${s.reason}`;}
+  else{reasonEl.style.display='none';}
+}
+
+async function showYTFallback(wrap,title,artist,ytUrl){
+  const hasKey=!!(await getYTKey());
+  wrap.innerHTML=`
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(135deg,#0e0e14,#181820);padding:24px;text-align:center;">
+      <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,59,0,.12);border:1.5px solid rgba(255,59,0,.25);display:flex;align-items:center;justify-content:center;">
+        <span style="font-size:22px;color:#FF3B00;">▶</span>
+      </div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:800;color:#e5e2e1;letter-spacing:-.3px;">${title||''}</div>
+      <div style="font-family:'Inter',sans-serif;font-size:12px;color:#a08d88;">${artist||''}</div>
+      ${!hasKey?`<div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#524340;letter-spacing:.1em;text-transform:uppercase;max-width:220px;line-height:1.6;">Settings에서 YouTube API 키를 등록하면<br>앱 안에서 바로 재생됩니다</div>`:''}
+      <a href="${ytUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#FF3B00;color:#fff;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.filter='brightness(1.12)'" onmouseout="this.style.filter='none'">▶ YouTube에서 재생</a>
+    </div>`;
+}
+
+function closeFavDetail(){
+  const wrap=document.getElementById('favDetailFrame');
+  if(wrap&&wrap.parentElement)wrap.parentElement.innerHTML=`<iframe id="favDetailFrame" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  document.getElementById('favWhyDetailView').style.display='none';
+  document.getElementById('favWhyListView').style.display='';
+}
+async function saveYTKey(){
+  const val=document.getElementById('ytApiKeyInput').value.trim();
+  if(!val||val.startsWith('•'))return;
+  try{
+    await setDoc(ytKeyDoc,{yt_api_key:val},{merge:true});
+    _ytKeyCache=val;
+    document.getElementById('ytApiKeyInput').value='••••••••••••••••••••';
+    document.getElementById('ytKeyStatus').textContent='API key saved ✓ (Cloud)';
+    toast('YouTube API key saved');
+  }catch(e){toast('Save failed');}
+}
+window.saveYTKey=saveYTKey;
+
+function newFavSong(){
+  editFavSongId=null;
+  ['favSongTitle','favSongArtist','favSongReason'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('favWhyListView').style.display='none';
+  document.getElementById('favSongEditor').style.display='flex';
+}
+
+async function saveFavSong(){
+  const title=document.getElementById('favSongTitle').value.trim();
+  const artist=document.getElementById('favSongArtist').value.trim();
+  const reason=document.getElementById('favSongReason').value.trim();
+  if(!title){toast('제목을 입력해주세요');return;}
+  try{await addDoc(favSongsCol,{title,artist,reason,c:Date.now()});}catch(e){toast('Save failed');return;}
+  toast('Saved');cancelFavSong();
+}
+
+function cancelFavSong(){
+  document.getElementById('favSongEditor').style.display='none';
+  document.getElementById('favWhyListView').style.display='';
+  renderFavSongs();
+}
+
+async function delFavSong(id){if(!confirm('Delete?'))return;try{await deleteDoc(doc(db,'mk_app','data','fav_songs',id));}catch(e){}renderFavSongs();}
+window.newFavSong=newFavSong;window.saveFavSong=saveFavSong;window.cancelFavSong=cancelFavSong;window.delFavSong=delFavSong;window.openFavDetail=openFavDetail;window.closeFavDetail=closeFavDetail;
+
+// ---- Playlists ----
+const playlistsCol=collection(db,'mk_app','data','playlists');
+const playlistSongsCol=collection(db,'mk_app','data','playlist_songs');
+let cachedPlaylists=[],curPlaylistId=null,curPlaylistSongs=[];
+async function renderPlaylists(){
+  document.getElementById('playlistHome').style.display='';document.getElementById('playlistInside').style.display='none';
+  const el=document.getElementById('playlistGrid');el.innerHTML='<div class="col-span-full text-outline text-sm py-4">Loading...</div>';
+  try{const s=await getDocs(query(playlistsCol,orderBy('c','desc')));cachedPlaylists=[];s.forEach(d=>cachedPlaylists.push({id:d.id,...d.data()}));}catch(e){cachedPlaylists=[];}
+  el.innerHTML=cachedPlaylists.map(p=>`
+    <div class="folder-card" onclick="openPlaylist('${p.id}')">
+      <span class="fc-del" onclick="event.stopPropagation();delPlaylist('${p.id}')">✕</span>
+      <div class="fc-icon"><span class="material-symbols-outlined">headphones</span></div>
+      <div class="fc-name">${p.name}</div>
+      <div class="fc-meta">${p.count||0} songs</div>
+    </div>`).join('')+`<div class="folder-card add-card" onclick="newPlaylist()">
+    <span class="material-symbols-outlined">add</span>
+    <span class="fc-add-label">New Playlist</span>
+  </div>`;
+}
+async function newPlaylist(){
+  const name=prompt('플레이리스트 이름:','My Playlist');if(!name)return;
+  try{await addDoc(playlistsCol,{name,c:Date.now(),count:0});}catch(e){toast('Failed');return;}
+  renderPlaylists();
+}
+async function openPlaylist(id){
+  curPlaylistId=id;const p=cachedPlaylists.find(x=>x.id===id);
+  document.getElementById('playlistHome').style.display='none';document.getElementById('playlistInside').style.display='';
+  document.getElementById('playlistBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="renderPlaylists()">🎧 Playlists</span><span class="text-outline/40 mx-1">›</span><span class="text-on-surface font-bold">${p?.name||'Playlist'}</span>`;
+  document.getElementById('addSongForm').style.display='none';
+  await renderPlaylistSongs();
+}
+async function renderPlaylistSongs(){
+  const el=document.getElementById('playlistSongList');el.innerHTML='<div class="text-outline text-sm py-4">Loading...</div>';
+  try{const s=await getDocs(query(playlistSongsCol,orderBy('c','asc')));curPlaylistSongs=[];s.forEach(d=>{if(d.data().plid===curPlaylistId)curPlaylistSongs.push({id:d.id,...d.data()});});}catch(e){curPlaylistSongs=[];}
+  if(!curPlaylistSongs.length){el.innerHTML='<div class="text-outline text-sm py-8 text-center">아직 곡이 없어요. 추가해보세요!</div>';return;}
+  el.innerHTML=curPlaylistSongs.map((s,i)=>`
+    <div class="flex items-center gap-3 px-4 py-3 bg-[#1c1b1b] border border-[#252525] rounded-xl hover:border-[#ffb4a2]/20 transition-colors">
+      <span class="font-label text-xs text-outline/40 w-5 shrink-0">${i+1}</span>
+      <div class="flex-1 min-w-0">
+        <div class="font-label font-bold text-sm text-on-surface">♪ ${s.title||'Untitled'}</div>
+        ${s.link?`<a href="${s.link}" target="_blank" class="text-[10px] text-[#FF3B00] hover:underline">${s.link.substring(0,40)}…</a>`:''}
+      </div>
+      <span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer transition-colors shrink-0" onclick="delSongFromPlaylist('${s.id}')">✕</span>
+    </div>`).join('');
+}
+function addSongToPlaylist(){document.getElementById('addSongForm').style.display='flex';document.getElementById('plSongTitle').focus();}
+async function saveSongToPlaylist(){
+  const title=document.getElementById('plSongTitle').value.trim(),link=document.getElementById('plSongLink').value.trim();
+  if(!title){toast('곡 제목을 입력해주세요');return;}
+  try{
+    await addDoc(playlistSongsCol,{title,link,plid:curPlaylistId,c:Date.now()});
+    // update count
+    const p=cachedPlaylists.find(x=>x.id===curPlaylistId);
+    if(p)await updateDoc(doc(db,'mk_app','data','playlists',curPlaylistId),{count:(p.count||0)+1});
+  }catch(e){toast('Failed');return;}
+  document.getElementById('plSongTitle').value='';document.getElementById('plSongLink').value='';
+  document.getElementById('addSongForm').style.display='none';
+  toast('Added!');await renderPlaylistSongs();
+}
+async function delSongFromPlaylist(id){if(!confirm('Remove?'))return;try{await deleteDoc(doc(db,'mk_app','data','playlist_songs',id));}catch(e){}renderPlaylistSongs();}
+async function delPlaylist(id){if(!confirm('Delete playlist?'))return;try{const s=await getDocs(playlistSongsCol);const ps=[];s.forEach(d=>{if(d.data().plid===id)ps.push(deleteDoc(doc(db,'mk_app','data','playlist_songs',d.id)));});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','playlists',id));}catch(e){}renderPlaylists();}
+window.newPlaylist=newPlaylist;window.openPlaylist=openPlaylist;window.addSongToPlaylist=addSongToPlaylist;window.saveSongToPlaylist=saveSongToPlaylist;window.delSongFromPlaylist=delSongFromPlaylist;window.delPlaylist=delPlaylist;window.renderPlaylists=renderPlaylists;
+
+/* ===== MEMO FOLDERS ===== */
 let curMemoFolder=null,cachedMemoFolders=[],cachedMemos=[];
 async function loadMemoFolders(){try{const s=await getDocs(query(memoFoldersCol,orderBy('order','asc')));cachedMemoFolders=[];s.forEach(d=>{cachedMemoFolders.push({id:d.id,...d.data()});});}catch(e){cachedMemoFolders=[];}}
-async function renderMemoFolders(){await loadMemoFolders();const el=document.getElementById('memoFolderGrid');const q=(document.getElementById('memoFolderSearch').value||'').toLowerCase();let fs=cachedMemoFolders;if(q)fs=fs.filter(f=>(f.name||'').toLowerCase().includes(q));let counts={};try{const ms=await getDocs(memosCol);ms.forEach(d=>{const fd=d.data().folder||'none';counts[fd]=(counts[fd]||0)+1;});}catch(e){}el.innerHTML=fs.map(f=>`<div class="folder-card" onclick="openMemoFolder('${f.id}')"><span class="fc-del" onclick="event.stopPropagation();delMemoFolder('${f.id}')" title="삭제">✕</span><span class="fc-icon">${f.icon||'📁'}</span><div class="fc-name">${f.name}</div><div class="fc-count">${counts[f.id]||0}개</div></div>`).join('')+`<div class="folder-card add-card" onclick="newMemoFolder()"><span class="fc-icon">➕</span><div class="fc-name" style="color:var(--txd);">새 폴더</div></div>`;}
-// Icon Picker
-const ICONS=['📁','📂','🎬','📚','💻','🎵','📷','✈️','🍔','💡','🏋️','📊','🎮','🏠','❤️','🗂️','🖼️','📄','📦','💼','🔬','🌍','🎨','✏️','📐','🧪','🎓','🏀','⚽','🎯'];
-let ipSelectedIcon='📁',ipCallback=null;
-function openIconPicker(title,callback){
-  ipSelectedIcon='📁';ipCallback=callback;
+async function renderMemoFolders(){
+  await loadMemoFolders();
+  const el=document.getElementById('memoFolderGrid');
+  const q=(document.getElementById('memoFolderSearch').value||'').toLowerCase();
+  let fs=cachedMemoFolders;if(q)fs=fs.filter(f=>(f.name||'').toLowerCase().includes(q));
+  let counts={};
+  try{const ms=await getDocs(memosCol);ms.forEach(d=>{const fd=d.data().folder||'none';counts[fd]=(counts[fd]||0)+1;});}catch(e){}
+  el.innerHTML=fs.map(f=>`
+    <div class="folder-card" onclick="openMemoFolder('${f.id}')">
+      <span class="fc-del" onclick="event.stopPropagation();delMemoFolder('${f.id}')">✕</span>
+      <div class="fc-icon"><span class="material-symbols-outlined">${f.icon||'folder'}</span></div>
+      <div class="fc-name">${f.name}</div>
+      <div class="fc-meta">${counts[f.id]||0} notes</div>
+    </div>`).join('')+`
+    <div class="folder-card add-card" onclick="newMemoFolder()">
+      <span class="material-symbols-outlined">add</span>
+      <span class="fc-add-label">New Folder</span>
+    </div>`;
+}
+const ICONS=[
+  {ic:'folder',lbl:'Folder'},{ic:'edit_note',lbl:'Notes'},{ic:'movie',lbl:'Movie'},
+  {ic:'menu_book',lbl:'Book'},{ic:'computer',lbl:'Dev'},{ic:'music_note',lbl:'Music'},
+  {ic:'photo_camera',lbl:'Photo'},{ic:'flight',lbl:'Travel'},{ic:'restaurant',lbl:'Food'},
+  {ic:'lightbulb',lbl:'Idea'},{ic:'fitness_center',lbl:'Fitness'},{ic:'bar_chart',lbl:'Stats'},
+  {ic:'sports_esports',lbl:'Game'},{ic:'home',lbl:'Home'},{ic:'favorite',lbl:'Fav'},
+  {ic:'inventory_2',lbl:'Archive'},{ic:'image',lbl:'Image'},{ic:'description',lbl:'Doc'},
+  {ic:'inventory',lbl:'Box'},{ic:'work',lbl:'Work'},{ic:'science',lbl:'Science'},
+  {ic:'language',lbl:'World'},{ic:'palette',lbl:'Art'},{ic:'draw',lbl:'Draw'},
+  {ic:'architecture',lbl:'Design'},{ic:'biotech',lbl:'Lab'},{ic:'school',lbl:'Study'},
+  {ic:'sports_basketball',lbl:'Sport'},{ic:'calendar_month',lbl:'Plan'},{ic:'target',lbl:'Goal'},
+];
+let ipSelectedIcon='folder',ipCallback=null;
+function iconHtml(ic,size='24px',color='#ffb4a2'){
+  return `<span class="material-symbols-outlined" style="font-size:${size};color:${color};font-variation-settings:'FILL' 1,'wght' 300,'GRAD' 0,'opsz' 24;">${ic}</span>`;
+}
+function openIconPicker(title,cb){
+  ipSelectedIcon='folder';ipCallback=cb;
   document.getElementById('ipTitle').textContent=title;
   document.getElementById('ipName').value='';
-  document.getElementById('ipGrid').innerHTML=ICONS.map(ic=>`<div class="icon-opt${ic==='📁'?' sel':''}" onclick="pickIcon(this,'${ic}')">${ic}</div>`).join('');
+  document.getElementById('ipGrid').innerHTML=ICONS.map(({ic,lbl})=>`
+    <div class="icon-opt${ic==='folder'?' sel':''}" onclick="pickIcon(this,'${ic}')" title="${lbl}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 6px;">
+      ${iconHtml(ic,'22px',ic==='folder'?'#ffb4a2':'#a08d88')}
+      <span style="font-size:8px;color:#524340;font-family:'Space Grotesk',sans-serif;letter-spacing:.06em;">${lbl}</span>
+    </div>`).join('');
   document.getElementById('iconOverlay').style.display='flex';
   setTimeout(()=>document.getElementById('ipName').focus(),100);
 }
-function pickIcon(el,ic){ipSelectedIcon=ic;document.querySelectorAll('#ipGrid .icon-opt').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');}
+function pickIcon(el,ic){
+  ipSelectedIcon=ic;
+  document.querySelectorAll('#ipGrid .icon-opt').forEach(e=>{
+    e.classList.remove('sel');
+    const span=e.querySelector('.material-symbols-outlined');
+    if(span)span.style.color='#a08d88';
+  });
+  el.classList.add('sel');
+  const span=el.querySelector('.material-symbols-outlined');
+  if(span)span.style.color='#ffb4a2';
+}
 function closeIconPicker(){document.getElementById('iconOverlay').style.display='none';ipCallback=null;}
-function confirmIconPicker(){const name=document.getElementById('ipName').value.trim();if(!name){alert('이름을 입력하세요');return;}if(ipCallback)ipCallback(name,ipSelectedIcon);closeIconPicker();}
+function confirmIconPicker(){const name=document.getElementById('ipName').value.trim();if(!name){toast('Enter a name');return;}if(ipCallback)ipCallback(name,ipSelectedIcon);closeIconPicker();}
 window.pickIcon=pickIcon;window.closeIconPicker=closeIconPicker;window.confirmIconPicker=confirmIconPicker;
-
-async function newMemoFolder(){openIconPicker('새 메모 폴더',async(name,icon)=>{try{await addDoc(memoFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderMemoFolders();});}
-async function delMemoFolder(id){if(!confirm('폴더와 메모를 모두 삭제할까요?'))return;try{const s=await getDocs(memosCol);const ps=[];s.forEach(d=>{if(d.data().folder===id)ps.push(deleteDoc(doc(db,'mk_app','data','memos',d.id)));});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','folders',id));}catch(e){}renderMemoFolders();}
-function openMemoFolder(id){curMemoFolder=id;const f=cachedMemoFolders.find(x=>x.id===id);document.getElementById('memoFolderView').style.display='none';document.getElementById('memoInsideFolder').style.display='';document.getElementById('memoBreadcrumb').innerHTML=`<span onclick="backToMemoFolders()">📝 메모장</span><span class="bc-sep">›</span><span class="bc-cur">${f?.icon||''} ${f?.name||'폴더'}</span>`;renderMemos();}
-function backToMemoFolders(){curMemoFolder=null;document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoFolderView').style.display='';renderMemoFolders();}
+async function newMemoFolder(){openIconPicker('New Memo Folder',async(name,icon)=>{try{await addDoc(memoFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderMemoFolders();});}
+async function delMemoFolder(id){if(!confirm('Delete folder and all notes?'))return;try{const s=await getDocs(memosCol);const ps=[];s.forEach(d=>{if(d.data().folder===id)ps.push(deleteDoc(doc(db,'mk_app','data','memos',d.id)));});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','folders',id));}catch(e){}renderMemoFolders();}
+function openMemoFolder(id){curMemoFolder=id;const f=cachedMemoFolders.find(x=>x.id===id);document.getElementById('memoFolderView').style.display='none';document.getElementById('memoInsideFolder').style.display='';document.getElementById('memoBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToMemoFolders()">Notepad</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>`;renderMemos();}
+function backToMemoFolders(){curMemoFolder=null;document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';document.getElementById('memoFolderView').style.display='';renderMemoFolders();}
 window.newMemoFolder=newMemoFolder;window.delMemoFolder=delMemoFolder;window.openMemoFolder=openMemoFolder;window.backToMemoFolders=backToMemoFolders;window.renderMemoFolders=renderMemoFolders;
 
-// Memos
+/* ===== Memos ===== */
 let editId=null;
 async function loadMemos(){try{const s=await getDocs(query(memosCol,orderBy('u','desc')));cachedMemos=[];s.forEach(d=>{cachedMemos.push({id:d.id,...d.data()});});}catch(e){cachedMemos=[];}}
-async function renderMemos(){const el=document.getElementById('memoList');el.innerHTML='<div class="loading">불러오는 중...</div>';await loadMemos();const q=(document.getElementById('memoSearch').value||'').toLowerCase();let ms=cachedMemos.filter(m=>(m.folder||'none')===curMemoFolder);if(q)ms=ms.filter(m=>(m.t||'').toLowerCase().includes(q)||(m.b||'').toLowerCase().includes(q));if(!ms.length){el.innerHTML=`<div class="empty"><div class="ei">📝</div><p>${q?'검색 결과 없음':'새 메모를 작성해보세요'}</p></div>`;return;}el.innerHTML=ms.map(m=>{const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});return`<div class="memo-item" onclick="editMemo('${m.id}')"><span class="mdel" onclick="event.stopPropagation();delMemo('${m.id}')">삭제</span><div class="mt">${m.t||'제목 없음'}</div><div class="mp">${(m.b||'').substring(0,80).replace(/\n/g,' ')||'내용 없음'}</div><div class="md">${d}</div></div>`;}).join('');}
+async function renderMemos(){const el=document.getElementById('memoList');el.innerHTML='<div class="text-center py-10 text-outline text-sm">Loading...</div>';await loadMemos();const q=(document.getElementById('memoSearch').value||'').toLowerCase();let ms=cachedMemos.filter(m=>(m.folder||'none')===curMemoFolder);if(q)ms=ms.filter(m=>(m.t||'').toLowerCase().includes(q)||(m.b||'').toLowerCase().includes(q));if(!ms.length){el.innerHTML=`<div class="text-center py-16 text-outline"><span class="material-symbols-outlined text-3xl mb-2 block">note_add</span><p class="text-sm">${q?'No results':'Create a new note'}</p></div>`;return;}el.innerHTML=ms.map(m=>{const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});return`<div class="mk-card" onclick="editMemo('${m.id}')"><div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-label font-bold text-sm mb-1 text-on-surface">${m.t||'Untitled'}</div><div class="text-xs text-on-surface-variant truncate">${(m.b||'').substring(0,80).replace(/\n/g,' ')||'—'}</div><div class="text-[11px] text-outline mt-2 font-label">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMemo('${m.id}')">Delete</span></div></div>`;}).join('');}
 function newMemo(){editId=null;document.getElementById('memoTitleInput').value='';document.getElementById('memoBodyInput').value='';showMemoEditor();}
 function editMemo(id){const m=cachedMemos.find(x=>x.id===id);if(!m)return;editId=id;document.getElementById('memoTitleInput').value=m.t||'';document.getElementById('memoBodyInput').value=m.b||'';showMemoEditor();}
-function showMemoEditor(){document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoFolderView').style.display='none';document.getElementById('memoEditor').classList.add('show');}
-async function saveMemo(){const t=document.getElementById('memoTitleInput').value.trim(),b=document.getElementById('memoBodyInput').value;try{if(editId)await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b,u:Date.now()});else await addDoc(memosCol,{t,b,c:Date.now(),u:Date.now(),folder:curMemoFolder});}catch(e){alert('저장 실패');return;}cancelMemo();}
-function cancelMemo(){editId=null;document.getElementById('memoEditor').classList.remove('show');document.getElementById('memoInsideFolder').style.display='';renderMemos();}
-async function delMemo(id){if(!confirm('삭제할까요?'))return;try{await deleteDoc(doc(db,'mk_app','data','memos',id));}catch(e){}renderMemos();}
+function showMemoEditor(){document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoFolderView').style.display='none';document.getElementById('memoEditor').style.display='flex';}
+async function saveMemo(){const t=document.getElementById('memoTitleInput').value.trim(),b=document.getElementById('memoBodyInput').value;try{if(editId)await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b,u:Date.now()});else await addDoc(memosCol,{t,b,c:Date.now(),u:Date.now(),folder:curMemoFolder});}catch(e){toast('Save failed');return;}toast('Saved');cancelMemo();}
+function cancelMemo(){editId=null;document.getElementById('memoEditor').style.display='none';document.getElementById('memoInsideFolder').style.display='';renderMemos();}
+async function delMemo(id){if(!confirm('Delete this note?'))return;try{await deleteDoc(doc(db,'mk_app','data','memos',id));}catch(e){}renderMemos();}
 window.newMemo=newMemo;window.editMemo=editMemo;window.saveMemo=saveMemo;window.cancelMemo=cancelMemo;window.delMemo=delMemo;window.renderMemos=renderMemos;
 
-// ===== FILE FOLDERS =====
+/* ===== FILE FOLDERS ===== */
 let curFileFolder=null,cachedFileFolders=[],cachedFiles=[];
 async function loadFileFolders(){try{const s=await getDocs(query(fileFoldersCol,orderBy('order','asc')));cachedFileFolders=[];s.forEach(d=>{cachedFileFolders.push({id:d.id,...d.data()});});}catch(e){cachedFileFolders=[];}}
-async function renderFileFolders(){await loadFileFolders();const el=document.getElementById('fileFolderGrid');const q=(document.getElementById('fileFolderSearch').value||'').toLowerCase();let fs=cachedFileFolders;if(q)fs=fs.filter(f=>(f.name||'').toLowerCase().includes(q));let counts={},sizes={};try{const ms=await getDocs(filesCol);ms.forEach(d=>{const fd=d.data().folder||'none';counts[fd]=(counts[fd]||0)+1;sizes[fd]=(sizes[fd]||0)+(d.data().size||0);});}catch(e){}let totalSize=0;Object.values(sizes).forEach(s=>totalSize+=s);document.getElementById('storageUsage').textContent='총 '+(totalSize<1048576?(totalSize/1024).toFixed(1)+' KB':(totalSize/1048576).toFixed(1)+' MB');el.innerHTML=fs.map(f=>{const sz=sizes[f.id]||0;const szStr=sz<1048576?(sz/1024).toFixed(0)+' KB':(sz/1048576).toFixed(1)+' MB';return`<div class="folder-card" onclick="openFileFolder('${f.id}')"><span class="fc-del" onclick="event.stopPropagation();delFileFolder('${f.id}')" title="삭제">✕</span><span class="fc-icon">${f.icon||'📁'}</span><div class="fc-name">${f.name}</div><div class="fc-count">${counts[f.id]||0}개 · ${szStr}</div></div>`;}).join('')+`<div class="folder-card add-card" onclick="newFileFolder()"><span class="fc-icon">➕</span><div class="fc-name" style="color:var(--txd);">새 폴더</div></div>`;}
-async function newFileFolder(){openIconPicker('새 저장소 폴더',async(name,icon)=>{try{await addDoc(fileFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderFileFolders();});}
-async function delFileFolder(id){if(!confirm('폴더와 파일을 모두 삭제할까요?'))return;try{const s=await getDocs(filesCol);const ps=[];s.forEach(d=>{if(d.data().folder===id){if(d.data().path)ps.push(deleteObject(sRef(stg,d.data().path)).catch(()=>{}));ps.push(deleteDoc(doc(db,'mk_app','data','files',d.id)));}});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','file_folders',id));}catch(e){}renderFileFolders();}
-function openFileFolder(id){curFileFolder=id;const f=cachedFileFolders.find(x=>x.id===id);document.getElementById('fileFolderView').style.display='none';document.getElementById('fileInsideFolder').style.display='';document.getElementById('fileBreadcrumb').innerHTML=`<span onclick="backToFileFolders()">📁 저장소</span><span class="bc-sep">›</span><span class="bc-cur">${f?.icon||''} ${f?.name||'폴더'}</span>`;renderFiles();}
+async function renderFileFolders(){
+  await loadFileFolders();
+  const el=document.getElementById('fileFolderGrid');
+  const q=(document.getElementById('fileFolderSearch').value||'').toLowerCase();
+  let fs=cachedFileFolders;if(q)fs=fs.filter(f=>(f.name||'').toLowerCase().includes(q));
+  let counts={},sizes={};
+  try{const ms=await getDocs(filesCol);ms.forEach(d=>{const fd=d.data().folder||'none';counts[fd]=(counts[fd]||0)+1;sizes[fd]=(sizes[fd]||0)+(d.data().size||0);});}catch(e){}
+  let totalSize=0;Object.values(sizes).forEach(s=>totalSize+=s);
+  document.getElementById('storageUsage').textContent='Total '+(totalSize<1048576?(totalSize/1024).toFixed(1)+' KB':(totalSize/1048576).toFixed(1)+' MB');
+  el.innerHTML=fs.map(f=>{
+    const sz=sizes[f.id]||0;
+    const szStr=sz<1048576?(sz/1024).toFixed(0)+' KB':(sz/1048576).toFixed(1)+' MB';
+    return`<div class="folder-card" onclick="openFileFolder('${f.id}')">
+      <span class="fc-del" onclick="event.stopPropagation();delFileFolder('${f.id}')">✕</span>
+      <div class="fc-icon"><span class="material-symbols-outlined">${f.icon||'folder'}</span></div>
+      <div class="fc-name">${f.name}</div>
+      <div class="fc-meta">${counts[f.id]||0} files · ${szStr}</div>
+    </div>`;
+  }).join('')+`<div class="folder-card add-card" onclick="newFileFolder()">
+    <span class="material-symbols-outlined">add</span>
+    <span class="fc-add-label">New Folder</span>
+  </div>`;
+}
+async function newFileFolder(){openIconPicker('New Vault Folder',async(name,icon)=>{try{await addDoc(fileFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderFileFolders();});}
+async function delFileFolder(id){if(!confirm('Delete folder and all files?'))return;try{const s=await getDocs(filesCol);const ps=[];s.forEach(d=>{if(d.data().folder===id){if(d.data().path)ps.push(deleteObject(sRef(stg,d.data().path)).catch(()=>{}));ps.push(deleteDoc(doc(db,'mk_app','data','files',d.id)));}});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','file_folders',id));}catch(e){}renderFileFolders();}
+function openFileFolder(id){curFileFolder=id;const f=cachedFileFolders.find(x=>x.id===id);document.getElementById('fileFolderView').style.display='none';document.getElementById('fileInsideFolder').style.display='';document.getElementById('fileBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToFileFolders()">Vault</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>`;renderFiles();}
 function backToFileFolders(){curFileFolder=null;document.getElementById('fileInsideFolder').style.display='none';document.getElementById('fileFolderView').style.display='';renderFileFolders();}
 window.newFileFolder=newFileFolder;window.delFileFolder=delFileFolder;window.openFileFolder=openFileFolder;window.backToFileFolders=backToFileFolders;window.renderFileFolders=renderFileFolders;
 
-// Files
+/* ===== Files ===== */
 async function loadFiles(){try{const s=await getDocs(query(filesCol,orderBy('c','desc')));cachedFiles=[];s.forEach(d=>{cachedFiles.push({id:d.id,...d.data()});});}catch(e){cachedFiles=[];}}
 const dz=document.getElementById('dropZone');
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
 dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');handleFiles(e.dataTransfer.files);});
-async function handleFiles(fl){for(const f of Array.from(fl)){if(f.size>50*1024*1024){alert(f.name+': 50MB 초과');continue;}try{const fid='f'+Date.now()+'_'+Math.random().toString(36).substr(2,4);const fr=sRef(stg,'mk_files/'+fid+'_'+f.name);document.getElementById('folderFileUsage').textContent='업로드 중: '+f.name;await uploadBytes(fr,f);const url=await getDownloadURL(fr);await addDoc(filesCol,{n:f.name,size:f.size,type:f.type,url,path:fr.fullPath,c:Date.now(),folder:curFileFolder});document.getElementById('folderFileUsage').textContent='완료!';}catch(e){alert('업로드 실패: '+e.message);}}renderFiles();}
+async function handleFiles(fl){for(const f of Array.from(fl)){if(f.size>50*1024*1024){toast(f.name+': Max 50MB');continue;}try{const fid='f'+Date.now()+'_'+Math.random().toString(36).substr(2,4);const fr=sRef(stg,'mk_files/'+fid+'_'+f.name);document.getElementById('folderFileUsage').textContent='Uploading: '+f.name;await uploadBytes(fr,f);const url=await getDownloadURL(fr);await addDoc(filesCol,{n:f.name,size:f.size,type:f.type,url,path:fr.fullPath,c:Date.now(),folder:curFileFolder});toast('Uploaded: '+f.name);}catch(e){toast('Upload failed');}}renderFiles();}
 window.handleFiles=handleFiles;
-async function renderFiles(){const el=document.getElementById('fileList');el.innerHTML='<div class="loading" style="grid-column:1/-1;">불러오는 중...</div>';await loadFiles();let fs=cachedFiles.filter(f=>(f.folder||'none')===curFileFolder);let ts=0;fs.forEach(f=>ts+=(f.size||0));document.getElementById('folderFileUsage').textContent=fs.length+'개 · '+(ts<1048576?(ts/1024).toFixed(1)+' KB':(ts/1048576).toFixed(1)+' MB');if(!fs.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1;"><div class="ei">📂</div><p>파일을 업로드해보세요</p></div>`;return;}el.innerHTML=fs.map(f=>{const ic=fIcon(f.type||'',f.n||'');const sz=f.size<1024?f.size+'B':f.size<1048576?(f.size/1024).toFixed(1)+' KB':(f.size/1048576).toFixed(1)+' MB';const dt=new Date(f.c).toLocaleDateString('ko-KR',{month:'short',day:'numeric'});return`<div class="file-item"><div class="fi">${ic}</div><div class="fn">${f.n}</div><div class="fs">${sz} · ${dt}</div><div class="fa"><button onclick="dlFile('${f.id}')">다운로드</button><button class="db" onclick="rmFile('${f.id}')">삭제</button></div></div>`;}).join('');}
+async function renderFiles(){
+  const el=document.getElementById('fileList');
+  el.innerHTML='<div class="text-center py-10 text-outline text-sm col-span-full">Loading...</div>';
+  await loadFiles();
+  let fs=cachedFiles.filter(f=>(f.folder||'none')===curFileFolder);
+  let ts=0;fs.forEach(f=>ts+=(f.size||0));
+  document.getElementById('folderFileUsage').textContent=fs.length+' files · '+(ts<1048576?(ts/1024).toFixed(1)+' KB':(ts/1048576).toFixed(1)+' MB');
+  if(!fs.length){el.innerHTML=`<div class="text-center py-16 text-outline col-span-full"><span class="material-symbols-outlined text-3xl mb-2 block">cloud_upload</span><p class="text-sm">Upload files to get started</p></div>`;return;}
+  el.innerHTML=fs.map(f=>{
+    const ic=fIcon(f.type||'',f.n||'');
+    const sz=f.size<1024?f.size+'B':f.size<1048576?(f.size/1024).toFixed(1)+' KB':(f.size/1048576).toFixed(1)+' MB';
+    const dt=new Date(f.c).toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
+    return`<div style="background:rgba(255,255,255,.025);border:1px solid #252525;border-radius:16px;padding:22px 20px;transition:all .25s;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-size:28px;line-height:1;">${ic}</div>
+      <div>
+        <div class="font-['Space_Grotesk'] font-bold text-[13px] text-on-surface break-all leading-tight mb-1">${f.n}</div>
+        <div class="font-['Space_Grotesk'] text-[10px] tracking-[.1em] uppercase text-outline/40">${sz} · ${dt}</div>
+      </div>
+      <div class="flex gap-2 mt-auto">
+        <button style="padding:7px 16px;border:1px solid #353535;border-radius:9999px;background:transparent;color:#ffb4a2;font-size:11px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:.2s;" onmouseover="this.style.borderColor='#ffb4a2'" onmouseout="this.style.borderColor='#353535'" onclick="dlFile('${f.id}')">Download</button>
+        <button style="padding:7px 16px;border:1px solid #353535;border-radius:9999px;background:transparent;color:#a08d88;font-size:11px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:.2s;" onmouseover="this.style.color='#FF3B00';this.style.borderColor='rgba(255,59,0,.4)'" onmouseout="this.style.color='#a08d88';this.style.borderColor='#353535'" onclick="rmFile('${f.id}')">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
 function fIcon(t,n){if(t.startsWith('image/'))return'🖼️';if(t.includes('pdf'))return'📄';if(t.includes('zip'))return'📦';if(t.includes('audio'))return'🎵';if(t.includes('video'))return'🎬';if((n||'').match(/\.docx?$/))return'📃';if((n||'').match(/\.xlsx?$/))return'📊';return'📎';}
 function dlFile(id){const f=cachedFiles.find(x=>x.id===id);if(f?.url)window.open(f.url,'_blank');}
-async function rmFile(id){if(!confirm('삭제할까요?'))return;const f=cachedFiles.find(x=>x.id===id);try{if(f?.path)await deleteObject(sRef(stg,f.path));await deleteDoc(doc(db,'mk_app','data','files',id));}catch(e){}renderFiles();}
+async function rmFile(id){if(!confirm('Delete this file?'))return;const f=cachedFiles.find(x=>x.id===id);try{if(f?.path)await deleteObject(sRef(stg,f.path));await deleteDoc(doc(db,'mk_app','data','files',id));}catch(e){}renderFiles();}
 window.dlFile=dlFile;window.rmFile=rmFile;
 
-buildNumpad();
+/* ===== Init ===== */
+loadBgImages().then(()=>renderBgGrid());
+// Hub storage bar
+async function updateHubStorage(){
+  try{
+    const fS=await getDocs(filesCol),mS=await getDocs(memosCol);
+    let fb=0;fS.forEach(d=>{fb+=(d.data().size||0);});
+    let mb=0;mS.forEach(d=>{mb+=JSON.stringify(d.data()).length;});
+    const totalBytes=fb+mb;
+    const GB=5*1024*1024*1024;
+    const pct=Math.min((totalBytes/GB)*100,100);
+    const label=totalBytes<1048576?(totalBytes/1024).toFixed(1)+' KB':((totalBytes/1048576).toFixed(1))+' MB';
+    document.getElementById('hubStorageBar').style.width=Math.max(pct,0.5)+'%';
+    document.getElementById('hubStorageLabel').textContent=label+' / 5 GB';
+    document.getElementById('hubStorageSub').textContent='Notes · Files · Assets';
+    document.getElementById('hubStoragePct').textContent=pct.toFixed(1)+'%';
+  }catch(e){}
+}
+updateHubStorage();
+
+/* ===== Photo Gallery ===== */
+const gallerCol=collection(db,'mk_app','data','gallery');
+let cachedGallery=[], lbIndex=0;
+
+async function loadGallery(){
+  try{
+    const s=await getDocs(query(gallerCol,orderBy('c','desc')));
+    cachedGallery=[];s.forEach(d=>cachedGallery.push({id:d.id,...d.data()}));
+  }catch(e){cachedGallery=[];}
+}
+
+async function renderGallery(){
+  await loadGallery();
+  const wall=document.getElementById('galleryGrid');
+
+  const SAMPLES=[
+    {url:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1524638431109-93d95c968f03?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1445205170230-053b83016050?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1521119989659-a83eee488004?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=500&q=88',id:'',path:'',sample:true},
+    {url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=88',id:'',path:'',sample:true},
+  ];
+
+  const items = cachedGallery.length ? [...cachedGallery, ...SAMPLES] : SAMPLES;
+
+  function rnd(seed){
+    let s = (seed ^ 0xdeadbeef) >>> 0;
+    s = Math.imul(s ^ (s >>> 16), 0x45d9f3b) >>> 0;
+    s = Math.imul(s ^ (s >>> 16), 0x45d9f3b) >>> 0;
+    return ((s ^ (s >>> 16)) >>> 0) / 0xffffffff;
+  }
+
+  // 사진 크기 (이미지1 기준)
+  const PSIZES = [
+    {w:148,h:140},{w:190,h:178},{w:118,h:110},
+    {w:168,h:158},{w:132,h:124},{w:215,h:202},
+    {w:108,h:100},{w:175,h:164},{w:142,h:134},
+  ];
+
+  const wallW = wall.offsetWidth || 900;
+  const PAD = 55;
+  const usableW = wallW - PAD * 2;
+  const COLS = 4;
+  const colW = usableW / COLS;
+
+  let html = '';
+  let maxBottom = 0;
+
+  items.forEach((p, i) => {
+    const ps = PSIZES[i % PSIZES.length];
+    const pw = ps.w + 16;  // 좌우 패딩 8+8
+    const ph = ps.h + 42;  // 상하 패딩 8+34
+
+    const col = i % COLS;
+    const row = Math.floor(i / COLS);
+
+    const ox = rnd(i*7+1) * Math.max(0, colW - pw - 8);
+    const oy = rnd(i*13+2) * 110;
+    const x = PAD + col * colW + ox;
+    const y = PAD + row * 300 + oy;
+    const rot = (rnd(i*11+3) * 2 - 1) * (i % 4 === 0 ? 18 : 12);
+    const z = 5 + Math.floor(rnd(i*17+4) * 80);
+
+    const fix = i % 3 === 1
+      ? `<div class="pol-tape"></div>`
+      : `<div class="pol-clip"></div>`;
+
+    const del = p.sample ? ''
+      : `<button class="pol-del" onclick="event.stopPropagation();delGalleryItem('${p.id}','${p.path||''}')">x</button>`;
+
+    if(y + ph + 22 > maxBottom) maxBottom = y + ph + 22;
+
+    html += `<div class="polaroid" style="left:${Math.round(x)}px;top:${Math.round(y)}px;width:${pw}px;height:${ph}px;transform:rotate(${rot.toFixed(1)}deg);z-index:${z};" onclick="openLightbox(${i})">${fix}<img src="${p.url}" loading="lazy" style="width:${ps.w}px;height:${ps.h}px;display:block;">${del}</div>`;
+  });
+
+  wall.style.minHeight = (maxBottom + 100) + 'px';
+  wall.innerHTML = html;
+  window._lbItems = items;
+}
+async function handleGalleryUpload(fl){
+  for(const f of Array.from(fl)){
+    if(!f.type.startsWith('image/')){toast('Images only');continue;}
+    if(f.size>20*1024*1024){toast('Max 20MB per image');continue;}
+    try{
+      const fid='gal_'+Date.now()+'_'+Math.random().toString(36).substr(2,4);
+      const fr=sRef(stg,'mk_gallery/'+fid+'_'+f.name);
+      toast('Uploading…');
+      await uploadBytes(fr,f);
+      const url=await getDownloadURL(fr);
+      await addDoc(gallerCol,{url,path:fr.fullPath,name:f.name,c:Date.now()});
+      cachedGallery.unshift({url,path:fr.fullPath,name:f.name,c:Date.now()});
+      toast('Photo added');
+    }catch(e){toast('Upload failed');}
+  }
+  renderGallery();
+  // Re-render after images load to get correct wall height
+  setTimeout(renderGallery, 800);
+}
+window.handleGalleryUpload=handleGalleryUpload;
+
+async function delGalleryItem(id,path){
+  if(!confirm('Delete this photo?'))return;
+  try{
+    if(path)await deleteObject(sRef(stg,path)).catch(()=>{});
+    await deleteDoc(doc(db,'mk_app','data','gallery',id));
+    cachedGallery=cachedGallery.filter(p=>p.id!==id);
+  }catch(e){}
+  renderGallery();
+}
+window.delGalleryItem=delGalleryItem;
+
+// Lightbox
+function openLightbox(i,url){
+  lbIndex=i;
+  const items=window._lbItems||cachedGallery;
+  const src=url||items[i]?.url||'';
+  document.getElementById('galleryLbImg').src=src;
+  document.getElementById('galleryLightbox').classList.add('open');
+  document.getElementById('galleryLbCounter').textContent=(i+1)+' / '+items.length;
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  document.getElementById('galleryLightbox').classList.remove('open');
+  document.getElementById('galleryLbImg').src='';
+  document.body.style.overflow='';
+}
+function lbNav(dir){
+  const items=window._lbItems||cachedGallery;
+  lbIndex=(lbIndex+dir+items.length)%items.length;
+  document.getElementById('galleryLbImg').src=items[lbIndex].url;
+  document.getElementById('galleryLbCounter').textContent=(lbIndex+1)+' / '+items.length;
+}
+async function lbDel(){
+  const items=window._lbItems||cachedGallery;
+  const p=items[lbIndex];
+  if(!p||p.sample){toast('Sample photo — upload your own to delete');return;}
+  closeLightbox();
+  await delGalleryItem(p.id,p.path||'');
+}
+window.openLightbox=openLightbox;window.closeLightbox=closeLightbox;window.lbNav=lbNav;window.lbDel=lbDel;
+
+// Keyboard nav for lightbox
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('galleryLightbox').classList.contains('open'))return;
+  if(e.key==='ArrowLeft')lbNav(-1);
+  else if(e.key==='ArrowRight')lbNav(1);
+  else if(e.key==='Escape')closeLightbox();
+});
+
+// Init gallery
+renderGallery();
 </script>
 </body>
 </html>

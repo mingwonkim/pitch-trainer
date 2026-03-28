@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>코드 수정 도구</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0e0e;--sf:#1c1b1b;--sf2:#201f1f;--bd:#353535;--tx:#e5e2e1;--txd:#a08d88;
+--acc:#ffb4a2;--accd:rgba(255,180,162,.12);--ok:#2dd4a0;--ng:#ff6b6b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tx);min-height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* Header */
+.hd{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0;}
+.hd h1{font-size:16px;font-weight:700;flex:1;letter-spacing:-.3px;}
+.hd-btn{padding:6px 16px;border:1px solid var(--bd);border-radius:8px;background:transparent;color:var(--tx);font-size:12px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:.2s;text-transform:uppercase;letter-spacing:.05em;}
+.hd-btn:hover{border-color:var(--acc);color:var(--acc);}
+.hd-btn.run{background:var(--acc);color:#360e05;border-color:var(--acc);}
+.hd-btn.run:hover{filter:brightness(1.1);}
+
+/* Tabs */
+.tabs{display:flex;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0;overflow-x:auto;}
+.tab{padding:10px 20px;font-size:13px;font-weight:600;color:var(--txd);cursor:pointer;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap;font-family:'JetBrains Mono',monospace;}
+.tab:hover{color:var(--tx);}
+.tab.on{color:var(--acc);border-bottom-color:var(--acc);}
+
+/* Editor area */
+.editor-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.split{flex:1;display:flex;overflow:hidden;}
+@media(max-width:768px){.split{flex-direction:column;}}
+
+/* Code panel */
+.code-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+.code-panel.hidden{display:none;}
+.line-numbers{position:absolute;left:0;top:0;bottom:0;width:48px;background:var(--sf);border-right:1px solid var(--bd);overflow:hidden;z-index:1;padding-top:12px;}
+.line-numbers div{height:21px;line-height:21px;text-align:right;padding-right:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--txd);user-select:none;}
+.code-area{flex:1;background:var(--bg);border:none;color:var(--tx);font-family:'JetBrains Mono',monospace;font-size:13px;line-height:21px;padding:12px 12px 12px 60px;resize:none;outline:none;overflow:auto;tab-size:2;white-space:pre;word-wrap:normal;}
+.code-area::selection{background:rgba(255,180,162,.2);}
+
+/* Preview panel */
+.preview-panel{flex:1;display:flex;flex-direction:column;border-left:1px solid var(--bd);background:var(--sf2);overflow:hidden;}
+@media(max-width:768px){.preview-panel{border-left:none;border-top:1px solid var(--bd);}}
+.preview-hd{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0;}
+.preview-hd span{font-size:12px;font-weight:600;color:var(--txd);text-transform:uppercase;letter-spacing:.1em;}
+.preview-frame{flex:1;border:none;background:#fff;width:100%;}
+
+/* Resizer */
+.resizer{width:4px;background:var(--bd);cursor:col-resize;flex-shrink:0;transition:background .2s;}
+.resizer:hover,.resizer.active{background:var(--acc);}
+@media(max-width:768px){.resizer{width:auto;height:4px;cursor:row-resize;}}
+
+/* Status bar */
+.status{display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:var(--sf);border-top:1px solid var(--bd);flex-shrink:0;font-size:11px;color:var(--txd);}
+.status .ok{color:var(--ok);}
+.status .ng{color:var(--ng);}
+
+/* Saved files dropdown */
+.saved-menu{position:relative;}
+.saved-list{position:absolute;top:100%;right:0;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;min-width:220px;max-height:300px;overflow-y:auto;z-index:100;display:none;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.saved-list.show{display:block;}
+.saved-item{padding:10px 16px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--bd);transition:.15s;display:flex;justify-content:space-between;align-items:center;}
+.saved-item:hover{background:var(--accd);}
+.saved-item:last-child{border-bottom:none;}
+.saved-item .name{font-weight:600;color:var(--tx);}
+.saved-item .date{font-size:10px;color:var(--txd);}
+.saved-item .del{font-size:10px;color:var(--ng);cursor:pointer;padding:2px 6px;border-radius:4px;}
+.saved-item .del:hover{background:rgba(255,107,107,.1);}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <h1>🛠️ 코드 수정 도구</h1>
+  <div class="saved-menu">
+    <button class="hd-btn" onclick="toggleSaved()">📂 저장 목록</button>
+    <div class="saved-list" id="savedList"></div>
+  </div>
+  <button class="hd-btn" onclick="saveCode()">💾 저장</button>
+  <button class="hd-btn" onclick="downloadCode()">⬇ 다운로드</button>
+  <button class="hd-btn run" onclick="runCode()">▶ 실행</button>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab on" onclick="switchTab('html')">HTML</div>
+  <div class="tab" onclick="switchTab('css')">CSS</div>
+  <div class="tab" onclick="switchTab('js')">JS</div>
+  <div class="tab" onclick="switchTab('all')">전체 (Single File)</div>
+</div>
+
+<div class="editor-wrap">
+  <div class="split" id="split">
+    <div class="code-panel" id="codePanel">
+      <div class="line-numbers" id="lineNums"></div>
+      <textarea class="code-area" id="codeArea" spellcheck="false" oninput="onCodeInput()" onscroll="syncLineScroll()"></textarea>
+    </div>
+    <div class="resizer" id="resizer"></div>
+    <div class="preview-panel">
+      <div class="preview-hd">
+        <span>미리보기</span>
+        <label style="font-size:11px;color:var(--txd);display:flex;align-items:center;gap:4px;cursor:pointer;">
+          <input type="checkbox" id="autoRun" checked style="accent-color:var(--acc);"> 자동 실행
+        </label>
+      </div>
+      <iframe class="preview-frame" id="previewFrame" sandbox="allow-scripts allow-modals allow-forms allow-same-origin"></iframe>
+    </div>
+  </div>
+</div>
+
+<div class="status">
+  <div><span id="statusMsg" class="ok">준비됨</span></div>
+  <div>
+    <span id="cursorPos">줄 1, 칸 1</span> · 
+    <span id="charCount">0자</span>
+  </div>
+</div>
+
+<script>
+// State
+let mode='all'; // 'html','css','js','all'
+let codes={html:'',css:'',js:'',all:''};
+const STORAGE_KEY='mk_code_editor';
+const SAVES_KEY='mk_code_saves';
+
+// Default template
+const DEFAULT_ALL=`<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Page</title>
+<style>
+body {
+  font-family: sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  background: #131313;
+  color: #e5e2e1;
+}
+h1 {
+  font-size: 3rem;
+  font-weight: 900;
+}
+</style>
+</head>
+<body>
+<h1>Hello, MK.HUB!</h1>
+<script>
+  console.log('Ready');
+<\/script>
+</body>
+</html>`;
+
+const DEFAULT_HTML=`<div class="container">
+  <h1>Hello, MK.HUB!</h1>
+  <p>HTML을 여기에 작성하세요.</p>
+</div>`;
+
+const DEFAULT_CSS=`body {
+  font-family: sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  background: #131313;
+  color: #e5e2e1;
+}
+h1 {
+  font-size: 3rem;
+  font-weight: 900;
+}`;
+
+const DEFAULT_JS=`console.log('Ready');`;
+
+// Load saved state
+function loadState(){
+  try{
+    const s=localStorage.getItem(STORAGE_KEY);
+    if(s){const d=JSON.parse(s);codes={...codes,...d};}
+    else{codes.all=DEFAULT_ALL;codes.html=DEFAULT_HTML;codes.css=DEFAULT_CSS;codes.js=DEFAULT_JS;}
+  }catch(e){codes.all=DEFAULT_ALL;codes.html=DEFAULT_HTML;codes.css=DEFAULT_CSS;codes.js=DEFAULT_JS;}
+}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(codes));}catch(e){}}
+
+// Tabs
+function switchTab(t){
+  // Save current
+  codes[mode]=document.getElementById('codeArea').value;
+  saveState();
+  mode=t;
+  document.querySelectorAll('.tab').forEach(tb=>tb.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(tb=>{if(tb.textContent.toLowerCase().includes(t==='all'?'전체':t))tb.classList.add('on');});
+  document.getElementById('codeArea').value=codes[mode]||'';
+  updateLines();
+  if(document.getElementById('autoRun').checked)runCode();
+}
+
+// Line numbers
+function updateLines(){
+  const code=document.getElementById('codeArea').value;
+  const lines=code.split('\n').length;
+  const el=document.getElementById('lineNums');
+  let h='';for(let i=1;i<=Math.max(lines,30);i++)h+=`<div>${i}</div>`;
+  el.innerHTML=h;
+}
+function syncLineScroll(){document.getElementById('lineNums').scrollTop=document.getElementById('codeArea').scrollTop;}
+
+// Code input
+function onCodeInput(){
+  updateLines();
+  updateCursor();
+  const code=document.getElementById('codeArea').value;
+  codes[mode]=code;
+  document.getElementById('charCount').textContent=code.length+'자';
+  saveState();
+  if(document.getElementById('autoRun').checked){
+    clearTimeout(window._runTimeout);
+    window._runTimeout=setTimeout(runCode,500);
+  }
+}
+
+function updateCursor(){
+  const ta=document.getElementById('codeArea');
+  const val=ta.value.substring(0,ta.selectionStart);
+  const lines=val.split('\n');
+  document.getElementById('cursorPos').textContent=`줄 ${lines.length}, 칸 ${lines[lines.length-1].length+1}`;
+}
+
+// Run
+function runCode(){
+  codes[mode]=document.getElementById('codeArea').value;
+  const frame=document.getElementById('previewFrame');
+  let html='';
+  if(mode==='all'){
+    html=codes.all;
+  }else{
+    html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>${codes.css||''}</style></head><body>${codes.html||''}<script>${codes.js||''}<\/script></body></html>`;
+  }
+  try{
+    const blob=new Blob([html],{type:'text/html'});
+    frame.src=URL.createObjectURL(blob);
+    document.getElementById('statusMsg').textContent='✓ 실행 완료';
+    document.getElementById('statusMsg').className='ok';
+  }catch(e){
+    document.getElementById('statusMsg').textContent='✕ 오류: '+e.message;
+    document.getElementById('statusMsg').className='ng';
+  }
+}
+
+// Save/Load files
+function getSaves(){try{return JSON.parse(localStorage.getItem(SAVES_KEY)||'[]');}catch(e){return[];}}
+function setSaves(s){localStorage.setItem(SAVES_KEY,JSON.stringify(s));}
+
+function saveCode(){
+  codes[mode]=document.getElementById('codeArea').value;
+  const name=prompt('저장할 이름을 입력하세요:','코드_'+new Date().toLocaleDateString('ko-KR'));
+  if(!name)return;
+  const saves=getSaves();
+  saves.unshift({name,codes:{...codes},date:Date.now()});
+  if(saves.length>20)saves.pop();
+  setSaves(saves);
+  document.getElementById('statusMsg').textContent='💾 저장 완료: '+name;
+  document.getElementById('statusMsg').className='ok';
+}
+
+function toggleSaved(){
+  const el=document.getElementById('savedList');
+  if(el.classList.contains('show')){el.classList.remove('show');return;}
+  const saves=getSaves();
+  if(!saves.length){el.innerHTML='<div style="padding:16px;text-align:center;color:var(--txd);font-size:12px;">저장된 파일 없음</div>';el.classList.add('show');return;}
+  el.innerHTML=saves.map((s,i)=>{
+    const d=new Date(s.date).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    return`<div class="saved-item" onclick="loadSave(${i})"><div><div class="name">${s.name}</div><div class="date">${d}</div></div><span class="del" onclick="event.stopPropagation();delSave(${i})">삭제</span></div>`;
+  }).join('');
+  el.classList.add('show');
+}
+
+function loadSave(i){
+  const saves=getSaves();if(!saves[i])return;
+  codes={...codes,...saves[i].codes};
+  document.getElementById('codeArea').value=codes[mode]||'';
+  updateLines();saveState();
+  document.getElementById('savedList').classList.remove('show');
+  document.getElementById('statusMsg').textContent='📂 불러옴: '+saves[i].name;
+  if(document.getElementById('autoRun').checked)runCode();
+}
+
+function delSave(i){
+  if(!confirm('삭제할까요?'))return;
+  const saves=getSaves();saves.splice(i,1);setSaves(saves);toggleSaved();toggleSaved();
+}
+
+// Download
+function downloadCode(){
+  codes[mode]=document.getElementById('codeArea').value;
+  let content,filename;
+  if(mode==='all'){content=codes.all;filename='page.html';}
+  else if(mode==='html'){content=codes.html;filename='index.html';}
+  else if(mode==='css'){content=codes.css;filename='style.css';}
+  else{content=codes.js;filename='script.js';}
+  const blob=new Blob([content],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+  document.getElementById('statusMsg').textContent='⬇ 다운로드: '+filename;
+}
+
+// Resizer
+const resizer=document.getElementById('resizer');
+const split=document.getElementById('split');
+let isResizing=false;
+resizer.addEventListener('mousedown',e=>{isResizing=true;resizer.classList.add('active');document.body.style.cursor='col-resize';document.body.style.userSelect='none';});
+document.addEventListener('mousemove',e=>{
+  if(!isResizing)return;
+  const rect=split.getBoundingClientRect();
+  const isVert=window.innerWidth<=768;
+  if(isVert){
+    const pct=((e.clientY-rect.top)/rect.height)*100;
+    document.getElementById('codePanel').style.flex='none';
+    document.getElementById('codePanel').style.height=Math.max(20,Math.min(80,pct))+'%';
+  }else{
+    const pct=((e.clientX-rect.left)/rect.width)*100;
+    document.getElementById('codePanel').style.flex='none';
+    document.getElementById('codePanel').style.width=Math.max(20,Math.min(80,pct))+'%';
+  }
+});
+document.addEventListener('mouseup',()=>{if(isResizing){isResizing=false;resizer.classList.remove('active');document.body.style.cursor='';document.body.style.userSelect='';}});
+
+// Tab key support
+document.getElementById('codeArea').addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const ta=e.target,s=ta.selectionStart,end=ta.selectionEnd;
+    ta.value=ta.value.substring(0,s)+'  '+ta.value.substring(end);
+    ta.selectionStart=ta.selectionEnd=s+2;
+    onCodeInput();
+  }
+});
+
+// Click outside to close saved list
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.saved-menu'))document.getElementById('savedList').classList.remove('show');
+});
+
+// Cursor tracking
+document.getElementById('codeArea').addEventListener('click',updateCursor);
+document.getElementById('codeArea').addEventListener('keyup',updateCursor);
+
+// Init
+loadState();
+document.getElementById('codeArea').value=codes[mode]||codes.all||DEFAULT_ALL;
+updateLines();
+runCode();
+</script>
+</body>
+</html>
