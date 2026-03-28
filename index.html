@@ -881,9 +881,6 @@ const filesCol=collection(db,'mk_app','data','files'),fileFoldersCol=collection(
 const bgImagesDoc=doc(db,'mk_app','bg_images');
 
 /* ===== Passwords ===== */
-const DEF_PW='5940';
-function getPw(){return localStorage.getItem('mk_pw')||DEF_PW;}
-function setPwLocal(pw){localStorage.setItem('mk_pw',pw);}
 let isUnlocked=false;
 
 /* ===== PIN Lock ===== */
