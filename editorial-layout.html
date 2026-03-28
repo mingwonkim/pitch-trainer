@@ -89,8 +89,7 @@
     pointer-events: none;
     backdrop-filter: blur(2px);
   }
-
-  .img-slot:hover::after {
+  body.ed-unlocked .img-slot:hover::after {
     opacity: 1;
   }
 
@@ -308,38 +307,7 @@
     border-bottom-color: var(--accent);
   }
 
-  /* ── 다운로드 버튼 ── */
-  .download-btn {
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    z-index: 100;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 50px;
-    font-size: 14px;
-    font-weight: 600;
-    font-family: 'Instrument Sans', sans-serif;
-    letter-spacing: 0.8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 4px 20px rgba(232,58,48,0.4);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
 
-  .download-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(232,58,48,0.55);
-  }
-
-  .download-btn svg {
-    width: 18px;
-    height: 18px;
-  }
 
 
 
@@ -374,8 +342,6 @@
 </head>
 <body>
 
-
-
 <!-- 숨겨진 파일 인풋들 -->
 <input type="file" accept="image/*" class="file-input" id="input-1">
 <input type="file" accept="image/*" class="file-input" id="input-2">
@@ -390,203 +356,165 @@
   <div class="col col-left">
     <div class="slot-1-wrap">
       <div class="dot-deco"></div>
-      <div class="img-slot slot-1" data-slot="1" onclick=\"edRequestUnlock(()=>document.getElementById('input-\1').click())\">
+      <div class="img-slot slot-1" data-slot="1" onclick="document.getElementById('input-1').click()">
         <div class="slot-1-placeholder" id="placeholder-1">🎤</div>
       </div>
-      <span class="label-raw label-editable" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">RAW</span>
-      <span class="label-nostalgic label-editable" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">NOSTALGIC</span>
+      <span class="label-raw label-editable" contenteditable="true">RAW</span>
+      <span class="label-nostalgic label-editable" contenteditable="true">NOSTALGIC</span>
     </div>
   </div>
 
   <!-- 중앙 컬럼 -->
   <div class="col col-center">
-    <p class="text-intro" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">At LowTheory, we thrive at the intersection of art, fashion and cultural tension. This means our creative direction will feel native to your identity and push it into bold territories Western audiences respond to.</p>
+    <p class="text-intro" contenteditable="true">At LowTheory, we thrive at the intersection of art, fashion and cultural tension. This means our creative direction will feel native to your identity and push it into bold territories Western audiences respond to.</p>
 
     <div class="slot-2-wrap">
-      <span class="label-vhs label-editable" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">VHS</span>
-      <div class="img-slot slot-2" data-slot="2" onclick=\"edRequestUnlock(()=>document.getElementById('input-\1').click())\">
+      <span class="label-vhs label-editable" contenteditable="true">VHS</span>
+      <div class="img-slot slot-2" data-slot="2" onclick="document.getElementById('input-2').click()">
         <div class="slot-2-placeholder" id="placeholder-2">🌿</div>
       </div>
     </div>
 
     <div class="text-bottom">
-      <p class="sub" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">We also have direct access to the top studios in europe for a more simplified campaign look or a detailed composition.</p>
-      <p class="quote" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})"><em>Everything we create passes through touch and tape.</em></p>
+      <p class="sub" contenteditable="true">We also have direct access to the top studios in europe for a more simplified campaign look or a detailed composition.</p>
+      <p class="quote" contenteditable="true"><em>Everything we create passes through touch and tape.</em></p>
     </div>
   </div>
 
   <!-- 우측 컬럼 -->
   <div class="col col-right">
     <div class="right-stack">
-      <div class="img-slot slot-3" data-slot="3" onclick=\"edRequestUnlock(()=>document.getElementById('input-\1').click())\">
+      <div class="img-slot slot-3" data-slot="3" onclick="document.getElementById('input-3').click()">
         <div class="slot-3-placeholder" id="placeholder-3">👠</div>
       </div>
-      <div class="img-slot slot-4" data-slot="4" onclick=\"edRequestUnlock(()=>document.getElementById('input-\1').click())\">
+      <div class="img-slot slot-4" data-slot="4" onclick="document.getElementById('input-4').click()">
         <div class="slot-4-placeholder" id="placeholder-4">👗</div>
       </div>
     </div>
 
     <div class="polaroid-wrap">
       <div class="polaroid">
-        <div class="img-slot slot-5" data-slot="5" onclick=\"edRequestUnlock(()=>document.getElementById('input-\1').click())\">
+        <div class="img-slot slot-5" data-slot="5" onclick="document.getElementById('input-5').click()">
           <div class="slot-5-placeholder" id="placeholder-5">🎈</div>
         </div>
       </div>
-      <span class="label-polaroid label-editable" contenteditable="false" onclick="edRequestUnlock(()=>{this.contentEditable='true';this.focus();})">Polaroid / Spectra</span>
+      <span class="label-polaroid label-editable" contenteditable="true">Polaroid / Spectra</span>
     </div>
   </div>
 
 </div>
 
-<!-- 다운로드 버튼 -->
-<button class="download-btn" onclick="downloadLayout()">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-    <polyline points="7 10 12 15 17 10"/>
-    <line x1="12" y1="15" x2="12" y2="3"/>
-  </svg>
-  DOWNLOAD PNG
-</button>
+
 
 <script>
-  // ── PIN 잠금 시스템 ──
+  // ── PIN 인증 시스템 ──
   let edUnlocked = false;
 
-  function getEdPw(){
-    try{const r=localStorage.getItem('mk_pw3');if(r)return JSON.parse(r);}catch(e){}
-    return {s1:'5940',s2:'000000',s3:'음악'};
+  function getEdPw() {
+    try {
+      const r = localStorage.getItem('mk_pw3');
+      if (r) return JSON.parse(r);
+    } catch(e) {}
+    return {s1:'5940', s2:'000000', s3:'음악'};
   }
 
-  function edRequestUnlock(cb){
-    if(edUnlocked){cb();return;}
-    // 3단계 인증
-    const phases=[
-      {label:'1단계: 영문·숫자 13자 이내',type:'text',maxLen:13},
-      {label:'2단계: 생년월일 6자리',type:'tel',maxLen:6},
-      {label:'3단계: 궁극적으로 만들고 싶은 것',type:'text',maxLen:9999},
+  function edRequestUnlock(cb) {
+    if (edUnlocked) { cb(); return; }
+    const phases = [
+      {label:'1단계: 영문·숫자 (최대 13자)', type:'text', maxLen:13},
+      {label:'2단계: 생년월일 6자리', type:'tel', maxLen:6},
+      {label:'3단계: 궁극적으로 만들고 싶은 것', type:'text', maxLen:9999},
     ];
-    let phase=0;
-    const overlay=document.createElement('div');
-    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(16px);';
-    function renderPhase(){
-      const cfg=phases[phase];
-      const pw=getEdPw();
-      overlay.innerHTML=`
-        <div style="width:360px;padding:36px 28px;display:flex;flex-direction:column;align-items:center;gap:16px;">
-          <div style="font-family:sans-serif;font-size:11px;letter-spacing:.2em;color:#a08d88;text-transform:uppercase;">MK.HUB — Editorial</div>
-          <div style="font-family:sans-serif;font-size:18px;font-weight:700;color:#ffb4a2;">${cfg.label}</div>
-          <div style="display:flex;gap:6px;margin-bottom:4px;">
-            ${[0,1,2].map(i=>`<div style="width:24px;height:3px;border-radius:2px;background:${i<phase?'#FF3B00':i===phase?'#ffb4a2':'#353535'};"></div>`).join('')}
+    let phase = 0;
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9999;display:flex;align-items:center;justify-content:center;';
+
+    function renderPhase() {
+      const cfg = phases[phase];
+      const pw = getEdPw();
+      overlay.innerHTML = `
+        <div style="width:340px;padding:36px 28px;display:flex;flex-direction:column;align-items:center;gap:14px;background:#111;border:1px solid #333;border-radius:16px;">
+          <div style="font-family:sans-serif;font-size:11px;letter-spacing:.2em;color:#888;text-transform:uppercase;">MK.HUB — 인증</div>
+          <div style="font-family:sans-serif;font-size:16px;font-weight:700;color:#ffb4a2;text-align:center;">${cfg.label}</div>
+          <div style="display:flex;gap:6px;">
+            ${[0,1,2].map(i=>`<div style="width:24px;height:3px;border-radius:2px;background:${i<phase?'#FF3B00':i===phase?'#ffb4a2':'#333'};"></div>`).join('')}
           </div>
-          <input id="edPinInput" type="${cfg.type}" maxlength="${cfg.maxLen}" autocomplete="off" autocorrect="off"
-            style="width:100%;padding:14px 16px;background:rgba(255,255,255,.05);border:1px solid #353535;border-radius:10px;color:#e5e2e1;font-size:16px;font-family:sans-serif;outline:none;"
-            placeholder="${cfg.label}">
+          <input id="edPinInput" type="${cfg.type}" maxlength="${cfg.maxLen > 100 ? 9999 : cfg.maxLen}" autocomplete="off"
+            style="width:100%;padding:14px 16px;background:#1a1a1a;border:1px solid #333;border-radius:10px;color:#e5e2e1;font-size:16px;font-family:sans-serif;outline:none;">
           <div id="edPinErr" style="font-size:12px;color:#FF3B00;min-height:16px;"></div>
           <div style="display:flex;gap:10px;width:100%;">
-            <button onclick="document.body.removeChild(document.querySelector('[data-edoverlay]'))" style="flex:1;padding:12px;background:transparent;border:1px solid #353535;border-radius:8px;color:#a08d88;font-size:13px;cursor:pointer;">취소</button>
-            <button id="edPinNext" style="flex:2;padding:12px;background:#ffb4a2;border:none;border-radius:8px;color:#360e05;font-size:13px;font-weight:700;cursor:pointer;">${phase===2?'확인 ✓':'다음 →'}</button>
+            <button id="edCancelBtn" style="flex:1;padding:12px;background:transparent;border:1px solid #333;border-radius:8px;color:#888;font-size:13px;cursor:pointer;">취소</button>
+            <button id="edNextBtn" style="flex:2;padding:12px;background:#ffb4a2;border:none;border-radius:8px;color:#360e05;font-size:13px;font-weight:700;cursor:pointer;">${phase===2?'확인 ✓':'다음 →'}</button>
           </div>
         </div>`;
-      overlay.dataset.edoverlay='1';
+
       document.getElementById('edPinInput').focus();
-      document.getElementById('edPinNext').onclick=()=>{
-        const val=document.getElementById('edPinInput').value.trim();
-        const pw=getEdPw();
-        const correct=[pw.s1,pw.s2,pw.s3][phase];
-        if(val!==correct){document.getElementById('edPinErr').textContent='틀렸습니다';return;}
+
+      document.getElementById('edCancelBtn').onclick = () => document.body.removeChild(overlay);
+
+      document.getElementById('edNextBtn').onclick = () => {
+        const val = document.getElementById('edPinInput').value.trim();
+        const pw = getEdPw();
+        const correct = [pw.s1, pw.s2, pw.s3][phase];
+        if (!val) { document.getElementById('edPinErr').textContent = '입력해주세요'; return; }
+        if (val !== correct) { document.getElementById('edPinErr').textContent = '틀렸습니다'; return; }
         phase++;
-        if(phase>=3){
-          edUnlocked=true;
+        if (phase >= 3) {
+          edUnlocked = true;
+          document.body.classList.add('ed-unlocked');
           document.body.removeChild(overlay);
           cb();
-        }else{renderPhase();}
+        } else {
+          renderPhase();
+        }
       };
-      document.getElementById('edPinInput').onkeydown=e=>{if(e.key==='Enter')document.getElementById('edPinNext').click();if(e.key==='Escape')document.body.removeChild(overlay);};
+
+      document.getElementById('edPinInput').onkeydown = e => {
+        if (e.key === 'Enter') document.getElementById('edNextBtn').click();
+        if (e.key === 'Escape') document.body.removeChild(overlay);
+      };
     }
+
     renderPhase();
     document.body.appendChild(overlay);
   }
+
+  // ── 이미지 슬롯 클릭 ──
+  document.querySelectorAll('.img-slot').forEach(slot => {
+    const slotNum = slot.dataset.slot;
+    slot.onclick = () => edRequestUnlock(() => document.getElementById('input-' + slotNum).click());
+  });
 
   // ── 파일 선택 시 이미지 교체 ──
   document.querySelectorAll('.file-input').forEach(input => {
     input.addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
-
       const slotNum = this.id.replace('input-', '');
-      const slot = document.querySelector(`.img-slot[data-slot="${slotNum}"]`);
-      const placeholder = document.getElementById(`placeholder-${slotNum}`);
-
+      const slot = document.querySelector('.img-slot[data-slot="' + slotNum + '"]');
+      const placeholder = document.getElementById('placeholder-' + slotNum);
       const url = URL.createObjectURL(file);
-      
-      if (placeholder) {
-        placeholder.remove();
-      }
-
-      // 기존 img 태그가 있으면 src만 교체
+      if (placeholder) placeholder.remove();
       let img = slot.querySelector('img');
-      if (!img) {
-        img = document.createElement('img');
-        slot.prepend(img);
-      }
+      if (!img) { img = document.createElement('img'); slot.prepend(img); }
       img.src = url;
-      img.alt = `Photo ${slotNum}`;
-
-      // 인풋 초기화 (같은 파일 재선택 가능하게)
       this.value = '';
     });
   });
 
-  // ── PNG 다운로드 (html2canvas CDN) ──
-  let html2canvasLoaded = false;
-
-  function loadHtml2Canvas() {
-    return new Promise((resolve, reject) => {
-      if (html2canvasLoaded) { resolve(); return; }
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-      script.onload = () => { html2canvasLoaded = true; resolve(); };
-      script.onerror = reject;
-      document.head.appendChild(script);
-    });
-  }
-
-  async function downloadLayout() {
-    const btn = document.querySelector('.download-btn');
-    const banner = document.getElementById('guideBanner');
-    const originalBtnText = btn.innerHTML;
-    
-    btn.innerHTML = '⏳ 렌더링 중...';
-    btn.style.pointerEvents = 'none';
-
-    // 버튼 숨기기
-    btn.style.visibility = 'hidden';
-
-    // hover 오버레이 제거
-    document.querySelectorAll('.img-slot').forEach(s => s.style.pointerEvents = 'none');
-
-    try {
-      await loadHtml2Canvas();
-      const layout = document.getElementById('editorialLayout');
-      const canvas = await html2canvas(layout, {
-        backgroundColor: '#4A0E0E',
-        scale: 2,
-        useCORS: true,
-        logging: false,
+  // ── contenteditable 잠금 ──
+  document.querySelectorAll('[contenteditable]').forEach(el => {
+    el.contentEditable = 'false';
+    el.style.cursor = 'default';
+    el.onclick = function(e) {
+      e.stopPropagation();
+      edRequestUnlock(() => {
+        this.contentEditable = 'true';
+        this.style.cursor = 'text';
+        this.focus();
       });
-      const link = document.createElement('a');
-      link.download = 'editorial-layout.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    } catch (err) {
-      alert('다운로드 실패: ' + err.message);
-    } finally {
-      btn.innerHTML = originalBtnText;
-      btn.style.pointerEvents = '';
-      btn.style.visibility = '';
-      document.querySelectorAll('.img-slot').forEach(s => s.style.pointerEvents = '');
-    }
-  }
+    };
+  });
 </script>
 
 </body>
