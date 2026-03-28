@@ -829,35 +829,71 @@
   </div>
 </div>
 
-<!-- Password Change Overlay -->
 <!-- 3-step Password Change Overlay -->
-<div style="position:fixed;inset:0;background:rgba(10,10,14,.97);z-index:9995;display:none;align-items:center;justify-content:center;backdrop-filter:blur(16px);" id="pwChangeOverlay">
-  <div style="width:100%;max-width:420px;padding:40px 32px;display:flex;flex-direction:column;align-items:center;gap:0;">
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.3em;color:#a08d88;text-transform:uppercase;margin-bottom:8px;">Security Protocol</div>
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#ffb4a2;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;" id="pwChangeTitle">비밀번호 확인</div>
-    <div style="font-size:12px;color:#a08d88;margin-bottom:28px;text-align:center;font-family:'Space Grotesk',sans-serif;" id="pwChangeSub">현재 비밀번호 1단계를 입력하세요</div>
+<div style="position:fixed;inset:0;background:rgba(6,6,10,.98);z-index:9995;display:none;align-items:center;justify-content:center;backdrop-filter:blur(24px);" id="pwChangeOverlay">
 
-    <!-- Step indicators -->
-    <div style="display:flex;gap:8px;margin-bottom:28px;" id="pwStepDots">
-      <div style="width:28px;height:4px;border-radius:2px;background:#ffb4a2;" id="psd0"></div>
-      <div style="width:28px;height:4px;border-radius:2px;background:#353535;" id="psd1"></div>
-      <div style="width:28px;height:4px;border-radius:2px;background:#353535;" id="psd2"></div>
+  <!-- Decorative background lines -->
+  <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden;">
+    <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:100%;background:linear-gradient(to bottom,transparent,rgba(255,180,162,.06) 30%,rgba(255,180,162,.06) 70%,transparent);"></div>
+    <div style="position:absolute;top:50%;left:0;width:100%;height:1px;background:linear-gradient(to right,transparent,rgba(255,180,162,.04) 30%,rgba(255,180,162,.04) 70%,transparent);"></div>
+  </div>
+
+  <div style="width:100%;max-width:460px;padding:0 24px;display:flex;flex-direction:column;align-items:center;position:relative;">
+
+    <!-- Header -->
+    <div style="width:100%;display:flex;flex-direction:column;align-items:center;margin-bottom:36px;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:.5em;color:#524340;text-transform:uppercase;margin-bottom:16px;">MK.HUB — SECURITY</div>
+      <!-- Mode badge -->
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,180,162,.06);border:1px solid rgba(255,180,162,.15);border-radius:100px;padding:6px 16px;margin-bottom:20px;">
+        <div style="width:6px;height:6px;border-radius:50%;background:#FF3B00;animation:encPulse 1.4s ease-in-out infinite;"></div>
+        <span style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.2em;color:#ffb4a2;text-transform:uppercase;" id="pwChangeTitle">비밀번호 확인</span>
+      </div>
+      <!-- Step label -->
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#a08d88;text-align:center;letter-spacing:.02em;line-height:1.5;" id="pwChangeSub">현재 비밀번호 1단계를 입력하세요</div>
     </div>
 
-    <!-- Input area -->
-    <div style="width:100%;position:relative;margin-bottom:8px;">
-      <input id="pwChangeInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-        style="width:100%;padding:16px 20px;background:rgba(255,255,255,.04);border:1px solid #353535;border-radius:12px;color:#e5e2e1;font-size:16px;font-family:'Space Grotesk',sans-serif;outline:none;letter-spacing:.05em;transition:border-color .2s;"
-        placeholder="" oninput="pwInputHandler()" onkeydown="pwKeydownHandler(event)">
-      <div style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:11px;color:#524340;font-family:'Space Grotesk',sans-serif;" id="pwCharCount"></div>
+    <!-- Step progress bar -->
+    <div style="width:100%;display:flex;gap:6px;margin-bottom:32px;">
+      <div style="flex:1;height:3px;border-radius:2px;background:#ffb4a2;transition:background .3s;" id="psd0"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#1e1e24;transition:background .3s;" id="psd1"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#1e1e24;transition:background .3s;" id="psd2"></div>
     </div>
-    <div style="font-size:11px;color:#FF3B00;font-family:'Space Grotesk',sans-serif;min-height:18px;margin-bottom:20px;" id="pwChangeError"></div>
+
+    <!-- Input card -->
+    <div style="width:100%;background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:18px;padding:24px;margin-bottom:8px;position:relative;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.2em;color:#524340;text-transform:uppercase;margin-bottom:10px;" id="pwInputLabel">입력</div>
+      <div style="position:relative;">
+        <input id="pwChangeInput" type="password" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false"
+          style="width:100%;padding:14px 52px 14px 18px;background:rgba(255,255,255,.03);border:1px solid #2a2a35;border-radius:12px;color:#e5e2e1;font-size:18px;font-family:'Space Grotesk',sans-serif;outline:none;letter-spacing:.08em;transition:border-color .25s,box-shadow .25s;"
+          oninput="pwInputHandler()" onkeydown="pwKeydownHandler(event)"
+          onfocus="this.style.borderColor='rgba(255,180,162,.4)';this.style.boxShadow='0 0 0 3px rgba(255,180,162,.06)'"
+          onblur="this.style.borderColor='#2a2a35';this.style.boxShadow='none'">
+        <!-- Eye toggle -->
+        <button onclick="pwToggleEye()" id="pwEyeBtn"
+          style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;line-height:1;color:#524340;transition:color .2s;padding:4px;"
+          title="비밀번호 보기">👁</button>
+        <!-- Char count -->
+        <div style="position:absolute;right:48px;top:50%;transform:translateY(-50%);font-size:10px;color:#352f2f;font-family:'Space Grotesk',sans-serif;letter-spacing:.05em;" id="pwCharCount"></div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div style="width:100%;min-height:20px;padding:0 4px;margin-bottom:24px;">
+      <div style="font-size:12px;color:#FF3B00;font-family:'Space Grotesk',sans-serif;letter-spacing:.04em;" id="pwChangeError"></div>
+    </div>
 
     <!-- Buttons -->
-    <div style="display:flex;gap:12px;width:100%;">
-      <button onclick="cancelPwChange()" style="flex:1;padding:14px;background:transparent;border:1px solid #353535;border-radius:10px;color:#a08d88;font-size:13px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:.2s;">취소</button>
-      <button onclick="pwNextStep()" id="pwNextBtn" style="flex:2;padding:14px;background:#ffb4a2;border:none;border-radius:10px;color:#360e05;font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:.2s;">다음 →</button>
+    <div style="display:flex;gap:10px;width:100%;">
+      <button onclick="cancelPwChange()"
+        style="flex:1;padding:15px;background:transparent;border:1px solid #1e1e24;border-radius:12px;color:#524340;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;"
+        onmouseover="this.style.borderColor='#353535';this.style.color='#a08d88'"
+        onmouseout="this.style.borderColor='#1e1e24';this.style.color='#524340'">취소</button>
+      <button onclick="pwNextStep()" id="pwNextBtn"
+        style="flex:2;padding:15px;background:linear-gradient(135deg,#ffb4a2,#ff8a6e);border:none;border-radius:12px;color:#360e05;font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;box-shadow:0 4px 20px rgba(255,100,70,.2);"
+        onmouseover="this.style.filter='brightness(1.08)';this.style.boxShadow='0 6px 28px rgba(255,100,70,.35)'"
+        onmouseout="this.style.filter='';this.style.boxShadow='0 4px 20px rgba(255,100,70,.2)'">다음 →</button>
     </div>
+
   </div>
 </div>
 
@@ -961,7 +997,7 @@ let pwNew=[null,null,null];
 let pwNewConfirm=[null,null,null];
 
 const PW_CONFIG=[
-  {title:'1단계 인증',sub:'영문·숫자 조합 최대 13자리',placeholder:'영문+숫자 입력',maxLen:13,type:'text',pattern:/^[a-zA-Z0-9]{1,13}$/,hint:'영문+숫자, 최대 13자'},
+  {title:'1단계 인증',sub:'영문·숫자·특수기호 최대 13자리',placeholder:'영문+숫자+특수기호 입력',maxLen:13,type:'text',pattern:/^.{1,13}$/,hint:'최대 13자'},
   {title:'2단계 인증',sub:'생년월일 6자리 숫자 (예: 990101)',placeholder:'YYMMDD',maxLen:6,type:'tel',pattern:/^[0-9]{6}$/,hint:'숫자 6자리'},
   {title:'3단계 인증',sub:'궁극적으로 만들고 싶은 것 (한글)',placeholder:'한글로 자유롭게 입력',maxLen:999,type:'text',pattern:null,hint:'글자 수 제한 없음'},
 ];
@@ -983,22 +1019,21 @@ function changePw(){
 function renderPwChange(){
   const cfg=PW_CONFIG[pwChangePhase];
   const modeTitle=pwChangeMode==='verify'?'현재 비밀번호 확인':pwChangeMode==='set'?'새 비밀번호 설정':'새 비밀번호 확인';
-  document.getElementById('pwChangeTitle').textContent=modeTitle+' — '+cfg.title;
+  document.getElementById('pwChangeTitle').textContent=modeTitle;
   document.getElementById('pwChangeSub').textContent=cfg.sub;
+  if(document.getElementById('pwInputLabel'))document.getElementById('pwInputLabel').textContent=cfg.title;
   const inp=document.getElementById('pwChangeInput');
   inp.value='';
-  inp.type=cfg.type;
-  inp.placeholder=cfg.placeholder;
-  inp.maxLength=cfg.maxLen===999?9999:cfg.maxLen;
-  inp.style.borderColor='#353535';
+  inp.type='password';
+  if(document.getElementById('pwEyeBtn'))document.getElementById('pwEyeBtn').style.color='#524340';
+  inp.style.borderColor='#2a2a35';
+  inp.style.boxShadow='none';
   document.getElementById('pwChangeError').textContent='';
   document.getElementById('pwCharCount').textContent=cfg.maxLen===999?'':('0/'+cfg.maxLen);
-  // Step dots
   for(let i=0;i<3;i++){
     const d=document.getElementById('psd'+i);
-    d.style.background=i<pwChangePhase?'#FF3B00':i===pwChangePhase?'#ffb4a2':'#353535';
+    if(d)d.style.background=i<pwChangePhase?'#FF3B00':i===pwChangePhase?'#ffb4a2':'#1e1e24';
   }
-  // Btn label
   const isLast=(pwChangePhase===2&&pwChangeMode==='confirm');
   document.getElementById('pwNextBtn').textContent=isLast?'변경 완료 ✓':'다음 →';
   setTimeout(()=>inp.focus(),50);
@@ -1066,7 +1101,13 @@ function showPwError(msg){
   setTimeout(()=>{inp.classList.remove('shake');inp.value='';pwInputHandler();},400);
 }
 function cancelPwChange(){document.getElementById('pwChangeOverlay').style.display='none';}
-window.changePw=changePw;window.cancelPwChange=cancelPwChange;
+function pwToggleEye(){
+  const inp=document.getElementById('pwChangeInput');
+  const btn=document.getElementById('pwEyeBtn');
+  if(inp.type==='password'){inp.type='text';btn.style.color='#ffb4a2';}
+  else{inp.type='password';btn.style.color='#524340';}
+}
+window.changePw=changePw;window.cancelPwChange=cancelPwChange;window.pwToggleEye=pwToggleEye;
 window.pwInputHandler=pwInputHandler;window.pwKeydownHandler=pwKeydownHandler;window.pwNextStep=pwNextStep;
 
 /* ===== Navigation ===== */
@@ -1113,7 +1154,7 @@ function showTextPin(cb){
   document.body.appendChild(overlay);
 
   const phases=[
-    {sub:'1단계: 영문·숫자 (최대 13자)',type:'text',key:'s1'},
+    {sub:'1단계: 영문·숫자·특수기호 (최대 13자)',type:'text',key:'s1'},
     {sub:'2단계: 생년월일 6자리',type:'tel',key:'s2'},
     {sub:'3단계: 궁극적으로 만들고 싶은 것',type:'text',key:'s3'},
   ];
