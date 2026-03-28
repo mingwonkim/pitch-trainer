@@ -815,13 +815,11 @@
 
     <div class="app-settings-section">
       <div class="app-settings-tag">Background</div>
-      <p class="text-xs text-outline mb-4 leading-relaxed">Add images to create the editorial background mosaic. They appear with automatic transparency.</p>
-      <div class="grid grid-cols-3 md:grid-cols-4 gap-3 mb-4" id="bgImageGrid"></div>
-      <div class="app-dropzone !py-5" id="bgDropZone" onclick="document.getElementById('bgFileInput').click()">
-        <span class="material-symbols-outlined text-xl mb-1 block text-outline/40">add_photo_alternate</span>
-        <div class="font-label text-xs text-outline/60 uppercase tracking-widest">Add Image</div>
-        <input type="file" id="bgFileInput" accept="image/*" multiple onchange="handleBgUpload(this.files)" style="display:none;">
+      <p class="text-xs text-outline mb-5 leading-relaxed">왼쪽·중앙·오른쪽 슬롯에 각각 사진을 지정합니다. 슬롯을 클릭해서 교체하세요.</p>
+      <div class="grid grid-cols-3 gap-3 mb-2" id="bgSlotGrid">
+        <!-- Slots rendered by JS -->
       </div>
+      <input type="file" id="bgSlotInput" accept="image/*" style="display:none;" onchange="handleBgSlotUpload(this.files)">
     </div>
 
     <div class="app-settings-section">
@@ -1309,60 +1307,104 @@ const BG_VERSION='v3';
 async function loadBgImages(){
   try{
     const snap=await getDoc(bgImagesDoc);
-    if(snap.exists()&&snap.data().ver===BG_VERSION&&snap.data().urls&&snap.data().urls.length){
-      bgImages=snap.data().urls;
+    if(snap.exists()&&snap.data().ver===BG_VERSION&&snap.data().slots){
+      bgImages=snap.data().slots; // array of 3: [url|null, url|null, url|null]
+    }else if(snap.exists()&&snap.data().ver===BG_VERSION&&snap.data().urls){
+      // migrate old format
+      const old=snap.data().urls.slice(0,3);
+      bgImages=[old[0]||null,old[1]||null,old[2]||null];
+      await setDoc(bgImagesDoc,{slots:bgImages,ver:BG_VERSION});
     }else{
-      bgImages=[...DEFAULT_BG];
-      await setDoc(bgImagesDoc,{urls:bgImages,ver:BG_VERSION});
+      bgImages=[null,null,null];
     }
-  }catch(e){bgImages=[...DEFAULT_BG];}
+  }catch(e){bgImages=[null,null,null];}
+  if(!Array.isArray(bgImages)||bgImages.length!==3)bgImages=[null,null,null];
 }
+
 function renderBgGrid(){
   const el=document.getElementById('bgGrid');
-  if(!bgImages.length){el.innerHTML='';return;}
-  el.innerHTML=bgImages.map(url=>`<div class="bg-cell"><img src="${url}" loading="lazy"></div>`).join('');
+  const filled=bgImages.filter(Boolean);
+  if(!filled.length){el.innerHTML='';return;}
+  el.innerHTML=filled.map(url=>`<div class="bg-cell"><img src="${url}" loading="lazy"></div>`).join('');
 }
+
+const SLOT_LABELS=['왼쪽','중앙','오른쪽'];
+let _bgEditingSlot=null;
+
 function renderBgImagesLocal(){
-  // renders from in-memory bgImages without re-fetching Firestore
-  const el=document.getElementById('bgImageGrid');
+  const el=document.getElementById('bgSlotGrid');
   if(!el)return;
-  if(!bgImages.length){el.innerHTML='<div class="col-span-full text-center text-xs text-outline py-6">No background images</div>';renderBgGrid();return;}
-  el.innerHTML=bgImages.map((url,i)=>`<div class="bg-thumb"><img src="${url}"><div class="bg-del" onclick="removeBgImage(${i})">✕</div></div>`).join('');
+  el.innerHTML=SLOT_LABELS.map((label,i)=>{
+    const url=bgImages[i];
+    return `<div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#a08d88;text-align:center;">${label}</div>
+      <div onclick="bgSlotClick(${i})" style="position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;cursor:pointer;border:1.5px solid ${url?'rgba(255,180,162,.3)':'#252525'};background:#0e0e0e;transition:all .2s;" class="bg-slot-card">
+        ${url
+          ?`<img src="${url}" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.8);">
+             <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;background:rgba(0,0,0,.6);transition:opacity .2s;" class="bg-slot-hover">
+               <span class="material-symbols-outlined" style="font-size:20px;color:#ffb4a2;">edit</span>
+               <span style="font-size:9px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-top:4px;">교체</span>
+             </div>`
+          :`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px;">
+               <span class="material-symbols-outlined" style="font-size:22px;color:#353535;">add_photo_alternate</span>
+               <span style="font-size:9px;color:#353535;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">추가</span>
+             </div>`
+        }
+      </div>
+      ${url?`<button onclick="bgSlotRemove(${i})" style="background:transparent;border:1px solid #252525;border-radius:8px;color:#a08d88;font-size:10px;font-family:'Space Grotesk',sans-serif;padding:6px;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;transition:.2s;" onmouseover="this.style.borderColor='#FF3B00';this.style.color='#FF3B00'" onmouseout="this.style.borderColor='#252525';this.style.color='#a08d88'">삭제</button>`:'<div></div>'}
+    </div>`;
+  }).join('');
+
+  // hover effect
+  document.querySelectorAll('.bg-slot-card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{const h=el.querySelector('.bg-slot-hover');if(h)h.style.opacity='1';});
+    el.addEventListener('mouseleave',()=>{const h=el.querySelector('.bg-slot-hover');if(h)h.style.opacity='0';});
+  });
+
   renderBgGrid();
 }
+
+function bgSlotClick(i){
+  _bgEditingSlot=i;
+  document.getElementById('bgSlotInput').click();
+}
+window.bgSlotClick=bgSlotClick;
+
+async function bgSlotRemove(i){
+  if(!confirm(SLOT_LABELS[i]+' 사진을 삭제할까요?'))return;
+  // delete from storage if possible
+  if(bgImages[i]){try{const path=bgImages[i];/* can't get path from URL easily, skip storage delete */}catch(e){}}
+  bgImages[i]=null;
+  try{await setDoc(bgImagesDoc,{slots:bgImages,ver:BG_VERSION});}catch(e){}
+  renderBgImagesLocal();
+}
+window.bgSlotRemove=bgSlotRemove;
+
+async function handleBgSlotUpload(fl){
+  const f=fl[0];
+  if(!f||_bgEditingSlot===null)return;
+  if(!f.type.startsWith('image/')){toast('이미지 파일만 가능합니다');return;}
+  if(f.size>10*1024*1024){toast('최대 10MB');return;}
+  try{
+    const fid='bg_'+Date.now()+'_s'+_bgEditingSlot;
+    const fr=sRef(stg,'mk_bg/'+fid+'_'+f.name);
+    toast('업로드 중...');
+    await uploadBytes(fr,f);
+    const url=await getDownloadURL(fr);
+    bgImages[_bgEditingSlot]=url;
+    await setDoc(bgImagesDoc,{slots:bgImages,ver:BG_VERSION});
+    toast(SLOT_LABELS[_bgEditingSlot]+' 사진이 설정됐습니다');
+  }catch(e){console.error('BG upload error:',e);toast('업로드 실패: '+e.code);}
+  document.getElementById('bgSlotInput').value='';
+  _bgEditingSlot=null;
+  renderBgImagesLocal();
+}
+window.handleBgSlotUpload=handleBgSlotUpload;
+
 async function renderBgImages(){
   await loadBgImages();
   renderBgImagesLocal();
 }
-async function handleBgUpload(fl){
-  for(const f of Array.from(fl)){
-    if(!f.type.startsWith('image/')){toast('Images only');continue;}
-    if(f.size>10*1024*1024){toast('Max 10MB');continue;}
-    try{
-      const fid='bg_'+Date.now()+'_'+Math.random().toString(36).substr(2,4);
-      const fr=sRef(stg,'mk_bg/'+fid+'_'+f.name);
-      toast('Uploading...');
-      await uploadBytes(fr,f);const url=await getDownloadURL(fr);
-      bgImages.push(url);
-      await setDoc(bgImagesDoc,{urls:bgImages,ver:BG_VERSION});
-      toast('Image added');
-    }catch(e){console.error('BG upload error:',e);toast('Upload failed: '+e.code);}
-  }
-  renderBgImagesLocal();
-}
-window.handleBgUpload=handleBgUpload;
-async function removeBgImage(i){
-  if(!confirm('Delete this background image?'))return;
-  bgImages.splice(i,1);
-  try{await setDoc(bgImagesDoc,{urls:bgImages,ver:BG_VERSION});}catch(e){}
-  renderBgImagesLocal();
-}
-window.removeBgImage=removeBgImage;
-// Settings bg drop zone
-setTimeout(()=>{
-  const bdz=document.getElementById('bgDropZone');
-  if(bdz){bdz.addEventListener('dragover',e=>{e.preventDefault();bdz.classList.add('over');});bdz.addEventListener('dragleave',()=>bdz.classList.remove('over'));bdz.addEventListener('drop',e=>{e.preventDefault();bdz.classList.remove('over');handleBgUpload(e.dataTransfer.files);});}
-},100);
 
 /* ===== Music ===== */
 function openMusicApp(a){
