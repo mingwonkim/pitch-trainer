@@ -484,7 +484,7 @@
 <script>
 function sendHeight(){
   var h=document.documentElement.scrollHeight||document.body.scrollHeight;
-  window.parent.postMessage({type:'iframe_height',id:'p4Frame',value:h},'*');
+  window.parent.postMessage({type:'iframe_height',id:'p4Frame',value:h-120},'*');
 }
 if(window.ResizeObserver){new ResizeObserver(sendHeight).observe(document.body);}
 window.addEventListener('load',sendHeight);
