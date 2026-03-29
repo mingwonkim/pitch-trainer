@@ -16,16 +16,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>
 
-/* ===== Scroll BG Transition ===== */
-#scroll-bg-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  transition: background-color 1.4s ease, opacity 1.4s ease;
-  background-color: transparent;
-  opacity: 0;
-}
 .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
 #pwChangeInputKorean,#tpInputKorean{outline:none !important;box-shadow:none !important;border:none !important;-webkit-appearance:none;}
 .hide-scrollbar::-webkit-scrollbar{display:none;}.hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}
@@ -1203,7 +1193,7 @@ function setPage(p){
 }
 function goHub(){setPage('hub');}
 function openApp(a){
-  if(a==='settings'&&!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');setTimeout(()=>showTextPin(()=>doOpenApp(a)),400);return;}
+  if(a==='settings'&&!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');showTextPin(()=>doOpenApp(a));return;}
   doOpenApp(a);
 }
 
@@ -1819,7 +1809,7 @@ function openMemoFolder(id){
   const f=cachedMemoFolders.find(x=>x.id===id);
   if(f?.locked){
     toast('비밀번호 해제 후 이용 가능합니다');
-    setTimeout(()=>showTextPin(()=>_doOpenMemoFolder(id)),400);
+    showTextPin(()=>_doOpenMemoFolder(id));
     return;
   }
   _doOpenMemoFolder(id);
@@ -1901,7 +1891,7 @@ function openFileFolder(id){
   const f=cachedFileFolders.find(x=>x.id===id);
   if(f?.locked){
     toast('비밀번호 해제 후 이용 가능합니다');
-    setTimeout(()=>showTextPin(()=>_doOpenFileFolder(id)),400);
+    showTextPin(()=>_doOpenFileFolder(id));
     return;
   }
   _doOpenFileFolder(id);
@@ -2198,49 +2188,44 @@ renderGallery();
 
 
 
-<div id="scroll-bg-overlay"></div>
+
+<div id="scroll-bg-overlay" style="position:fixed;inset:0;z-index:0;pointer-events:none;background-color:#e8e0d0;opacity:0;transition:opacity 1.2s ease;background-image:url('data:image/svg+xml,%3Csvg viewBox=%270 0 256 256%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cfilter id=%27g%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.68%27 numOctaves=%274%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23g)%27 opacity=%270.22%27/%3E%3C/svg%3E');background-size:256px 256px;"></div>
 <script>
 (function(){
   var overlay = document.getElementById('scroll-bg-overlay');
-  var grain_url = "data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.68' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.25'/%3E%3C/svg%3E";
+  var active = false;
 
-  var zones = [
-    { id:'edLayoutFrame', color:'#131313', opacity:0, grain:false },
-    { id:'mbFrame',       color:'#e8e0d0', opacity:0.92, grain:true },
-    { id:'p5Frame',       color:'#131313', opacity:0, grain:false },
-  ];
+  function check() {
+    var mbFrame = document.getElementById('mbFrame');
+    var p5Frame = document.getElementById('p5Frame');
+    if (!mbFrame || !p5Frame) return;
 
-  function applyZone(zone) {
-    if (zone.opacity === 0) {
+    var scrollY = window.scrollY || window.pageYOffset;
+    var winH = window.innerHeight;
+
+    var mbTop = mbFrame.getBoundingClientRect().top + scrollY;
+    var mbBot = mbFrame.getBoundingClientRect().bottom + scrollY;
+    var p5Top = p5Frame.getBoundingClientRect().top + scrollY;
+
+    var viewTop = scrollY;
+    var viewBot = scrollY + winH;
+
+    // 3picture(mbFrame) 구간에 들어오면 베이지 on
+    var inBeige = viewBot > mbTop + 100 && viewTop < p5Top - 100;
+
+    if (inBeige && !active) {
+      overlay.style.opacity = '0.9';
+      active = true;
+    } else if (!inBeige && active) {
       overlay.style.opacity = '0';
-    } else {
-      overlay.style.backgroundColor = zone.color;
-      overlay.style.backgroundImage = zone.grain ? 'url("' + grain_url + '")' : 'none';
-      overlay.style.backgroundSize = '256px 256px';
-      overlay.style.mixBlendMode = 'normal';
-      overlay.style.opacity = String(zone.opacity);
+      active = false;
     }
   }
 
-  var obs = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) {
-      if (!e.isIntersecting) return;
-      var zone = zones.find(function(z){ return z.id === e.target.id; });
-      if (zone) applyZone(zone);
-    });
-  }, { threshold: 0.05 });
-
-  function init() {
-    zones.forEach(function(z) {
-      var el = document.getElementById(z.id);
-      if (el) obs.observe(el);
-    });
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  window.addEventListener('scroll', check, {passive:true});
+  window.addEventListener('resize', check, {passive:true});
+  // 높이 변화 대응
+  setInterval(check, 500);
 })();
 </script>
 </body>
