@@ -98,34 +98,7 @@
 .icon-picker h3{font-size:16px;font-weight:700;margin-bottom:10px;color:#e5e2e1;}
 .icon-picker .icon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:14px;max-height:240px;overflow-y:auto;}
 .icon-picker .icon-opt{padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;transition:.15s;border:1.5px solid transparent;}.icon-picker .icon-opt:hover{background:#252525;border-color:rgba(255,180,162,.2);}.icon-picker .icon-opt.sel{border-color:#ffb4a2;background:rgba(255,180,162,.08);}
-.music-frame{
-  position:fixed;
-  top:var(--nav-h,64px);
-  left:0;right:0;bottom:0;
-  width:100%;
-  height:calc(100vh - var(--nav-h,64px));
-  border:none;
-  background:#08080e;
-  z-index:200;
-}
-.music-app-back{
-  position:fixed;
-  top:calc(var(--nav-h,64px) + 12px);
-  left:16px;
-  z-index:201;
-  display:flex;align-items:center;gap:7px;
-  padding:7px 16px;
-  background:rgba(14,14,14,.88);
-  backdrop-filter:blur(12px);
-  border:1px solid #353535;
-  border-radius:9999px;
-  color:#ffb4a2;
-  font-family:'Space Grotesk',sans-serif;
-  font-size:11px;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;
-  cursor:pointer;transition:.2s;
-}
-.music-app-back:hover{border-color:#ffb4a2;}
+.music-frame{flex:1;border:none;border-radius:12px;min-height:85vh;background:#1c1b1b;}
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#FF3B00;color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}.toast.show{opacity:1;}
 /* ===== NEW PIN OVERLAY ===== */
 .pin-overlay{position:fixed;inset:0;background:#0a0a0e;z-index:9990;display:grid;grid-template-columns:1fr 1fr 1fr;overflow:hidden;}
@@ -726,7 +699,11 @@
       </div>
     </div>
 
-    <!-- Pitch trainer: full-screen overlay (handled outside container) -->
+    <!-- Pitch trainer iframe -->
+    <div id="musicAppView" style="display:none;flex:1;flex-direction:column;">
+      <div class="mb-5"><button class="app-ghost-btn" onclick="closeMusicApp()">← 목록</button></div>
+      <iframe class="music-frame" id="musicFrame" style="flex:1;"></iframe>
+    </div>
 
     <!-- Music Notes -->
     <div id="musicNotesView" style="display:none;">
@@ -1435,7 +1412,7 @@ function openMusicApp(a){
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
   if(a==='pitch'){
-    document.getElementById('musicAppView').style.display='block';
+    document.getElementById('musicAppView').style.display='flex';
     document.getElementById('musicFrame').src='pitch-trainer.html';
   }else if(a==='notes'){
     document.getElementById('musicNotesView').style.display='';
@@ -1532,42 +1509,46 @@ async function getYTKey(){
   return '';
 }
 
-// Invidious 무료 인스턴스 목록 (API 키 불필요)
-const INVIDIOUS=[
+// Invidious 무료 인스턴스 (API 키 불필요)
+const INVIDIOUS_HOSTS=[
+  'https://inv.tux.pizza',
   'https://yt.artemislena.eu',
   'https://invidious.tiekoetter.com',
-  'https://inv.tux.pizza',
 ];
-async function fetchVideoIdFree(title,artist){
-  const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
-  for(const base of INVIDIOUS){
-    try{
-      const res=await fetch(`${base}/api/v1/search?q=${q}&type=video&fields=videoId,title&page=1`,{signal:AbortSignal.timeout(4000)});
-      if(!res.ok)continue;
-      const data=await res.json();
-      if(Array.isArray(data)&&data.length>0&&data[0].videoId)return data[0].videoId;
-    }catch(e){continue;}
-  }
-  return null;
-}
 
 async function fetchYTVideoId(title,artist){
   const key=await getYTKey();
   if(!key)return null;
-  const q=encodeURIComponent((title||'')+(artist?' '+artist:''));
+  const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
   try{
     const res=await fetch(
       `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${key}`,
       {signal:AbortSignal.timeout(6000)}
     );
     if(!res.ok){
-      const err=await res.json().catch(()=>({}));
-      toast('YT API: '+(err?.error?.message||'error').substring(0,40));
+      // 리퍼러 오류 등 — 토스트 없이 조용히 null 반환해서 Invidious로 넘어감
+      console.warn('YT API failed:',res.status);
       return null;
     }
     const data=await res.json();
     if(data.items&&data.items.length>0)return data.items[0].id.videoId;
-  }catch(e){console.error('YT API error:',e);}
+  }catch(e){console.warn('YT API error:',e);}
+  return null;
+}
+
+async function fetchVideoIdFree(title,artist){
+  const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
+  for(const host of INVIDIOUS_HOSTS){
+    try{
+      const res=await fetch(
+        `${host}/api/v1/search?q=${q}&type=video&fields=videoId,title&page=1`,
+        {signal:AbortSignal.timeout(5000)}
+      );
+      if(!res.ok)continue;
+      const data=await res.json();
+      if(Array.isArray(data)&&data.length>0&&data[0].videoId)return data[0].videoId;
+    }catch(e){continue;}
+  }
   return null;
 }
 
@@ -1584,8 +1565,7 @@ async function openFavDetail(id){
     <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#524340;letter-spacing:.12em;text-transform:uppercase;">검색 중…</div>
   </div>`;
 
-  // 1순위: YouTube Data API
-  // 2순위: Invidious 무료 API
+  // 1순위: YouTube Data API → 2순위: Invidious 무료 API → 3순위: 버튼 폴백
   let videoId = await fetchYTVideoId(s.title, s.artist);
   if(!videoId) videoId = await fetchVideoIdFree(s.title, s.artist);
 
@@ -1606,17 +1586,17 @@ async function openFavDetail(id){
 }
 
 function showYTFallback(wrap,title,artist){
-  // 직접 watch URL — 검색 후 첫 번째 결과로 바로 이동하는 가장 정확한 쿼리
+  // sp=EgIQAQ%3D%3D 는 '동영상' 필터 — 검색결과에서 동영상만 표시
   const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
-  const watchUrl=`https://www.youtube.com/results?search_query=${q}&sp=EgIQAQ%3D%3D`; // 동영상 필터
+  const watchUrl=`https://www.youtube.com/results?search_query=${q}&sp=EgIQAQ%3D%3D`;
   wrap.innerHTML=`
     <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:linear-gradient(135deg,#0e0e14,#181820);padding:24px;text-align:center;">
       <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,59,0,.12);border:1.5px solid rgba(255,59,0,.25);display:flex;align-items:center;justify-content:center;">
         <span style="font-size:22px;color:#FF3B00;">▶</span>
       </div>
       <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:800;color:#e5e2e1;">${title||''}</div>
-      <div style="font-family:'Inter',sans-serif;font-size:12px;color:#a08d88;">${artist||''}</div>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#524340;letter-spacing:.1em;text-transform:uppercase;line-height:1.7;">서버 연결 실패<br>아래 버튼으로 YouTube에서 직접 재생</div>
+      <div style="font-family:'Inter',sans-serif;font-size:12px;color:#a08d88;margin-top:-8px;">${artist||''}</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#524340;letter-spacing:.08em;text-transform:uppercase;line-height:1.7;">자동 검색 실패<br>아래 버튼으로 YouTube에서 직접 재생하세요</div>
       <a href="${watchUrl}" target="_blank"
         style="display:inline-flex;align-items:center;gap:8px;padding:13px 30px;background:#FF3B00;color:#fff;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;">
         ▶ YouTube 바로 재생
@@ -1884,13 +1864,6 @@ async function rmFile(id){if(!confirm('Delete this file?'))return;const f=cached
 window.dlFile=dlFile;window.rmFile=rmFile;
 
 /* ===== Init ===== */
-// nav 높이를 CSS 변수로 설정해서 iframe top 위치 정확하게 맞춤
-function setNavHeight(){
-  const nav=document.querySelector('nav.fixed.top-0');
-  if(nav)document.documentElement.style.setProperty('--nav-h',nav.offsetHeight+'px');
-}
-setNavHeight();
-window.addEventListener('resize',setNavHeight);
 loadBgImages().then(()=>renderBgGrid());
 // Hub storage bar
 async function updateHubStorage(){
@@ -2102,11 +2075,5 @@ renderGallery();
   onScroll();
 })();
 </script>
-<!-- Music App Full-Screen Overlay -->
-<div id="musicAppView" style="display:none;">
-  <button class="music-app-back" onclick="closeMusicApp()">← 목록</button>
-  <iframe class="music-frame" id="musicFrame"></iframe>
-</div>
-
 </body>
 </html>
