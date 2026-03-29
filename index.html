@@ -1509,47 +1509,90 @@ async function getYTKey(){
   return '';
 }
 
-// Invidious 무료 인스턴스 (API 키 불필요)
+// ── YouTube 재생 ── 4단계 폴백 ──────────────────────────
+// 1. YouTube Data API (키 있을 때, 리퍼러 제한 없음으로 설정 필요)
+// 2. Invidious 무료 API
+// 3. CORS 프록시로 YouTube 검색결과 HTML 파싱 → videoId 추출
+// 4. listType=search embed (항상 작동, API 완전 불필요)
+
 const INVIDIOUS_HOSTS=[
   'https://inv.tux.pizza',
   'https://yt.artemislena.eu',
   'https://invidious.tiekoetter.com',
 ];
 
-async function fetchYTVideoId(title,artist){
-  const key=await getYTKey();
-  if(!key)return null;
+// 1순위: YouTube Data API
+async function fetchVidByAPI(title,artist){
+  const key=await getYTKey();if(!key)return null;
   const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
   try{
-    const res=await fetch(
+    const r=await fetch(
       `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${key}`,
       {signal:AbortSignal.timeout(6000)}
     );
-    if(!res.ok){
-      // 리퍼러 오류 등 — 토스트 없이 조용히 null 반환해서 Invidious로 넘어감
-      console.warn('YT API failed:',res.status);
-      return null;
-    }
-    const data=await res.json();
-    if(data.items&&data.items.length>0)return data.items[0].id.videoId;
-  }catch(e){console.warn('YT API error:',e);}
-  return null;
+    if(!r.ok){console.warn('YT API:',r.status);return null;}
+    const d=await r.json();
+    return d.items?.[0]?.id?.videoId||null;
+  }catch(e){console.warn('YT API err',e);return null;}
 }
 
-async function fetchVideoIdFree(title,artist){
+// 2순위: Invidious 무료 API
+async function fetchVidByInvidious(title,artist){
   const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
   for(const host of INVIDIOUS_HOSTS){
     try{
-      const res=await fetch(
-        `${host}/api/v1/search?q=${q}&type=video&fields=videoId,title&page=1`,
-        {signal:AbortSignal.timeout(5000)}
-      );
-      if(!res.ok)continue;
-      const data=await res.json();
-      if(Array.isArray(data)&&data.length>0&&data[0].videoId)return data[0].videoId;
+      const r=await fetch(`${host}/api/v1/search?q=${q}&type=video&fields=videoId&page=1`,
+        {signal:AbortSignal.timeout(4000)});
+      if(!r.ok)continue;
+      const d=await r.json();
+      if(Array.isArray(d)&&d[0]?.videoId)return d[0].videoId;
     }catch(e){continue;}
   }
   return null;
+}
+
+// 3순위: CORS 프록시로 YouTube HTML 파싱
+async function fetchVidByScrape(title,artist){
+  const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
+  const target=`https://www.youtube.com/results?search_query=${q}`;
+  const proxies=[
+    `https://api.allorigins.win/get?url=${encodeURIComponent(target)}`,
+    `https://corsproxy.io/?${encodeURIComponent(target)}`,
+  ];
+  for(const proxy of proxies){
+    try{
+      const r=await fetch(proxy,{signal:AbortSignal.timeout(6000)});
+      if(!r.ok)continue;
+      let html='';
+      if(proxy.includes('allorigins')){const d=await r.json();html=d.contents||'';}
+      else{html=await r.text();}
+      // ytInitialData 안에서 첫 번째 videoId 추출
+      const m=html.match(/"videoId":"([a-zA-Z0-9_-]{11})"/);
+      if(m&&m[1])return m[1];
+    }catch(e){continue;}
+  }
+  return null;
+}
+
+// iframe embed 공통 함수
+function doEmbed(wrap,videoId){
+  wrap.innerHTML=`<iframe
+    src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+    style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+}
+
+// 4순위: listType=search embed (API 불필요, 항상 작동)
+function doEmbedSearch(wrap,title,artist){
+  const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
+  wrap.innerHTML=`<iframe
+    src="https://www.youtube.com/embed?listType=search&list=${q}&rel=0&modestbranding=1"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+    style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
 }
 
 async function openFavDetail(id){
@@ -1560,49 +1603,25 @@ async function openFavDetail(id){
   document.getElementById('favDetailArtist').textContent=s.artist||'';
   const wrap=document.getElementById('favDetailFrame').parentElement;
 
-  wrap.innerHTML=`<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(135deg,#0e0e14,#181820);">
+  wrap.innerHTML=`<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#0e0e14;">
     <div style="width:32px;height:32px;border:2px solid #252525;border-top-color:#ffb4a2;border-radius:50%;animation:spin .8s linear infinite;"></div>
     <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#524340;letter-spacing:.12em;text-transform:uppercase;">검색 중…</div>
   </div>`;
 
-  // 1순위: YouTube Data API → 2순위: Invidious 무료 API → 3순위: 버튼 폴백
-  let videoId = await fetchYTVideoId(s.title, s.artist);
-  if(!videoId) videoId = await fetchVideoIdFree(s.title, s.artist);
+  // 순서대로 시도
+  let vid = await fetchVidByAPI(s.title, s.artist);
+  if(!vid) vid = await fetchVidByInvidious(s.title, s.artist);
+  if(!vid) vid = await fetchVidByScrape(s.title, s.artist);
 
-  if(videoId){
-    wrap.innerHTML=`<iframe id="favDetailFrame"
-      src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowfullscreen
-      style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
-  }else{
-    showYTFallback(wrap,s.title,s.artist);
-  }
+  if(vid){ doEmbed(wrap, vid); }
+  else{ doEmbedSearch(wrap, s.title, s.artist); } // 항상 재생됨
 
   const reasonEl=document.getElementById('favDetailReason');
   if(s.reason){reasonEl.style.display='';reasonEl.innerHTML=`<span class="fav-reason-label">이유</span>${s.reason}`;}
   else{reasonEl.style.display='none';}
 }
 
-function showYTFallback(wrap,title,artist){
-  // sp=EgIQAQ%3D%3D 는 '동영상' 필터 — 검색결과에서 동영상만 표시
-  const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
-  const watchUrl=`https://www.youtube.com/results?search_query=${q}&sp=EgIQAQ%3D%3D`;
-  wrap.innerHTML=`
-    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:linear-gradient(135deg,#0e0e14,#181820);padding:24px;text-align:center;">
-      <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,59,0,.12);border:1.5px solid rgba(255,59,0,.25);display:flex;align-items:center;justify-content:center;">
-        <span style="font-size:22px;color:#FF3B00;">▶</span>
-      </div>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:800;color:#e5e2e1;">${title||''}</div>
-      <div style="font-family:'Inter',sans-serif;font-size:12px;color:#a08d88;margin-top:-8px;">${artist||''}</div>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#524340;letter-spacing:.08em;text-transform:uppercase;line-height:1.7;">자동 검색 실패<br>아래 버튼으로 YouTube에서 직접 재생하세요</div>
-      <a href="${watchUrl}" target="_blank"
-        style="display:inline-flex;align-items:center;gap:8px;padding:13px 30px;background:#FF3B00;color:#fff;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;">
-        ▶ YouTube 바로 재생
-      </a>
-    </div>`;
-}
+
 
 function closeFavDetail(){
   const wrap=document.getElementById('favDetailFrame');
