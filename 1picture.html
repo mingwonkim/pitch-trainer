@@ -343,7 +343,7 @@
   }
 </style>
 </head>
-<body>
+<body style="transform:scale(0.9);transform-origin:top left;width:111.11%;">
 
 <button id="ed-edit-btn"
   style="display:none;position:sticky;top:12px;float:right;z-index:9999;
@@ -535,7 +535,7 @@
   function sendH(){
     var el = document.getElementById("editorialLayout") || document.body;
     var h = el.getBoundingClientRect().height || el.offsetHeight;
-    window.parent.postMessage({type:'iframe_height',id:'edLayoutFrame',value:h},'*');
+    window.parent.postMessage({type:'iframe_height',id:'edLayoutFrame',value:h-200},'*');
   }
   if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
   window.addEventListener('load', sendH);
