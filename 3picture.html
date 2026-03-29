@@ -542,7 +542,7 @@ CMYK: 0 83 62 72</div>
     const btn = document.getElementById('mb-edit-btn');
     // 파일 업로드 버튼
     document.querySelectorAll('.upload-btn').forEach(b => {
-      b.style.display = mbEditMode ? '' : 'none';
+      b.style.display = mbEditMode ? 'block' : 'none';
     });
     // contenteditable
     document.querySelectorAll('[contenteditable]').forEach(el => {

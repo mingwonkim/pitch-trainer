@@ -56,14 +56,17 @@
     /* === PHOTO EDITOR STYLES === */
     .photo-slot {
         position: relative;
-        cursor: pointer;
+        cursor: default;
         transition: outline 0.15s ease;
     }
-    .photo-slot:hover {
+    .photo-slot.edit-active {
+        cursor: pointer;
+    }
+    .photo-slot.edit-active:hover {
         outline: 3px solid #b91d20;
         outline-offset: 2px;
     }
-    .photo-slot:hover .photo-overlay {
+    .photo-slot.edit-active:hover .photo-overlay {
         opacity: 1;
     }
     .photo-overlay {
@@ -193,9 +196,9 @@
 
 <!-- LEFT MARGIN ANNOTATIONS -->
 <aside class="fixed left-4 top-1/4 h-fit hidden lg:flex flex-col gap-12 text-[10px] tracking-[0.3em] font-bold text-outline-variant vertical-text z-40">
-    <span>ISSUE 01</span>
-    <span>WINTER 2024</span>
-    <span>EDITORIAL FOCUS</span>
+    <span contenteditable="false">ISSUE 01</span>
+    <span contenteditable="false">WINTER 2024</span>
+    <span contenteditable="false">EDITORIAL FOCUS</span>
 </aside>
 
 <!-- HEADER / TOP NAV -->
@@ -240,21 +243,21 @@
                     </div>
                     <img id="img-1" class="w-full aspect-square object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqXWJInjce4HplbGB9WeeP2vg83Pkjt2mLMhRAACrScfq-TRhf6g4PMPej35AFYVRqk2o0U2y8LYCdSJvRrdIq1tCeExUG_a73EqaN4lbY6JSPa5j0N4Ck79Qqtso_OClD8GD2kPbx2Qi8qLZbNbMKvJDvziUYb8yTs1AN66QYpqusQv-FQrReQPZ5gHvS4Yuj-4SjMZCbZjUbL_Cdy7EDy7KACHSF2l9TN4QILT4bC8PwEJMpGFsQEuDBKDcMOoNDjUDZbapnAPY"/>
                 </div>
-                <div class="pt-4 font-handwritten text-on-surface/80 text-xl leading-none">
+                <div class="pt-4 font-handwritten text-on-surface/80 text-xl leading-none" contenteditable="false">
                     Evening in Paris
                 </div>
             </div>
-            <div class="absolute -right-4 -top-4 font-handwritten text-primary text-3xl rotate-12">RAW</div>
+            <div class="absolute -right-4 -top-4 font-handwritten text-primary text-3xl rotate-12" contenteditable="false">RAW</div>
         </div>
 
         <!-- Item 3: Deep Red Block -->
         <div class="col-span-12 md:col-span-5 bg-[#470C0D] p-8 md:p-12 text-white relative flex flex-col justify-center min-h-[400px]">
             <div class="absolute top-4 right-4 text-xs font-mono opacity-40">01 / 24</div>
-            <h2 class="text-4xl font-headline font-black uppercase mb-6 leading-none">Texture Overlays</h2>
+            <h2 class="text-4xl font-headline font-black uppercase mb-6 leading-none" contenteditable="false">Texture Overlays</h2>
             <div class="flex items-center gap-4 mb-8">
-                <span class="font-mono text-xs border border-white/30 px-2 py-1 uppercase">London</span>
+                <span class="font-mono text-xs border border-white/30 px-2 py-1 uppercase" contenteditable="false">London</span>
                 <span class="material-symbols-outlined text-white/50">trending_flat</span>
-                <span class="font-mono text-xs border border-white/30 px-2 py-1 uppercase">Paris</span>
+                <span class="font-mono text-xs border border-white/30 px-2 py-1 uppercase" contenteditable="false">Paris</span>
             </div>
             <p class="text-sm font-light leading-relaxed opacity-80 mb-8">
                 The intersection of geography and grain. We trace the lineage of the ephemeral from urban decay to high-fashion brutality.
@@ -292,18 +295,18 @@
                 <ul class="space-y-3">
                     <li class="flex items-center gap-2">
                         <span class="w-1.5 h-1.5 bg-primary rounded-none"></span>
-                        <span class="text-xs font-bold uppercase tracking-tighter">Color Grading</span>
+                        <span class="text-xs font-bold uppercase tracking-tighter" contenteditable="false">Color Grading</span>
                     </li>
                     <li class="flex items-center gap-2">
                         <span class="w-1.5 h-1.5 bg-on-surface rounded-none"></span>
-                        <span class="text-xs font-bold uppercase tracking-tighter">Print specs</span>
+                        <span class="text-xs font-bold uppercase tracking-tighter" contenteditable="false">Print specs</span>
                     </li>
                     <li class="flex items-center gap-2">
                         <span class="w-1.5 h-1.5 bg-on-surface/20 rounded-none"></span>
-                        <span class="text-xs font-bold uppercase tracking-tighter">Masthead V2</span>
+                        <span class="text-xs font-bold uppercase tracking-tighter" contenteditable="false">Masthead V2</span>
                     </li>
                 </ul>
-                <div class="mt-8 font-handwritten text-primary text-3xl opacity-60">NOSTALGIC</div>
+                <div class="mt-8 font-handwritten text-primary text-3xl opacity-60" contenteditable="false">NOSTALGIC</div>
             </div>
         </div>
 
@@ -328,7 +331,7 @@
         <!-- Floating Notes -->
         <div class="absolute right-4 bottom-24 hidden lg:block">
             <div class="p-4 bg-yellow-50/80 shadow-md -rotate-6 max-w-[180px] border-l-4 border-yellow-200">
-                <p class="font-handwritten text-sm text-on-surface/70">Ensure all print artifacts are scanned at 1200 DPI. No exceptions.</p>
+                <p class="font-handwritten text-sm text-on-surface/70" contenteditable="false">Ensure all print artifacts are scanned at 1200 DPI. No exceptions.</p>
             </div>
         </div>
 
@@ -468,10 +471,10 @@
       if (p4EditMode) {
         const slot = el.getAttribute('data-slot-click');
         el.onclick = () => openFilePicker(parseInt(slot));
-        el.style.cursor = 'pointer';
+        el.classList.add('edit-active');
       } else {
         el.onclick = null;
-        el.style.cursor = 'default';
+        el.classList.remove('edit-active');
       }
     });
     document.querySelectorAll('[contenteditable]').forEach(el => {
