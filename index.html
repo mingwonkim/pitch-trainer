@@ -752,6 +752,7 @@
         <div class="app-editor-label">New Song</div>
         <input type="text" class="mk-input" id="favSongTitle" placeholder="노래 제목">
         <input type="text" class="mk-input" id="favSongArtist" placeholder="가수 / 아티스트">
+        <input type="url" class="mk-input" id="favSongYtUrl" placeholder="YouTube URL (선택) — 붙여넣으면 바로 재생" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
         <textarea class="mk-textarea !min-h-[110px]" id="favSongReason" placeholder="이 노래를 좋아하는 이유…"></textarea>
         <div class="flex gap-3">
           <button class="app-action-btn" onclick="saveFavSong()"><span class="material-symbols-outlined text-base">save</span> Save</button>
@@ -1509,40 +1510,59 @@ async function getYTKey(){
   return '';
 }
 
-// ── YouTube 재생 ── 4단계 폴백 ──────────────────────────
-// 1. YouTube Data API (키 있을 때, 리퍼러 제한 없음으로 설정 필요)
-// 2. Invidious 무료 API
-// 3. CORS 프록시로 YouTube 검색결과 HTML 파싱 → videoId 추출
-// 4. listType=search embed (항상 작동, API 완전 불필요)
+async function fetchYTVideoId(title,artist){
+  const key=await getYTKey();
+  if(!key)return null;
+  const q=encodeURIComponent((title||'')+(artist?' '+artist:''));
+  try{
+    const res=await fetch(
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${key}`,
+      {method:'GET'}
+    );
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      const msg=err?.error?.message||'API error '+res.status;
+      toast('YT API: '+msg.substring(0,40));
+      return null;
+    }
+    const data=await res.json();
+    if(data.items&&data.items.length>0)return data.items[0].id.videoId;
+    toast('검색 결과 없음');
+  }catch(e){
+    // file:// 환경에서는 CORS로 차단됨 — GitHub Pages에서는 정상 작동
+    toast('GitHub Pages에서 실행하면 재생됩니다');
+    console.error('YT fetch error:',e);
+  }
+  return null;
+}
 
-const INVIDIOUS_HOSTS=[
-  'https://inv.tux.pizza',
-  'https://yt.artemislena.eu',
-  'https://invidious.tiekoetter.com',
-];
+// YouTube URL → videoId 파싱
+function parseVideoId(url){
+  if(!url)return null;
+  url=url.trim();
+  let m=url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);if(m)return m[1];
+  m=url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);if(m)return m[1];
+  m=url.match(/embed\/([a-zA-Z0-9_-]{11})/);if(m)return m[1];
+  m=url.match(/^([a-zA-Z0-9_-]{11})$/);if(m)return m[1];
+  return null;
+}
 
-// 1순위: YouTube Data API
+// ── 폴백 체인 ──
+const INVIDIOUS_HOSTS=['https://inv.tux.pizza','https://yt.artemislena.eu','https://invidious.tiekoetter.com'];
 async function fetchVidByAPI(title,artist){
   const key=await getYTKey();if(!key)return null;
   const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
   try{
-    const r=await fetch(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${key}`,
-      {signal:AbortSignal.timeout(6000)}
-    );
+    const r=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${key}`,{signal:AbortSignal.timeout(6000)});
     if(!r.ok){console.warn('YT API:',r.status);return null;}
-    const d=await r.json();
-    return d.items?.[0]?.id?.videoId||null;
-  }catch(e){console.warn('YT API err',e);return null;}
+    const d=await r.json();return d.items?.[0]?.id?.videoId||null;
+  }catch(e){return null;}
 }
-
-// 2순위: Invidious 무료 API
 async function fetchVidByInvidious(title,artist){
   const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
   for(const host of INVIDIOUS_HOSTS){
     try{
-      const r=await fetch(`${host}/api/v1/search?q=${q}&type=video&fields=videoId&page=1`,
-        {signal:AbortSignal.timeout(4000)});
+      const r=await fetch(`${host}/api/v1/search?q=${q}&type=video&fields=videoId&page=1`,{signal:AbortSignal.timeout(4000)});
       if(!r.ok)continue;
       const d=await r.json();
       if(Array.isArray(d)&&d[0]?.videoId)return d[0].videoId;
@@ -1550,49 +1570,23 @@ async function fetchVidByInvidious(title,artist){
   }
   return null;
 }
-
-// 3순위: CORS 프록시로 YouTube HTML 파싱
 async function fetchVidByScrape(title,artist){
   const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
   const target=`https://www.youtube.com/results?search_query=${q}`;
-  const proxies=[
-    `https://api.allorigins.win/get?url=${encodeURIComponent(target)}`,
-    `https://corsproxy.io/?${encodeURIComponent(target)}`,
-  ];
-  for(const proxy of proxies){
+  const proxies=[`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`,`https://corsproxy.io/?${encodeURIComponent(target)}`];
+  for(const px of proxies){
     try{
-      const r=await fetch(proxy,{signal:AbortSignal.timeout(6000)});
-      if(!r.ok)continue;
+      const r=await fetch(px,{signal:AbortSignal.timeout(6000)});if(!r.ok)continue;
       let html='';
-      if(proxy.includes('allorigins')){const d=await r.json();html=d.contents||'';}
-      else{html=await r.text();}
-      // ytInitialData 안에서 첫 번째 videoId 추출
+      if(px.includes('allorigins')){const d=await r.json();html=d.contents||'';}else html=await r.text();
       const m=html.match(/"videoId":"([a-zA-Z0-9_-]{11})"/);
       if(m&&m[1])return m[1];
     }catch(e){continue;}
   }
   return null;
 }
-
-// iframe embed 공통 함수
 function doEmbed(wrap,videoId){
-  wrap.innerHTML=`<iframe
-    src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen
-    style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
-}
-
-// 4순위: listType=search embed (API 불필요, 항상 작동)
-function doEmbedSearch(wrap,title,artist){
-  const q=encodeURIComponent((artist?artist+' ':'')+title+' official MV');
-  wrap.innerHTML=`<iframe
-    src="https://www.youtube.com/embed?listType=search&list=${q}&rel=0&modestbranding=1"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen
-    style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+  wrap.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
 }
 
 async function openFavDetail(id){
@@ -1603,25 +1597,26 @@ async function openFavDetail(id){
   document.getElementById('favDetailArtist').textContent=s.artist||'';
   const wrap=document.getElementById('favDetailFrame').parentElement;
 
-  wrap.innerHTML=`<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#0e0e14;">
-    <div style="width:32px;height:32px;border:2px solid #252525;border-top-color:#ffb4a2;border-radius:50%;animation:spin .8s linear infinite;"></div>
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#524340;letter-spacing:.12em;text-transform:uppercase;">검색 중…</div>
-  </div>`;
-
-  // 순서대로 시도
-  let vid = await fetchVidByAPI(s.title, s.artist);
-  if(!vid) vid = await fetchVidByInvidious(s.title, s.artist);
-  if(!vid) vid = await fetchVidByScrape(s.title, s.artist);
-
-  if(vid){ doEmbed(wrap, vid); }
-  else{ doEmbedSearch(wrap, s.title, s.artist); } // 항상 재생됨
+  if(s.videoId){
+    // 저장된 videoId 있으면 즉시 재생 (검색 없음)
+    doEmbed(wrap,s.videoId);
+  }else{
+    wrap.innerHTML=`<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#0e0e14;"><div style="width:32px;height:32px;border:2px solid #252525;border-top-color:#ffb4a2;border-radius:50%;animation:spin .8s linear infinite;"></div><div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#524340;letter-spacing:.12em;text-transform:uppercase;">검색 중…</div></div>`;
+    let vid=await fetchVidByAPI(s.title,s.artist);
+    if(!vid)vid=await fetchVidByInvidious(s.title,s.artist);
+    if(!vid)vid=await fetchVidByScrape(s.title,s.artist);
+    if(vid){doEmbed(wrap,vid);}
+    else{
+      // 최후 수단: listType=search embed
+      const q=encodeURIComponent((s.artist?s.artist+' ':'')+s.title+' official MV');
+      wrap.innerHTML=`<iframe src="https://www.youtube.com/embed?listType=search&list=${q}&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+    }
+  }
 
   const reasonEl=document.getElementById('favDetailReason');
   if(s.reason){reasonEl.style.display='';reasonEl.innerHTML=`<span class="fav-reason-label">이유</span>${s.reason}`;}
   else{reasonEl.style.display='none';}
 }
-
-
 
 function closeFavDetail(){
   const wrap=document.getElementById('favDetailFrame');
@@ -1630,13 +1625,15 @@ function closeFavDetail(){
   document.getElementById('favWhyListView').style.display='';
 }
 async function saveYTKey(){
-  const val=document.getElementById('ytApiKeyInput').value.trim();
-  if(!val||val.startsWith('•'))return;
+  const inp=document.getElementById('ytApiKeyInput');
+  const val=inp.value.trim();
+  if(!val||/^\*+$/.test(val))return;
   try{
     await setDoc(ytKeyDoc,{yt_api_key:val},{merge:true});
     _ytKeyCache=val;
-    document.getElementById('ytApiKeyInput').value='••••••••••••••••••••';
-    document.getElementById('ytKeyStatus').textContent='API key saved ✓ (Cloud)';
+    inp.value='*'.repeat(val.length);
+    inp.dataset.masked='1';
+    document.getElementById('ytKeyStatus').textContent='✓ 저장됨 · '+val.length+'자';
     toast('YouTube API key saved');
   }catch(e){toast('Save failed');}
 }
@@ -1644,27 +1641,37 @@ window.saveYTKey=saveYTKey;
 
 function newFavSong(){
   editFavSongId=null;
-  ['favSongTitle','favSongArtist','favSongReason'].forEach(id=>document.getElementById(id).value='');
+  ['favSongTitle','favSongArtist','favSongYtUrl','favSongReason'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('favWhyListView').style.display='none';
   document.getElementById('favSongEditor').style.display='flex';
 }
-
 async function saveFavSong(){
   const title=document.getElementById('favSongTitle').value.trim();
   const artist=document.getElementById('favSongArtist').value.trim();
   const reason=document.getElementById('favSongReason').value.trim();
+  const ytRaw=document.getElementById('favSongYtUrl')?.value.trim()||'';
+  const videoId=parseVideoId(ytRaw)||null;
   if(!title){toast('제목을 입력해주세요');return;}
-  try{await addDoc(favSongsCol,{title,artist,reason,c:Date.now()});}catch(e){toast('Save failed');return;}
-  toast('Saved');cancelFavSong();
+  try{
+    if(editFavSongId){
+      await updateDoc(doc(db,'mk_app','data','fav_songs',editFavSongId),{title,artist,reason,videoId,u:Date.now()});
+    }else{
+      await addDoc(favSongsCol,{title,artist,reason,videoId,c:Date.now()});
+    }
+  }catch(e){toast('Save failed');return;}
+  toast(videoId?'저장됨 (YouTube 연결됨 ✓)':'저장됨');
+  editFavSongId=null;
+  document.getElementById('favSongEditor').style.display='none';
+  document.getElementById('favWhyListView').style.display='';
+  renderFavSongs();
 }
-
 function cancelFavSong(){
   document.getElementById('favSongEditor').style.display='none';
   document.getElementById('favWhyListView').style.display='';
   renderFavSongs();
 }
-
 async function delFavSong(id){if(!confirm('Delete?'))return;try{await deleteDoc(doc(db,'mk_app','data','fav_songs',id));}catch(e){}renderFavSongs();}
+
 window.newFavSong=newFavSong;window.saveFavSong=saveFavSong;window.cancelFavSong=cancelFavSong;window.delFavSong=delFavSong;window.openFavDetail=openFavDetail;window.closeFavDetail=closeFavDetail;
 
 // ---- Playlists ----
