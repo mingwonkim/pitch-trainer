@@ -15,6 +15,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>
+
+/* ===== Scroll BG Transition ===== */
+#scroll-bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: background-color 1.4s ease, opacity 1.4s ease;
+  background-color: transparent;
+  opacity: 0;
+}
 .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
 #pwChangeInputKorean,#tpInputKorean{outline:none !important;box-shadow:none !important;border:none !important;-webkit-appearance:none;}
 .hide-scrollbar::-webkit-scrollbar{display:none;}.hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}
@@ -1192,7 +1203,7 @@ function setPage(p){
 }
 function goHub(){setPage('hub');}
 function openApp(a){
-  if(a==='settings'&&!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
+  if(a==='settings'&&!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');setTimeout(()=>showTextPin(()=>doOpenApp(a)),400);return;}
   doOpenApp(a);
 }
 
@@ -1807,7 +1818,8 @@ async function delMemoFolder(id){if(!isUnlocked){toast('비밀번호 해제 후 
 function openMemoFolder(id){
   const f=cachedMemoFolders.find(x=>x.id===id);
   if(f?.locked){
-    showTextPin(()=>_doOpenMemoFolder(id));
+    toast('비밀번호 해제 후 이용 가능합니다');
+    setTimeout(()=>showTextPin(()=>_doOpenMemoFolder(id)),400);
     return;
   }
   _doOpenMemoFolder(id);
@@ -1888,7 +1900,8 @@ async function delFileFolder(id){if(!isUnlocked){toast('비밀번호 해제 후 
 function openFileFolder(id){
   const f=cachedFileFolders.find(x=>x.id===id);
   if(f?.locked){
-    showTextPin(()=>_doOpenFileFolder(id));
+    toast('비밀번호 해제 후 이용 가능합니다');
+    setTimeout(()=>showTextPin(()=>_doOpenFileFolder(id)),400);
     return;
   }
   _doOpenFileFolder(id);
@@ -2184,56 +2197,50 @@ renderGallery();
 </div>
 
 
+
+<div id="scroll-bg-overlay"></div>
 <script>
 (function(){
-  var BG_BLACK = '#131313';
-  var BG_BEIGE = '#e8e0d0';
-
-  // body transition
-  document.body.style.transition = 'background-color 1.2s ease, color 1.2s ease';
-
-  // grain 오버레이
-  var grain = document.createElement('div');
-  grain.id = 'scroll-grain';
-  grain.style.cssText = 'position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity 1.2s ease;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.22'/%3E%3C/svg%3E");background-size:256px 256px;mix-blend-mode:overlay;';
-  document.body.appendChild(grain);
-
-  function setBg(bg, grainOp) {
-    // tailwind 클래스 덮어쓰기 위해 !important style
-    document.body.setAttribute('style',
-      document.body.getAttribute('style').replace(/background-color:[^;]+;?/g,'') +
-      ';background-color:' + bg + ' !important;transition:background-color 1.2s ease,color 1.2s ease;color:' +
-      (bg === BG_BEIGE ? '#2a2218' : '#e5e2e1') + ' !important;'
-    );
-    grain.style.opacity = grainOp;
-  }
+  var overlay = document.getElementById('scroll-bg-overlay');
+  var grain_url = "data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.68' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.25'/%3E%3C/svg%3E";
 
   var zones = [
-    { id:'edLayoutFrame', bg:BG_BLACK, grain:0 },
-    { id:'mbFrame',       bg:BG_BEIGE, grain:0.5 },
-    { id:'p5Frame',       bg:BG_BLACK, grain:0 },
+    { id:'edLayoutFrame', color:'#131313', opacity:0, grain:false },
+    { id:'mbFrame',       color:'#e8e0d0', opacity:0.92, grain:true },
+    { id:'p5Frame',       color:'#131313', opacity:0, grain:false },
   ];
 
-  var obs = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if (!entry.isIntersecting) return;
-      var zone = zones.find(function(z){ return z.id === entry.target.id; });
-      if (zone) setBg(zone.bg, zone.grain);
-    });
-  }, { threshold:0.05 });
+  function applyZone(zone) {
+    if (zone.opacity === 0) {
+      overlay.style.opacity = '0';
+    } else {
+      overlay.style.backgroundColor = zone.color;
+      overlay.style.backgroundImage = zone.grain ? 'url("' + grain_url + '")' : 'none';
+      overlay.style.backgroundSize = '256px 256px';
+      overlay.style.mixBlendMode = 'normal';
+      overlay.style.opacity = String(zone.opacity);
+    }
+  }
 
-  // iframe이 동적으로 크기 변경되므로 load 후 observe
-  window.addEventListener('load', function(){
-    zones.forEach(function(z){
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (!e.isIntersecting) return;
+      var zone = zones.find(function(z){ return z.id === e.target.id; });
+      if (zone) applyZone(zone);
+    });
+  }, { threshold: 0.05 });
+
+  function init() {
+    zones.forEach(function(z) {
       var el = document.getElementById(z.id);
       if (el) obs.observe(el);
     });
-  });
-  // fallback: 바로 observe
-  zones.forEach(function(z){
-    var el = document.getElementById(z.id);
-    if (el) obs.observe(el);
-  });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
 </script>
 </body>
