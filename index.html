@@ -991,18 +991,16 @@ function pinAdd(n){
   const pwInfo=getPwForPin();pinInput+=n;
   const dots=document.querySelectorAll('#pinDots .pin-dot');dots.forEach((d,i)=>d.classList.toggle('filled',i<pinInput.length));
   if(pinInput.length>=pwInfo.len){
-    hashStr(pinInput).then(h=>{
-      if(h===pwInfo.hash){
-        setTimeout(()=>{document.getElementById('pinOverlay').style.display='none';isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');if(pinCallback)pinCallback();
-        notifyAllFrames(true);pinCallback=null;},180);
-      }else{
-        pinAttempts=Math.max(0,pinAttempts-1);
-        document.getElementById('pinAttemptsLeft').textContent='0'+pinAttempts;
-        const dots2=document.querySelectorAll('#pinDots .pin-dot');dots2.forEach(d=>d.classList.add('wrong'));
-        document.getElementById('pinDots').classList.add('shake');
-        setTimeout(()=>{pinInput='';dots2.forEach(d=>{d.classList.remove('filled','wrong');});document.getElementById('pinDots').classList.remove('shake');},500);
-      }
-    });
+    if(checkPwHash(pwInfo.hash,pinInput)){
+      setTimeout(()=>{document.getElementById('pinOverlay').style.display='none';isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');if(pinCallback)pinCallback();
+      notifyAllFrames(true);pinCallback=null;},180);
+    }else{
+      pinAttempts=Math.max(0,pinAttempts-1);
+      document.getElementById('pinAttemptsLeft').textContent='0'+pinAttempts;
+      const dots2=document.querySelectorAll('#pinDots .pin-dot');dots2.forEach(d=>d.classList.add('wrong'));
+      document.getElementById('pinDots').classList.add('shake');
+      setTimeout(()=>{pinInput='';dots2.forEach(d=>{d.classList.remove('filled','wrong');});document.getElementById('pinDots').classList.remove('shake');},500);
+    }
   }
 }
 function pinDel(){pinInput=pinInput.slice(0,-1);document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>{d.classList.toggle('filled',i<pinInput.length);d.classList.remove('wrong');});}
@@ -1011,19 +1009,26 @@ document.addEventListener('keydown',e=>{if(document.getElementById('pinOverlay')
 window.pinAdd=pinAdd;window.pinDel=pinDel;window.cancelPin=cancelPin;
 
 /* ===== 3-step Password System ===== */
-// ===== SHA-256 해시 =====
-async function hashStr(s){
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+// ===== 비밀번호 해시 (동기) =====
+function hashStr(s){
+  // 간단한 FNV-1a 32bit 변형 해시
+  let h=2166136261;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*16777619)>>>0;}
+  // 솔트 추가
+  let h2=h^0xDEADBEEF;
+  for(let i=s.length-1;i>=0;i--){h2^=s.charCodeAt(i);h2=(h2*16777619)>>>0;}
+  return (h>>>0).toString(16).padStart(8,'0')+(h2>>>0).toString(16).padStart(8,'0');
 }
 function getPw(){
   try{const r=localStorage.getItem('mk_pw4');if(r)return JSON.parse(r);}catch(e){}
-  return {s1:'5143486f326c168b46d41692da6a6be15a3b182b63fc25f9258f0f5f76329cd3',s1len:4,s2:null,s2len:0,s3:null,s3len:0};
+  // 기본값: 5940의 해시
+  const def=hashStr('5940');
+  return {s1:def,s1len:4,s2:null,s2len:0,s3:null,s3len:0};
 }
 function setPwLocal(pw){localStorage.setItem('mk_pw4',JSON.stringify(pw));}
-async function checkPwHash(hash,val){
+function checkPwHash(hash,val){
   if(!hash)return true;
-  return (await hashStr(val))===hash;
+  return hashStr(val)===hash;
 }
 function getPwForPin(){const pw=getPw();return {hash:pw.s1,len:pw.s1len||4};}
 
@@ -1132,12 +1137,10 @@ function pwNextStep(){
       return;
     }
     const storedHash=getPw()[['s1','s2','s3'][pwChangePhase]];
-    checkPwHash(storedHash,val).then(ok=>{
-      if(!ok){showPwError('비밀번호가 틀렸습니다');return;}
-      pwVerified[pwChangePhase]=val;
-      if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
-      else{pwChangeMode='set';pwChangePhase=0;renderPwChange();}
-    }); return;
+    if(!checkPwHash(storedHash,val)){showPwError('비밀번호가 틀렸습니다');return;}
+    pwVerified[pwChangePhase]=val;
+    if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
+    else{pwChangeMode='set';pwChangePhase=0;renderPwChange();}
   }else if(pwChangeMode==='set'){
     pwNew[pwChangePhase]=val;
     if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
@@ -1147,17 +1150,15 @@ function pwNextStep(){
     pwNewConfirm[pwChangePhase]=val;
     if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
     else{
-      Promise.all([
-        pwNew[0]?hashStr(pwNew[0]):Promise.resolve(null),
-        pwNew[1]?hashStr(pwNew[1]):Promise.resolve(null),
-        pwNew[2]?hashStr(pwNew[2]):Promise.resolve(null),
-      ]).then(hashes=>{
-        setPwLocal({s1:hashes[0],s1len:pwNew[0]?pwNew[0].length:4,s2:hashes[1],s2len:pwNew[1]?pwNew[1].length:0,s3:hashes[2],s3len:pwNew[2]?pwNew[2].length:0});
-        isUnlocked=false;sessionStorage.removeItem('mk_unlocked');
-        notifyAllFrames(false);
-        document.getElementById('pwChangeOverlay').style.display='none';
-        toast('비밀번호가 변경됐습니다');
+      setPwLocal({
+        s1:pwNew[0]?hashStr(pwNew[0]):null,s1len:pwNew[0]?pwNew[0].length:4,
+        s2:pwNew[1]?hashStr(pwNew[1]):null,s2len:pwNew[1]?pwNew[1].length:0,
+        s3:pwNew[2]?hashStr(pwNew[2]):null,s3len:pwNew[2]?pwNew[2].length:0
       });
+      isUnlocked=false;sessionStorage.removeItem('mk_unlocked');
+      notifyAllFrames(false);
+      document.getElementById('pwChangeOverlay').style.display='none';
+      toast('비밀번호가 변경됐습니다');
     }
   }
 }
@@ -1316,18 +1317,16 @@ function showTextPin(cb){
     const correct=pw[phases[phase].key];
     if(correct===null||correct===undefined||correct===''){phase++;updatePhase();return;}
     if(!val){document.getElementById('tpErr').textContent='입력해주세요';return;}
-    checkPwHash(correct,val).then(ok=>{
-      if(!ok){
-        document.getElementById('tpErr').textContent='틀렸습니다';
-        inp.style.borderColor='#FF3B00';
-        inp.style.boxShadow='0 0 0 3px rgba(255,59,0,.08)';
-        setTimeout(()=>{inp.value='';inpKo.value='';inp.style.borderColor='#2a2a35';inp.style.boxShadow='none';},400);
-        return;
-      }
-      phase++;
-      if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');notifyAllFrames(true);cb();}
-      else{updatePhase();}
-    });
+    if(!checkPwHash(correct,val)){
+      document.getElementById('tpErr').textContent='틀렸습니다';
+      inp.style.borderColor='#FF3B00';
+      inp.style.boxShadow='0 0 0 3px rgba(255,59,0,.08)';
+      setTimeout(()=>{inp.value='';inpKo.value='';inp.style.borderColor='#2a2a35';inp.style.boxShadow='none';},400);
+      return;
+    }
+    phase++;
+    if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');notifyAllFrames(true);cb();}
+    else{updatePhase();}
   }
 
   document.getElementById('tpNext').onclick=tryNext;
@@ -2201,34 +2200,47 @@ renderGallery();
 
 
 
-<style>
-#sbg{position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:#e8e0d0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
-  background-size:200px 200px;
-  opacity:0;
-  transition:opacity 1.4s ease;}
-</style>
-<div id="sbg"></div>
+
+<div id="sbg" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.2s ease;"></div>
 <script>
 (function(){
   var el=document.getElementById('sbg');
-  var on=false;
+  var cur=''; // '', 'beige', 'red'
+  var GRAIN="url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.18%22/%3E%3C/svg%3E')";
+  function set(state){
+    if(state===cur)return;
+    cur=state;
+    if(state==='beige'){
+      el.style.background='#e8e0d0';
+      el.style.backgroundImage=GRAIN;
+      el.style.backgroundSize='200px 200px';
+      el.style.opacity='0.92';
+    }else if(state==='red'){
+      el.style.background='#3B0000';
+      el.style.backgroundImage='none';
+      el.style.opacity='0.85';
+    }else{
+      el.style.opacity='0';
+    }
+  }
   function tick(){
     var mb=document.getElementById('mbFrame');
     var p5=document.getElementById('p5Frame');
     if(!mb||!p5)return;
-    var mbRect=mb.getBoundingClientRect();
-    var p5Rect=p5.getBoundingClientRect();
+    var mbT=mb.getBoundingClientRect().top;
+    var mbB=mb.getBoundingClientRect().bottom;
+    var p5T=p5.getBoundingClientRect().top;
+    var p5B=p5.getBoundingClientRect().bottom;
     var vh=window.innerHeight;
-    // mbFrame이 화면에 걸쳐 있고 p5Frame 아직 시작 전
-    var shouldOn=(mbRect.bottom>100)&&(p5Rect.top>100);
-    if(shouldOn&&!on){el.style.opacity='0.88';on=true;}
-    else if(!shouldOn&&on){el.style.opacity='0';on=false;}
+    var inMb=(mbT<vh*0.9&&mbB>vh*0.1);
+    var inP5=(p5T<vh*0.9&&p5B>vh*0.1);
+    if(inP5)set('red');
+    else if(inMb)set('beige');
+    else set('');
   }
   window.addEventListener('scroll',tick,{passive:true});
   window.addEventListener('resize',tick,{passive:true});
-  setInterval(tick,300);
+  setInterval(tick,200);
 })();
 </script>
 </body>
