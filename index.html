@@ -1009,22 +1009,29 @@ document.addEventListener('keydown',e=>{if(document.getElementById('pinOverlay')
 window.pinAdd=pinAdd;window.pinDel=pinDel;window.cancelPin=cancelPin;
 
 /* ===== 3-step Password System ===== */
+// ===== SHA-256 해시 =====
+async function hashStr(s){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
 function getPw(){
-  try{const r=localStorage.getItem('mk_pw3');if(r)return JSON.parse(r);}catch(e){}
-  // 기본: 1단계만 5940, 2/3단계는 미설정(null)
-  return {s1:'5940',s2:null,s3:null};
+  // 새 키 mk_pw4 (해시 저장)
+  try{const r=localStorage.getItem('mk_pw4');if(r)return JSON.parse(r);}catch(e){}
+  // 기본: 5940의 SHA-256
+  return {s1:'5143486f326c168b46d41692da6a6be15a3b182b63fc25f9258f0f5f76329cd3',s2:null,s3:null};
 }
-function setPwLocal(pw){localStorage.setItem('mk_pw3',JSON.stringify(pw));}
+function setPwLocal(pw){localStorage.setItem('mk_pw4',JSON.stringify(pw));}
 
-// Check if input matches current password for given step
-function checkPwStep(step, val){
+// 해시 비교 (async)
+async function checkPwStep(step, val){
   const pw=getPw();
-  if(step===0)return val===pw.s1;
-  if(step===1)return val===pw.s2;
-  if(step===2)return val===pw.s3;
+  const stored=pw[['s1','s2','s3'][step]];
+  if(!stored)return true; // 미설정 단계는 통과
+  const h=await hashStr(val);
+  return h===stored;
 }
 
-// Combined pw check for main PIN lock (use s1 as primary)
 function getPwForPin(){return getPw().s1;}
 
 // 3-step change flow
@@ -1131,7 +1138,11 @@ function pwNextStep(){
       else{pwChangeMode='set';pwChangePhase=0;renderPwChange();}
       return;
     }
-    if(!checkPwStep(pwChangePhase,val)){showPwError('비밀번호가 틀렸습니다');return;}
+    checkPwStep(pwChangePhase,val).then(ok=>{if(!ok){showPwError('비밀번호가 틀렸습니다');return;}
+    pwVerified[pwChangePhase]=val;
+    if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
+    else{pwChangeMode='set';pwChangePhase=0;renderPwChange();}
+    }); return;
     pwVerified[pwChangePhase]=val;
     if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
     else{pwChangeMode='set';pwChangePhase=0;renderPwChange();}
@@ -1144,11 +1155,17 @@ function pwNextStep(){
     pwNewConfirm[pwChangePhase]=val;
     if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
     else{
-      setPwLocal({s1:pwNew[0],s2:pwNew[1],s3:pwNew[2]});
-      isUnlocked=false;sessionStorage.removeItem('mk_unlocked');
-      notifyAllFrames(false);
-      document.getElementById('pwChangeOverlay').style.display='none';
-      toast('비밀번호가 변경됐습니다');
+      Promise.all([
+        pwNew[0]?hashStr(pwNew[0]):Promise.resolve(null),
+        pwNew[1]?hashStr(pwNew[1]):Promise.resolve(null),
+        pwNew[2]?hashStr(pwNew[2]):Promise.resolve(null),
+      ]).then(hashes=>{
+        setPwLocal({s1:hashes[0],s2:hashes[1],s3:hashes[2]});
+        isUnlocked=false;sessionStorage.removeItem('mk_unlocked');
+        notifyAllFrames(false);
+        document.getElementById('pwChangeOverlay').style.display='none';
+        toast('비밀번호가 변경됐습니다');
+      });
     }
   }
 }
@@ -1307,16 +1324,18 @@ function showTextPin(cb){
     const correct=pw[phases[phase].key];
     if(correct===null||correct===undefined||correct===''){phase++;updatePhase();return;}
     if(!val){document.getElementById('tpErr').textContent='입력해주세요';return;}
-    if(val!==correct){
-      document.getElementById('tpErr').textContent='틀렸습니다';
-      inp.style.borderColor='#FF3B00';
-      inp.style.boxShadow='0 0 0 3px rgba(255,59,0,.08)';
-      setTimeout(()=>{inp.value='';inpKo.value='';inp.style.borderColor='#2a2a35';inp.style.boxShadow='none';},400);
-      return;
-    }
-    phase++;
-    if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');notifyAllFrames(true);cb();}
-    else{updatePhase();}
+    hashStr(val).then(h=>{
+      if(h!==correct){
+        document.getElementById('tpErr').textContent='틀렸습니다';
+        inp.style.borderColor='#FF3B00';
+        inp.style.boxShadow='0 0 0 3px rgba(255,59,0,.08)';
+        setTimeout(()=>{inp.value='';inpKo.value='';inp.style.borderColor='#2a2a35';inp.style.boxShadow='none';},400);
+        return;
+      }
+      phase++;
+      if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');notifyAllFrames(true);cb();}
+      else{updatePhase();}
+    });
   }
 
   document.getElementById('tpNext').onclick=tryNext;
