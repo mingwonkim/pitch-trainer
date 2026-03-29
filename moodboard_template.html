@@ -99,11 +99,10 @@
 
     .item {
       position: relative;
-      min-height: 180px;
     }
 
     .swatch {
-      height: 245px;
+      aspect-ratio: 1 / 1;
       border: 1px solid rgba(255,255,255,0.2);
       display: flex;
       align-items: center;
@@ -142,8 +141,8 @@
       overflow: visible;
     }
 
-    .polaroid.tall { min-height: 255px; }
-    .polaroid.square { min-height: 170px; }
+    .polaroid.tall { min-height: auto; }
+    .polaroid.square { min-height: auto; }
 
     .polaroid .photo {
       width: 100%;
@@ -154,7 +153,7 @@
     }
 
     .polaroid.square .photo { aspect-ratio: 1 / 1; }
-    .polaroid.tall .photo { aspect-ratio: 4 / 5; }
+    .polaroid.tall .photo { aspect-ratio: 1 / 1; }
 
     .polaroid img {
       width: 100%;
