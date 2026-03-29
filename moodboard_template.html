@@ -237,6 +237,7 @@
       border-radius: 999px;
       padding: 8px 12px;
       font-size: 12px;
+      display: none;
     }
 
     .upload-btn:hover { opacity: 0.9; }
@@ -539,8 +540,8 @@ CMYK: 0 83 62 72</div>
     if (!mbUnlocked) return;
     mbEditMode = !mbEditMode;
     const btn = document.getElementById('mb-edit-btn');
-    // 파일 인풋 버튼들
-    document.querySelectorAll('.photo-btn').forEach(b => {
+    // 파일 업로드 버튼
+    document.querySelectorAll('.upload-btn').forEach(b => {
       b.style.display = mbEditMode ? '' : 'none';
     });
     // contenteditable
@@ -559,7 +560,7 @@ CMYK: 0 83 62 72</div>
   document.querySelectorAll('[contenteditable]').forEach(el => {
     el.contentEditable = 'false';
   });
-  document.querySelectorAll('.photo-btn').forEach(b => {
+  document.querySelectorAll('.upload-btn').forEach(b => {
     b.style.display = 'none';
   });
 
