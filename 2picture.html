@@ -560,7 +560,7 @@
   </section>
 
 
-  <section class="w-full max-w-[1440px] mx-auto px-8 -mt-5 mb-12 relative">
+  <section class="w-full max-w-[1440px] mx-auto px-8 -mt-5 mb-6 relative">
     <div class="film-layout">
       <div class="relative">
         <div data-main-screen="" class="relative w-full h-auto aspect-[21/9] bg-surface-container overflow-visible shadow-paper">
@@ -649,7 +649,7 @@ window.addEventListener('load',sendHeight);
 (function(){
   function sendH(){
     var h = document.documentElement.scrollHeight;
-    window.parent.postMessage({type:'iframe_height',id:'ltScaleFrame',value:h-20},'*');
+    window.parent.postMessage({type:'iframe_height',id:'ltScaleFrame',value:h-40},'*');
   }
   if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
   window.addEventListener('load', sendH);
