@@ -114,7 +114,7 @@
         }
     </style>
 </head>
-<body style="transform:scale(0.9);transform-origin:top left;width:111.11%;" class="font-body text-on-background m-0 p-0 overflow-x-hidden">
+<body class="font-body text-on-background m-0 p-0 overflow-x-hidden">
 <button id="p5-edit-btn"
   style="display:none;position:sticky;top:12px;float:right;z-index:9999;
     align-items:center;gap:6px;padding:7px 16px;margin:12px 12px 0 0;
@@ -345,12 +345,15 @@
       el.contentEditable = p5EditMode ? 'true' : 'false';
       el.style.outline = p5EditMode ? '1px dashed rgba(255,180,162,.3)' : '';
     });
-    // 이미지 클릭 업로드
-    document.querySelectorAll('img[data-alt]').forEach(img => {
+    // 셀 클릭으로 이미지 교체
+    document.querySelectorAll('.grid-cell').forEach(cell => {
+      const img = cell.querySelector('img[data-alt]');
+      if (!img) return;
       if (p5EditMode) {
-        img.style.cursor = 'pointer';
-        img.style.outline = '2px dashed rgba(185,29,32,.4)';
-        img.onclick = () => {
+        cell.style.cursor = 'pointer';
+        cell.style.outline = '2px dashed rgba(185,29,32,.6)';
+        cell.style.outlineOffset = '-2px';
+        cell.onclick = () => {
           const inp = document.createElement('input');
           inp.type = 'file'; inp.accept = 'image/*';
           inp.onchange = e => {
@@ -363,9 +366,9 @@
           inp.click();
         };
       } else {
-        img.style.cursor = '';
-        img.style.outline = '';
-        img.onclick = null;
+        cell.style.cursor = '';
+        cell.style.outline = '';
+        cell.onclick = null;
       }
     });
     if (btn) {
