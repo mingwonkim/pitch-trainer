@@ -574,13 +574,19 @@
       </div>
 
       <!-- ===== Editorial Layout iframe ===== -->
-      <iframe id="edLayoutFrame" src="editorial-layout.html" onload="notifyEdFrame(isUnlocked)" style="width:100%;height:900px;border:none;display:block;"></iframe>
+      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" style="width:100%;height:900px;border:none;display:block;"></iframe>
 
       <!-- ===== Lowtheory Scale ===== -->
-      <iframe id="ltScaleFrame" src="lowtheory-scale.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:1400px;border:none;display:block;margin-top:40px;overflow:hidden;" loading="lazy"></iframe>
+      <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:1400px;border:none;display:block;margin-top:40px;overflow:hidden;" loading="lazy"></iframe>
 
       <!-- ===== Moodboard ===== -->
-      <iframe id="mbFrame" src="moodboard_template.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:1400px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
+      <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:1400px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
+
+      <!-- ===== 4PICTURE ===== -->
+      <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:900px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
+
+      <!-- ===== 5PICTURE ===== -->
+      <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:900px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
 
     </div>
 
@@ -1941,7 +1947,9 @@ window.dlFile=dlFile;window.rmFile=rmFile;
 function notifyLtFrame(val){const f=document.getElementById('ltScaleFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyEdFrame(val){const f=document.getElementById('edLayoutFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyMbFrame(val){const f=document.getElementById('mbFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
-function notifyAllFrames(val){notifyLtFrame(val);notifyEdFrame(val);notifyMbFrame(val);}
+function notifyP4Frame(val){const f=document.getElementById('p4Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
+function notifyP5Frame(val){const f=document.getElementById('p5Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
+function notifyAllFrames(val){notifyLtFrame(val);notifyEdFrame(val);notifyMbFrame(val);notifyP4Frame(val);notifyP5Frame(val);}
 window.addEventListener('message',e=>{
   if(e.data&&e.data.type==='lt_height'){
     const f=document.getElementById('ltScaleFrame');
