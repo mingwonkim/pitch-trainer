@@ -438,4 +438,46 @@
         setTimeout(() => toastEl.classList.remove('show'), 2200);
     }
 </script>
+
+<script>
+  let p4Unlocked = false;
+  let p4EditMode = false;
+
+  window.addEventListener('message', e => {
+    if (e.data && e.data.type === 'mk_unlock') {
+      p4Unlocked = e.data.value;
+      const btn = document.getElementById('p4-edit-btn');
+      if (btn) btn.style.display = p4Unlocked ? 'flex' : 'none';
+      if (!p4Unlocked && p4EditMode) p4ToggleEdit();
+    }
+  });
+
+  function p4ToggleEdit() {
+    if (!p4Unlocked) return;
+    p4EditMode = !p4EditMode;
+    const btn = document.getElementById('p4-edit-btn');
+    document.querySelectorAll('[data-slot-click]').forEach(el => {
+      if (p4EditMode) {
+        const slot = el.getAttribute('data-slot-click');
+        el.onclick = () => openFilePicker(parseInt(slot));
+        el.style.cursor = 'pointer';
+      } else {
+        el.onclick = null;
+        el.style.cursor = 'default';
+      }
+    });
+    document.querySelectorAll('[contenteditable]').forEach(el => {
+      el.contentEditable = p4EditMode ? 'true' : 'false';
+    });
+    if (btn) {
+      btn.textContent = p4EditMode ? '✓ 완료' : '✎ 편집';
+      btn.style.color = p4EditMode ? '#ffb4a2' : '#a08d88';
+      btn.style.borderColor = p4EditMode ? '#ffb4a2' : '#353535';
+    }
+  }
+
+  document.querySelectorAll('[contenteditable]').forEach(el => {
+    el.contentEditable = 'false';
+  });
+</script>
 </body></html>

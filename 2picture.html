@@ -159,9 +159,9 @@
   .film-strip {
     position: relative;
     width: min(100%, 248px);
-    background: linear-gradient(180deg, rgba(18,16,14,0.98), rgba(28,24,20,0.98));
+    background: #060504;
     padding: 16px 24px;
-    box-shadow: 0 22px 48px rgba(27, 28, 21, 0.16);
+    box-shadow: 0 22px 48px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.04);
     overflow: visible;
     justify-self: end;
     align-self: start;
@@ -171,6 +171,7 @@
   }
 
   .film-tape {
+    display: none;
     position: absolute;
     top: -4px;
     width: 74px;
@@ -211,16 +212,19 @@
   .film-strip::after {
     content: "";
     position: absolute;
-    top: 14px;
-    bottom: 14px;
-    width: 14px;
+    top: 8px;
+    bottom: 8px;
+    width: 16px;
     background:
       repeating-linear-gradient(
         180deg,
-        rgba(229,225,211,0.94) 0 12px,
-        transparent 12px 26px
+        rgba(255,255,255,0.0) 0 4px,
+        #060504 4px 8px,
+        rgba(255,255,255,0.0) 8px 10px,
+        #060504 10px 22px
       );
-    opacity: 0.9;
+    border: 1px solid rgba(255,255,255,0.06);
+    opacity: 1;
   }
 
   .film-strip::before { left: 7px; }
@@ -274,7 +278,7 @@
     margin-bottom: 16px;
     padding: 7px 10px;
     background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
     cursor: grab;
     touch-action: none;
   }
@@ -302,9 +306,9 @@
   .film-image-wrap {
     position: relative;
     width: 100%;
-    padding: 8px;
-    background: #0d0b09;
-    border: 1px solid rgba(255,255,255,0.08);
+    padding: 6px;
+    background: #030201;
+    border: 1px solid rgba(255,255,255,0.14);
     overflow: hidden;
     isolation: isolate;
     box-shadow:
@@ -317,13 +321,13 @@
     position: absolute;
     inset: 8px;
     background:
-      linear-gradient(180deg, rgba(245,220,186,0.14), rgba(0,0,0,0.10) 38%, rgba(0,0,0,0.26)),
-      repeating-linear-gradient(180deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 3px),
-      radial-gradient(circle at 20% 14%, rgba(255,255,255,0.14), transparent 28%),
-      radial-gradient(circle at 84% 84%, rgba(0,0,0,0.28), transparent 34%);
+      linear-gradient(180deg, rgba(245,220,186,0.22), rgba(0,0,0,0.14) 38%, rgba(0,0,0,0.38)),
+      repeating-linear-gradient(180deg, rgba(255,255,255,0.07) 0 1px, transparent 1px 2px),
+      radial-gradient(circle at 20% 14%, rgba(255,255,255,0.18), transparent 28%),
+      radial-gradient(circle at 84% 84%, rgba(0,0,0,0.38), transparent 34%);
     background-blend-mode: soft-light, normal, screen, multiply;
     mix-blend-mode: screen;
-    opacity: 0.62;
+    opacity: 0.82;
     pointer-events: none;
     z-index: 1;
   }
@@ -348,7 +352,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: saturate(0.7) contrast(1.12) brightness(0.9) sepia(0.16) hue-rotate(-8deg) grayscale(0.12);
+    filter: saturate(0.45) contrast(1.25) brightness(0.82) sepia(0.28) hue-rotate(-6deg) grayscale(0.25);
     transform: scale(1.035);
   }
 
@@ -432,7 +436,16 @@
   /* 배경 완전 투명 */
   html, body, main, .opening-composition, section { background: transparent !important; }
 
-
+  /* film-strip 폴라로이드 section 오른쪽 상단에 고정 */
+  [data-film-strip] {
+    display: block !important;
+    position: static !important;
+    transform: none !important;
+    width: 220px !important;
+  }
+  .film-track {
+    height: auto !important;
+  }
 
   main section:first-child { overflow: visible !important; }
   .opening-composition { overflow: visible !important; }
@@ -494,23 +507,13 @@
       <h2 data-editable="headline" class="font-headline text-3xl md:text-5xl lg:text-7xl font-black text-primary leading-[0.88] tracking-[-0.045em] uppercase max-w-7xl mx-auto" spellcheck="false">
         ARE WE TALKING TO EACH OTHER THROUGH OUR SCREENS OR ARE OUR SCREENS TALKING TO EAC</h2>
     </div>
-  </section>
-
-
-  <section class="w-full max-w-[1440px] mx-auto px-8 -mt-5 mb-28 relative">
-    <div class="film-layout">
-      <div class="relative">
-        <div data-main-screen="" class="relative w-full h-auto aspect-[21/9] bg-surface-container overflow-visible shadow-paper">
-          <div class="absolute -top-4 left-[10%] w-32 h-10 tape-texture -rotate-3 z-20"></div>
-          <div class="absolute -top-3 right-[15%] w-28 h-8 tape-texture rotate-2 z-20"></div>
-          <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-40 h-10 tape-texture rotate-1 z-20"></div>
-          <img data-image="hero" alt="hero photo" class="w-full h-full object-cover saturate-95" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY6iaytnpst8D6KXyHJ-IEmqAV11l_aLI0Yxf20SO2aUXKXhNWwk91hWSZLZfWVCVX7mruGspfPB4CNPkhuUHv6vDMVpDvNh_j42erckQypyqh6vGVR-YnW9HRo6t9l7gB1BTJEJgqIP4AozR7ACFrFA5FHED1su0mBjQcDWYmHIfEtAGLnHwBab4wLWAEZLmhjOo9EzaxNAWiYowjPUSHKqZU0ddStIZgIPoFpJ5kKJLSaCKAcS5voqy0NS0bxHTwwmFU424Cgv5j" tabindex="-1">
-        </div>
-        <div class="absolute -bottom-8 right-6 md:right-16 z-50">
-          <span data-editable="subline" class="font-label text-primary font-bold text-lg tracking-widest uppercase" spellcheck="false">THE RED COLLECTION / SS24</span>
-        </div>
-      </div>
-
+  
+    <div style="position:absolute;top:12%;right:-180px;z-index:50;width:220px;">
+      <!-- 필름 맨 위 테이프 2개 -->
+      <div style="position:absolute;top:-14px;left:18%;width:80px;height:22px;transform:rotate(-4deg);z-index:60;" class="tape-texture"></div>
+      <div style="position:absolute;top:-10px;right:10%;width:60px;height:18px;transform:rotate(7deg);z-index:60;" class="tape-texture"></div>
+      <!-- 필름 중간 테이프 1개 -->
+      <div style="position:absolute;top:50%;left:-12px;width:24px;height:72px;transform:rotate(2deg);z-index:60;" class="tape-texture"></div>
       <aside data-film-strip="" class="film-strip" data-offset-x="457" data-offset-y="-750" style="--film-offset-x: 0px; --film-offset-y: 0px;" data-initial-view="screen-position-v10">
         <div aria-hidden="true" class="film-tape film-tape-left"></div>
         <div aria-hidden="true" class="film-tape film-tape-right"></div>
@@ -553,6 +556,25 @@
             <figcaption data-editable="copy-01-caption" class="film-caption" spellcheck="false">copy 01 / tallest cut</figcaption>
           </figure></div>
       </aside>
+    </div>
+  </section>
+
+
+  <section class="w-full max-w-[1440px] mx-auto px-8 -mt-5 mb-28 relative">
+    <div class="film-layout">
+      <div class="relative">
+        <div data-main-screen="" class="relative w-full h-auto aspect-[21/9] bg-surface-container overflow-visible shadow-paper">
+          <div class="absolute -top-4 left-[10%] w-32 h-10 tape-texture -rotate-3 z-20"></div>
+          <div class="absolute -top-3 right-[15%] w-28 h-8 tape-texture rotate-2 z-20"></div>
+          <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-40 h-10 tape-texture rotate-1 z-20"></div>
+          <img data-image="hero" alt="hero photo" class="w-full h-full object-cover saturate-95" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY6iaytnpst8D6KXyHJ-IEmqAV11l_aLI0Yxf20SO2aUXKXhNWwk91hWSZLZfWVCVX7mruGspfPB4CNPkhuUHv6vDMVpDvNh_j42erckQypyqh6vGVR-YnW9HRo6t9l7gB1BTJEJgqIP4AozR7ACFrFA5FHED1su0mBjQcDWYmHIfEtAGLnHwBab4wLWAEZLmhjOo9EzaxNAWiYowjPUSHKqZU0ddStIZgIPoFpJ5kKJLSaCKAcS5voqy0NS0bxHTwwmFU424Cgv5j" tabindex="-1">
+        </div>
+        <div class="absolute -bottom-8 right-6 md:right-16 z-50">
+          <span data-editable="subline" class="font-label text-primary font-bold text-lg tracking-widest uppercase" spellcheck="false">THE RED COLLECTION / SS24</span>
+        </div>
+      </div>
+
+      
     </div>
   </section>
   </div>
