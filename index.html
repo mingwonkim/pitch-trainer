@@ -877,7 +877,7 @@
           onblur="this.style.borderColor='#2a2a35';this.style.boxShadow='none'">
         <!-- 3단계 한글 전용 숨김 input -->
         <input id="pwChangeInputKorean" type="text" autocomplete="off" spellcheck="false"
-          style="position:absolute;top:0;left:0;width:calc(100% - 52px);height:100%;padding:14px 0 14px 18px;background:transparent;border:none;color:transparent;caret-color:#ffb4a2;font-size:18px;font-family:'Space Grotesk',sans-serif;outline:none;display:none;z-index:2;"
+          style="position:absolute;top:0;left:0;width:calc(100% - 52px);height:100%;padding:14px 0 14px 18px;background:transparent;border:none;color:transparent;caret-color:#ffb4a2;font-size:18px;font-family:'Space Grotesk',sans-serif;outline:none !important;-webkit-tap-highlight-color:transparent;display:none;z-index:3;"
           oninput="pwKoreanInputHandler()" onkeydown="pwKeydownHandler(event)">
         <!-- Eye toggle -->
         <button onclick="pwToggleEye()" id="pwEyeBtn"
@@ -1040,10 +1040,12 @@ function renderPwChange(){
   // 3단계: 숨김 한글 input 활성화, 보이는 input은 readOnly로 * 표시
   if(isKorean){
     inp.type='text'; inp.readOnly=true; inp.style.caretColor='transparent'; inp.style.letterSpacing='.08em';
+    inp.style.pointerEvents='none'; inp.tabIndex=-1; inp.style.outline='none';
     if(inpKo){inpKo.style.display='block';}
-    setTimeout(()=>{if(inpKo)inpKo.focus();},50);
+    setTimeout(()=>{if(inpKo){inpKo.focus();}},50);
   }else{
     inp.type='password'; inp.readOnly=false; inp.style.caretColor=''; inp.style.letterSpacing='.08em';
+    inp.style.pointerEvents=''; inp.tabIndex=0;
     if(inpKo)inpKo.style.display='none';
     setTimeout(()=>inp.focus(),50);
   }
@@ -1192,7 +1194,7 @@ function showTextPin(cb){
             style="width:100%;padding:14px 52px 14px 18px;background:rgba(255,255,255,.03);border:1px solid #2a2a35;border-radius:12px;color:#e5e2e1;font-size:18px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;outline:none !important;transition:border-color .25s,box-shadow .25s;">
           <!-- 3단계 한글 전용 숨김 input -->
           <input id="tpInputKorean" type="text" autocomplete="off" spellcheck="false"
-            style="position:absolute;top:0;left:0;width:calc(100% - 52px);height:100%;padding:14px 0 14px 18px;background:transparent;border:none;color:transparent;caret-color:#ffb4a2;font-size:18px;font-family:'Space Grotesk',sans-serif;outline:none;display:none;z-index:2;">
+            style="position:absolute;top:0;left:0;width:calc(100% - 52px);height:100%;padding:14px 0 14px 18px;background:transparent;border:none;color:transparent;caret-color:#ffb4a2;font-size:18px;font-family:'Space Grotesk',sans-serif;outline:none !important;-webkit-tap-highlight-color:transparent;display:none;z-index:3;">
           <button id="tpEyeBtn" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:#524340;transition:color .2s;padding:4px;z-index:3;">👁</button>
         </div>
       </div>
@@ -1260,10 +1262,12 @@ function showTextPin(cb){
     }
     if(isKoreanPhase){
       inp.type='text';inp.readOnly=true;inp.style.caretColor='transparent';
+      inp.style.pointerEvents='none';inp.tabIndex=-1;inp.style.outline='none';
       inpKo.style.display='block';
       setTimeout(()=>inpKo.focus(),50);
     }else{
       inp.type='password';inp.readOnly=false;inp.style.caretColor='';
+      inp.style.pointerEvents='';inp.tabIndex=0;
       inpKo.style.display='none';
       setTimeout(()=>inp.focus(),50);
     }
