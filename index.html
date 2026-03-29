@@ -988,19 +988,21 @@ function showPin(title,cb){
   document.getElementById('pinOverlay').style.display='grid';
 }
 function pinAdd(n){
-  const pw=getPwForPin();pinInput+=n;
+  const pwInfo=getPwForPin();pinInput+=n;
   const dots=document.querySelectorAll('#pinDots .pin-dot');dots.forEach((d,i)=>d.classList.toggle('filled',i<pinInput.length));
-  if(pinInput.length>=pw.length){
-    if(pinInput===pw){
-      setTimeout(()=>{document.getElementById('pinOverlay').style.display='none';isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');if(pinCallback)pinCallback();
-      notifyAllFrames(true);pinCallback=null;},180);
-    }else{
-      pinAttempts=Math.max(0,pinAttempts-1);
-      document.getElementById('pinAttemptsLeft').textContent='0'+pinAttempts;
-      dots.forEach(d=>d.classList.add('wrong'));
-      document.getElementById('pinDots').classList.add('shake');
-      setTimeout(()=>{pinInput='';dots.forEach(d=>{d.classList.remove('filled','wrong');});document.getElementById('pinDots').classList.remove('shake');},500);
-    }
+  if(pinInput.length>=pwInfo.len){
+    hashStr(pinInput).then(h=>{
+      if(h===pwInfo.hash){
+        setTimeout(()=>{document.getElementById('pinOverlay').style.display='none';isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');if(pinCallback)pinCallback();
+        notifyAllFrames(true);pinCallback=null;},180);
+      }else{
+        pinAttempts=Math.max(0,pinAttempts-1);
+        document.getElementById('pinAttemptsLeft').textContent='0'+pinAttempts;
+        const dots2=document.querySelectorAll('#pinDots .pin-dot');dots2.forEach(d=>d.classList.add('wrong'));
+        document.getElementById('pinDots').classList.add('shake');
+        setTimeout(()=>{pinInput='';dots2.forEach(d=>{d.classList.remove('filled','wrong');});document.getElementById('pinDots').classList.remove('shake');},500);
+      }
+    });
   }
 }
 function pinDel(){pinInput=pinInput.slice(0,-1);document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>{d.classList.toggle('filled',i<pinInput.length);d.classList.remove('wrong');});}
@@ -1014,25 +1016,16 @@ async function hashStr(s){
   const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
-
 function getPw(){
-  // 새 키 mk_pw4 (해시 저장)
   try{const r=localStorage.getItem('mk_pw4');if(r)return JSON.parse(r);}catch(e){}
-  // 기본: 5940의 SHA-256
-  return {s1:'5143486f326c168b46d41692da6a6be15a3b182b63fc25f9258f0f5f76329cd3',s2:null,s3:null};
+  return {s1:'5143486f326c168b46d41692da6a6be15a3b182b63fc25f9258f0f5f76329cd3',s1len:4,s2:null,s2len:0,s3:null,s3len:0};
 }
 function setPwLocal(pw){localStorage.setItem('mk_pw4',JSON.stringify(pw));}
-
-// 해시 비교 (async)
-async function checkPwStep(step, val){
-  const pw=getPw();
-  const stored=pw[['s1','s2','s3'][step]];
-  if(!stored)return true; // 미설정 단계는 통과
-  const h=await hashStr(val);
-  return h===stored;
+async function checkPwHash(hash,val){
+  if(!hash)return true;
+  return (await hashStr(val))===hash;
 }
-
-function getPwForPin(){return getPw().s1;}
+function getPwForPin(){const pw=getPw();return {hash:pw.s1,len:pw.s1len||4};}
 
 // 3-step change flow
 // mode: 'verify' = verify current pw (3 steps), 'set' = set new pw (3 steps), 'confirm' = confirm new pw (3 steps)
@@ -1138,14 +1131,13 @@ function pwNextStep(){
       else{pwChangeMode='set';pwChangePhase=0;renderPwChange();}
       return;
     }
-    checkPwStep(pwChangePhase,val).then(ok=>{if(!ok){showPwError('비밀번호가 틀렸습니다');return;}
-    pwVerified[pwChangePhase]=val;
-    if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
-    else{pwChangeMode='set';pwChangePhase=0;renderPwChange();}
+    const storedHash=getPw()[['s1','s2','s3'][pwChangePhase]];
+    checkPwHash(storedHash,val).then(ok=>{
+      if(!ok){showPwError('비밀번호가 틀렸습니다');return;}
+      pwVerified[pwChangePhase]=val;
+      if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
+      else{pwChangeMode='set';pwChangePhase=0;renderPwChange();}
     }); return;
-    pwVerified[pwChangePhase]=val;
-    if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
-    else{pwChangeMode='set';pwChangePhase=0;renderPwChange();}
   }else if(pwChangeMode==='set'){
     pwNew[pwChangePhase]=val;
     if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
@@ -1160,7 +1152,7 @@ function pwNextStep(){
         pwNew[1]?hashStr(pwNew[1]):Promise.resolve(null),
         pwNew[2]?hashStr(pwNew[2]):Promise.resolve(null),
       ]).then(hashes=>{
-        setPwLocal({s1:hashes[0],s2:hashes[1],s3:hashes[2]});
+        setPwLocal({s1:hashes[0],s1len:pwNew[0]?pwNew[0].length:4,s2:hashes[1],s2len:pwNew[1]?pwNew[1].length:0,s3:hashes[2],s3len:pwNew[2]?pwNew[2].length:0});
         isUnlocked=false;sessionStorage.removeItem('mk_unlocked');
         notifyAllFrames(false);
         document.getElementById('pwChangeOverlay').style.display='none';
@@ -1324,8 +1316,8 @@ function showTextPin(cb){
     const correct=pw[phases[phase].key];
     if(correct===null||correct===undefined||correct===''){phase++;updatePhase();return;}
     if(!val){document.getElementById('tpErr').textContent='입력해주세요';return;}
-    hashStr(val).then(h=>{
-      if(h!==correct){
+    checkPwHash(correct,val).then(ok=>{
+      if(!ok){
         document.getElementById('tpErr').textContent='틀렸습니다';
         inp.style.borderColor='#FF3B00';
         inp.style.boxShadow='0 0 0 3px rgba(255,59,0,.08)';
@@ -2208,43 +2200,35 @@ renderGallery();
 
 
 
-<div id="scroll-bg-overlay" style="position:fixed;inset:0;z-index:0;pointer-events:none;background-color:#e8e0d0;opacity:0;transition:opacity 1.2s ease;background-image:url('data:image/svg+xml,%3Csvg viewBox=%270 0 256 256%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cfilter id=%27g%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.68%27 numOctaves=%274%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23g)%27 opacity=%270.22%27/%3E%3C/svg%3E');background-size:256px 256px;"></div>
+
+<style>
+#sbg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:#e8e0d0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  opacity:0;
+  transition:opacity 1.4s ease;}
+</style>
+<div id="sbg"></div>
 <script>
 (function(){
-  var overlay = document.getElementById('scroll-bg-overlay');
-  var active = false;
-
-  function check() {
-    var mbFrame = document.getElementById('mbFrame');
-    var p5Frame = document.getElementById('p5Frame');
-    if (!mbFrame || !p5Frame) return;
-
-    var scrollY = window.scrollY || window.pageYOffset;
-    var winH = window.innerHeight;
-
-    var mbTop = mbFrame.getBoundingClientRect().top + scrollY;
-    var mbBot = mbFrame.getBoundingClientRect().bottom + scrollY;
-    var p5Top = p5Frame.getBoundingClientRect().top + scrollY;
-
-    var viewTop = scrollY;
-    var viewBot = scrollY + winH;
-
-    // 3picture(mbFrame) 구간에 들어오면 베이지 on
-    var inBeige = viewBot > mbTop + 100 && viewTop < p5Top - 100;
-
-    if (inBeige && !active) {
-      overlay.style.opacity = '0.9';
-      active = true;
-    } else if (!inBeige && active) {
-      overlay.style.opacity = '0';
-      active = false;
-    }
+  var el=document.getElementById('sbg');
+  var on=false;
+  function tick(){
+    var mb=document.getElementById('mbFrame');
+    var p5=document.getElementById('p5Frame');
+    if(!mb||!p5)return;
+    var mbRect=mb.getBoundingClientRect();
+    var p5Rect=p5.getBoundingClientRect();
+    var vh=window.innerHeight;
+    // mbFrame이 화면에 걸쳐 있고 p5Frame 아직 시작 전
+    var shouldOn=(mbRect.bottom>100)&&(p5Rect.top>100);
+    if(shouldOn&&!on){el.style.opacity='0.88';on=true;}
+    else if(!shouldOn&&on){el.style.opacity='0';on=false;}
   }
-
-  window.addEventListener('scroll', check, {passive:true});
-  window.addEventListener('resize', check, {passive:true});
-  // 높이 변화 대응
-  setInterval(check, 500);
+  window.addEventListener('scroll',tick,{passive:true});
+  window.addEventListener('resize',tick,{passive:true});
+  setInterval(tick,300);
 })();
 </script>
 </body>
