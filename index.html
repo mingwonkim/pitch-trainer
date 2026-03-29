@@ -57,6 +57,17 @@
 }
 .folder-card:hover .fc-del{color:rgba(255,255,255,.45);}
 .folder-card .fc-del:hover,.folder-card .fc-del:active{color:#FF3B00 !important;background:rgba(255,59,0,.1);}
+.folder-card .fc-lock{
+  position:absolute;top:10px;right:34px;
+  font-size:13px;color:rgba(255,255,255,.15);cursor:pointer;
+  transition:color .2s;line-height:1;
+  padding:4px 5px;border-radius:6px;
+}
+.folder-card:hover .fc-lock{color:rgba(255,255,255,.4);}
+.folder-card .fc-lock:hover,.folder-card .fc-lock:active{color:#ffb4a2 !important;}
+.folder-card.locked{border-color:rgba(255,180,162,.2);}
+.folder-card.locked .fc-lock{color:rgba(255,180,162,.6);}
+.folder-card.locked .fc-icon{background:rgba(255,180,162,.12);border-color:rgba(255,180,162,.2);}
 .folder-card .fc-icon{
   width:36px;height:36px;border-radius:10px;
   background:rgba(255,180,162,.08);
@@ -529,7 +540,7 @@
             <li class="flex items-center gap-4 text-on-surface/60"><span class="w-1.5 h-1.5 rounded-full bg-[#FF3B00] shrink-0"></span><span class="font-body text-sm">Wong 2025 Protocol</span></li>
           </ul>
         </div>
-        <button class="w-full bg-[#252525] text-on-surface py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg flex items-center justify-center gap-2 group-hover:bg-[#ffb4a2]/10 transition-all"><span class="material-symbols-outlined text-sm text-[#ffb4a2]">music_note</span>Open Studio →</button>
+        <button class="w-full bg-[#ffb4a2] text-[#360e05] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:brightness-110 transition-all">Open Studio →</button>
     </div>
 
     <!-- Bottom Bento -->
@@ -1165,7 +1176,7 @@ function setPage(p){
 }
 function goHub(){setPage('hub');}
 function openApp(a){
-  if((a==='memo'||a==='files'||a==='settings')&&!isUnlocked){
+  if((a==='settings')&&!isUnlocked){
     showTextPin(()=>doOpenApp(a));
     return;
   }
@@ -1722,7 +1733,8 @@ async function renderMemoFolders(){
   let counts={};
   try{const ms=await getDocs(memosCol);ms.forEach(d=>{const fd=d.data().folder||'none';counts[fd]=(counts[fd]||0)+1;});}catch(e){}
   el.innerHTML=fs.map(f=>`
-    <div class="folder-card" onclick="openMemoFolder('${f.id}')">
+    <div class="folder-card${f.locked?' locked':''}" onclick="openMemoFolder('${f.id}')">
+      <span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('memo','${f.id}',${!!f.locked})" title="${f.locked?'잠금 해제':'잠금 설정'}">${f.locked?'🔒':'🔓'}</span>
       <span class="fc-del" onclick="event.stopPropagation();delMemoFolder('${f.id}')">✕</span>
       <div class="fc-icon"><span class="material-symbols-outlined">${f.icon||'folder'}</span></div>
       <div class="fc-name">${f.name}</div>
@@ -1777,9 +1789,32 @@ function confirmIconPicker(){const name=document.getElementById('ipName').value.
 window.pickIcon=pickIcon;window.closeIconPicker=closeIconPicker;window.confirmIconPicker=confirmIconPicker;
 async function newMemoFolder(){openIconPicker('New Memo Folder',async(name,icon)=>{try{await addDoc(memoFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderMemoFolders();});}
 async function delMemoFolder(id){if(!confirm('Delete folder and all notes?'))return;try{const s=await getDocs(memosCol);const ps=[];s.forEach(d=>{if(d.data().folder===id)ps.push(deleteDoc(doc(db,'mk_app','data','memos',d.id)));});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','folders',id));}catch(e){}renderMemoFolders();}
-function openMemoFolder(id){curMemoFolder=id;const f=cachedMemoFolders.find(x=>x.id===id);document.getElementById('memoFolderView').style.display='none';document.getElementById('memoInsideFolder').style.display='';document.getElementById('memoBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToMemoFolders()">Notepad</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>`;renderMemos();}
+function openMemoFolder(id){
+  const f=cachedMemoFolders.find(x=>x.id===id);
+  if(f?.locked){
+    showTextPin(()=>_doOpenMemoFolder(id));
+    return;
+  }
+  _doOpenMemoFolder(id);
+}
+function _doOpenMemoFolder(id){
+  curMemoFolder=id;const f=cachedMemoFolders.find(x=>x.id===id);document.getElementById('memoFolderView').style.display='none';document.getElementById('memoInsideFolder').style.display='';document.getElementById('memoBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToMemoFolders()">Notepad</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>`;renderMemos();
+}
 function backToMemoFolders(){curMemoFolder=null;document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';document.getElementById('memoFolderView').style.display='';renderMemoFolders();}
-window.newMemoFolder=newMemoFolder;window.delMemoFolder=delMemoFolder;window.openMemoFolder=openMemoFolder;window.backToMemoFolders=backToMemoFolders;window.renderMemoFolders=renderMemoFolders;
+// 폴더 잠금 토글
+async function toggleFolderLock(type, id, isLocked){
+  const col = type==='memo' ? memoFoldersCol : fileFoldersCol;
+  const docPath = type==='memo'
+    ? doc(db,'mk_app','data','folders',id)
+    : doc(db,'mk_app','data','file_folders',id);
+  try{
+    await updateDoc(docPath,{locked:!isLocked});
+    toast(isLocked?'🔓 잠금 해제됨':'🔒 폴더 잠금 설정됨');
+    if(type==='memo')renderMemoFolders();
+    else renderFileFolders();
+  }catch(e){toast('설정 실패');}
+}
+window.newMemoFolder=newMemoFolder;window.delMemoFolder=delMemoFolder;window.openMemoFolder=openMemoFolder;window.backToMemoFolders=backToMemoFolders;window.renderMemoFolders=renderMemoFolders;window.toggleFolderLock=toggleFolderLock;window._doOpenMemoFolder=_doOpenMemoFolder;window._doOpenFileFolder=_doOpenFileFolder;
 
 /* ===== Memos ===== */
 let editId=null;
@@ -1808,7 +1843,8 @@ async function renderFileFolders(){
   el.innerHTML=fs.map(f=>{
     const sz=sizes[f.id]||0;
     const szStr=sz<1048576?(sz/1024).toFixed(0)+' KB':(sz/1048576).toFixed(1)+' MB';
-    return`<div class="folder-card" onclick="openFileFolder('${f.id}')">
+    return`<div class="folder-card${f.locked?' locked':''}" onclick="openFileFolder('${f.id}')">
+      <span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('files','${f.id}',${!!f.locked})" title="${f.locked?'잠금 해제':'잠금 설정'}">${f.locked?'🔒':'🔓'}</span>
       <span class="fc-del" onclick="event.stopPropagation();delFileFolder('${f.id}')">✕</span>
       <div class="fc-icon"><span class="material-symbols-outlined">${f.icon||'folder'}</span></div>
       <div class="fc-name">${f.name}</div>
@@ -1821,7 +1857,17 @@ async function renderFileFolders(){
 }
 async function newFileFolder(){openIconPicker('New Vault Folder',async(name,icon)=>{try{await addDoc(fileFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderFileFolders();});}
 async function delFileFolder(id){if(!confirm('Delete folder and all files?'))return;try{const s=await getDocs(filesCol);const ps=[];s.forEach(d=>{if(d.data().folder===id){if(d.data().path)ps.push(deleteObject(sRef(stg,d.data().path)).catch(()=>{}));ps.push(deleteDoc(doc(db,'mk_app','data','files',d.id)));}});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','file_folders',id));}catch(e){}renderFileFolders();}
-function openFileFolder(id){curFileFolder=id;const f=cachedFileFolders.find(x=>x.id===id);document.getElementById('fileFolderView').style.display='none';document.getElementById('fileInsideFolder').style.display='';document.getElementById('fileBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToFileFolders()">Vault</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>`;renderFiles();}
+function openFileFolder(id){
+  const f=cachedFileFolders.find(x=>x.id===id);
+  if(f?.locked){
+    showTextPin(()=>_doOpenFileFolder(id));
+    return;
+  }
+  _doOpenFileFolder(id);
+}
+function _doOpenFileFolder(id){
+  curFileFolder=id;const f=cachedFileFolders.find(x=>x.id===id);document.getElementById('fileFolderView').style.display='none';document.getElementById('fileInsideFolder').style.display='';document.getElementById('fileBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToFileFolders()">Vault</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>`;renderFiles();
+}
 function backToFileFolders(){curFileFolder=null;document.getElementById('fileInsideFolder').style.display='none';document.getElementById('fileFolderView').style.display='';renderFileFolders();}
 window.newFileFolder=newFileFolder;window.delFileFolder=delFileFolder;window.openFileFolder=openFileFolder;window.backToFileFolders=backToFileFolders;window.renderFileFolders=renderFileFolders;
 
