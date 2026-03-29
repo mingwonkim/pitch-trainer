@@ -35,7 +35,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .cc .cn{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;margin-bottom:1px;}.cc .ct{font-size:10px;color:var(--txd);margin-bottom:2px;}.cc .cd{font-size:9px;color:var(--txl);font-family:'JetBrains Mono',monospace;}
 .cc .dg{position:absolute;top:5px;right:6px;font-size:8px;font-weight:700;padding:2px 5px;border-radius:4px;}
 .sec-label{font-size:12px;font-weight:700;margin:14px 0 8px;padding:6px 12px;border-radius:8px;display:inline-block;}
-.sec-label.mi{color:var(--acc);background:var(--accd);}.sec-label.sd{color:var(--pink);background:var(--pinkd);}.sec-label.pic{color:var(--ok);background:var(--okd);}
+.sec-label.mi{color:var(--ok);background:var(--okd);}.sec-label.sd{color:var(--pink);background:var(--pinkd);}.sec-label.pic{color:var(--ok);background:var(--okd);}
 .pc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--shadow);transition:.2s;}.pc.playing{border-color:var(--acc);}
 .pc .pt{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
 .pc .pn{font-size:14px;font-weight:800;}.pc .pa{font-size:11px;color:var(--txd);}
@@ -274,8 +274,8 @@ function rChords(){
   document.getElementById('chordGrid').innerHTML=ch.map((c,i)=>`<div class="cc" onclick="pcc(${i})" id="c${i}"><span class="dg" style="background:var(--accd);color:var(--acc);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct">${CT[c.type]?.l||''}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('');
   window._ch=ch;
   const bw=getBorrowed(curKey,curMode);let h='';
-  if(bw.mi.length){h+=`<div class="sec-label mi">🎨 모달 인터체인지 — 마이너에서 빌려 쓸 수 있는 코드</div><div class="chord-grid">${bw.mi.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])" style="border-color:var(--acc);"><span class="dg" style="background:var(--accd);color:var(--acc);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct" style="color:var(--acc);">${c.desc}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('')}</div>`;}
   if(bw.sd.length){h+=`<div class="sec-label sd">🎯 세컨더리 도미넌트 — 해결감을 만드는 빌려쓰기</div><div class="chord-grid">${bw.sd.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])" style="border-color:var(--pink);"><span class="dg" style="background:var(--pinkd);color:var(--pink);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct" style="color:var(--pink);">${c.desc}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('')}</div>`;}
+  if(bw.mi.length){h+=`<div class="sec-label mi">🎨 모달 인터체인지 — 마이너에서 빌려 쓸 수 있는 코드</div><div class="chord-grid">${bw.mi.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])" style="border-color:var(--ok);"><span class="dg" style="background:var(--okd);color:var(--ok);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct" style="color:var(--ok);">${c.desc}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('')}</div>`;}
   if(bw.pic.length){h+=`<div class="sec-label pic">✨ 피카르디 / 메이저화</div><div class="chord-grid">${bw.pic.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])" style="border-color:var(--ok);"><span class="dg" style="background:var(--okd);color:var(--ok);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct" style="color:var(--ok);">${c.desc}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('')}</div>`;}
   document.getElementById('borrowedSection').innerHTML=h;
   // Famous progressions in current key
