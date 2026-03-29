@@ -577,7 +577,7 @@
       <iframe src="editorial-layout.html" style="width:100%;height:900px;border:none;display:block;"></iframe>
 
       <!-- ===== Lowtheory Scale iframe ===== -->
-      <iframe src="lowtheory-scale.html" style="width:100%;min-height:100vh;border:none;display:block;margin-top:32px;" loading="lazy"></iframe>
+      <iframe id="ltScaleFrame" src="lowtheory-scale.html" onload="notifyLtFrame(isUnlocked)" style="width:100%;height:1100px;border:none;display:block;margin-top:32px;" loading="lazy"></iframe>
 
     </div>
 
@@ -982,7 +982,8 @@ function pinAdd(n){
   const dots=document.querySelectorAll('#pinDots .pin-dot');dots.forEach((d,i)=>d.classList.toggle('filled',i<pinInput.length));
   if(pinInput.length>=pw.length){
     if(pinInput===pw){
-      setTimeout(()=>{document.getElementById('pinOverlay').style.display='none';isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');if(pinCallback)pinCallback();pinCallback=null;},180);
+      setTimeout(()=>{document.getElementById('pinOverlay').style.display='none';isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');if(pinCallback)pinCallback();
+      notifyLtFrame(true);pinCallback=null;},180);
     }else{
       pinAttempts=Math.max(0,pinAttempts-1);
       document.getElementById('pinAttemptsLeft').textContent='0'+pinAttempts;
@@ -1135,6 +1136,7 @@ function pwNextStep(){
     else{
       setPwLocal({s1:pwNew[0],s2:pwNew[1],s3:pwNew[2]});
       isUnlocked=false;sessionStorage.removeItem('mk_unlocked');
+      notifyLtFrame(false);
       document.getElementById('pwChangeOverlay').style.display='none';
       toast('비밀번호가 변경됐습니다');
     }
@@ -1262,7 +1264,9 @@ function showTextPin(cb){
   function updatePhase(){
     const pw=getPw();
     while(phase<3&&(pw[phases[phase].key]===null||pw[phases[phase].key]===undefined||pw[phases[phase].key]=='')){phase++;}
-    if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');cb();return;}
+    if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');cb();
+      notifyLtFrame(true);return;
+      notifyLtFrame(true);}
     const cfg=phases[phase];
     isKoreanPhase=cfg.korean||false;
     document.getElementById('tpSub').textContent=cfg.sub;
@@ -1933,6 +1937,7 @@ function dlFile(id){const f=cachedFiles.find(x=>x.id===id);if(f?.url)window.open
 async function rmFile(id){if(!confirm('Delete this file?'))return;const f=cachedFiles.find(x=>x.id===id);try{if(f?.path)await deleteObject(sRef(stg,f.path));await deleteDoc(doc(db,'mk_app','data','files',id));}catch(e){}renderFiles();}
 window.dlFile=dlFile;window.rmFile=rmFile;
 
+function notifyLtFrame(val){const f=document.getElementById('ltScaleFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 /* ===== Init ===== */
 (function(){
   const nav=document.querySelector('nav.fixed.top-0');
