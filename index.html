@@ -577,7 +577,7 @@
       <iframe id="edLayoutFrame" src="editorial-layout.html" onload="notifyEdFrame(isUnlocked)" style="width:100%;height:900px;border:none;display:block;"></iframe>
 
       <!-- ===== Lowtheory Scale iframe ===== -->
-      <iframe id="ltScaleFrame" src="lowtheory-scale.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:1400px;border:none;display:block;margin-top:80px;overflow:hidden;" loading="lazy"></iframe>
+      <iframe id="ltScaleFrame" src="lowtheory-scale.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:1400px;border:none;display:block;margin-top:160px;overflow:hidden;" loading="lazy"></iframe>
 
     </div>
 
@@ -1183,10 +1183,7 @@ function setPage(p){
 }
 function goHub(){setPage('hub');}
 function openApp(a){
-  if((a==='settings')&&!isUnlocked){
-    showTextPin(()=>doOpenApp(a));
-    return;
-  }
+  if(a==='settings'&&!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
   doOpenApp(a);
 }
 
@@ -1521,7 +1518,7 @@ async function renderMusicNotes(){
     return`<div class="mk-card" onclick="editMusicNoteItem('${m.id}')"><div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-label font-bold text-sm mb-1">${m.t||'Untitled'}</div><div class="text-xs text-on-surface-variant truncate">${(m.b||'').substring(0,80)||'—'}</div><div class="text-[11px] text-outline mt-2">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMusicNote('${m.id}')">Delete</span></div></div>`;
   }).join('');
 }
-function newMusicNote(){editMusicNoteId=null;document.getElementById('musicNoteTitleInput').value='';document.getElementById('musicNoteBodyInput').value='';document.getElementById('musicNotesList').style.display='none';document.getElementById('musicNoteEditor').style.display='flex';}
+function newMusicNote(){if(!isUnlocked){showTextPin(()=>newMusicNote());return;}editMusicNoteId=null;document.getElementById('musicNoteTitleInput').value='';document.getElementById('musicNoteBodyInput').value='';document.getElementById('musicNotesList').style.display='none';document.getElementById('musicNoteEditor').style.display='flex';}
 function editMusicNoteItem(id){const m=cachedMusicNotes.find(x=>x.id===id);if(!m)return;editMusicNoteId=id;document.getElementById('musicNoteTitleInput').value=m.t||'';document.getElementById('musicNoteBodyInput').value=m.b||'';document.getElementById('musicNotesList').style.display='none';document.getElementById('musicNoteEditor').style.display='flex';}
 async function saveMusicNote(){const t=document.getElementById('musicNoteTitleInput').value.trim(),b=document.getElementById('musicNoteBodyInput').value;try{if(editMusicNoteId)await updateDoc(doc(db,'mk_app','data','music_notes',editMusicNoteId),{t,b,u:Date.now()});else await addDoc(musicNotesCol,{t,b,c:Date.now(),u:Date.now()});}catch(e){toast('Save failed');return;}toast('Saved');cancelMusicNote();}
 function cancelMusicNote(){editMusicNoteId=null;document.getElementById('musicNoteEditor').style.display='none';document.getElementById('musicNotesList').style.display='';renderMusicNotes();}
@@ -1618,7 +1615,7 @@ function closeFavDetail(){
   document.getElementById('favWhyDetailView').style.display='none';
   document.getElementById('favWhyListView').style.display='';
 }
-async function saveYTKey(){
+async function saveYTKey(){if(!isUnlocked){toast("비밀번호 해제 후 이용 가능합니다");return;}
   const val=document.getElementById('ytApiKeyInput').value.trim();
   if(!val||val.startsWith('•'))return;
   try{
@@ -1640,6 +1637,7 @@ function parseVideoId(url){
   return null;
 }
 function newFavSong(){
+  if(!isUnlocked){showTextPin(()=>newFavSong());return;}
   editFavSongId=null;
   ['favSongTitle','favSongArtist','favSongYtUrl','favSongReason'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('favWhyListView').style.display='none';
@@ -1687,7 +1685,7 @@ async function renderPlaylists(){
     <span class="fc-add-label">New Playlist</span>
   </div>`;
 }
-async function newPlaylist(){
+async function newPlaylist(){if(!isUnlocked){showTextPin(()=>newPlaylist());return;}
   const name=prompt('플레이리스트 이름:','My Playlist');if(!name)return;
   try{await addDoc(playlistsCol,{name,c:Date.now(),count:0});}catch(e){toast('Failed');return;}
   renderPlaylists();
@@ -1795,8 +1793,8 @@ function pickIcon(el,ic){
 function closeIconPicker(){document.getElementById('iconOverlay').style.display='none';ipCallback=null;}
 function confirmIconPicker(){const name=document.getElementById('ipName').value.trim();if(!name){toast('Enter a name');return;}if(ipCallback)ipCallback(name,ipSelectedIcon);closeIconPicker();}
 window.pickIcon=pickIcon;window.closeIconPicker=closeIconPicker;window.confirmIconPicker=confirmIconPicker;
-async function newMemoFolder(){openIconPicker('New Memo Folder',async(name,icon)=>{try{await addDoc(memoFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderMemoFolders();});}
-async function delMemoFolder(id){if(!confirm('Delete folder and all notes?'))return;try{const s=await getDocs(memosCol);const ps=[];s.forEach(d=>{if(d.data().folder===id)ps.push(deleteDoc(doc(db,'mk_app','data','memos',d.id)));});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','folders',id));}catch(e){}renderMemoFolders();}
+async function newMemoFolder(){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}openIconPicker('New Memo Folder',async(name,icon)=>{try{await addDoc(memoFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderMemoFolders();});}
+async function delMemoFolder(id){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}if(!confirm('Delete folder and all notes?'))return;try{const s=await getDocs(memosCol);const ps=[];s.forEach(d=>{if(d.data().folder===id)ps.push(deleteDoc(doc(db,'mk_app','data','memos',d.id)));});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','folders',id));}catch(e){}renderMemoFolders();}
 function openMemoFolder(id){
   const f=cachedMemoFolders.find(x=>x.id===id);
   if(f?.locked){
@@ -1817,7 +1815,7 @@ function _doOpenMemoFolder(id){
 }
 function backToMemoFolders(){curMemoFolder=null;document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';document.getElementById('memoFolderView').style.display='';renderMemoFolders();}
 // 폴더 잠금 토글
-async function toggleFolderLock(type, id, isLocked){
+async function toggleFolderLock(type, id, isLocked){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
   const doToggle = async () => {
     const docPath = type==='memo'
       ? doc(db,'mk_app','data','folders',id)
@@ -1842,12 +1840,12 @@ window.newMemoFolder=newMemoFolder;window.delMemoFolder=delMemoFolder;window.ope
 let editId=null;
 async function loadMemos(){try{const s=await getDocs(query(memosCol,orderBy('u','desc')));cachedMemos=[];s.forEach(d=>{cachedMemos.push({id:d.id,...d.data()});});}catch(e){cachedMemos=[];}}
 async function renderMemos(){const el=document.getElementById('memoList');el.innerHTML='<div class="text-center py-10 text-outline text-sm">Loading...</div>';await loadMemos();const q=(document.getElementById('memoSearch').value||'').toLowerCase();let ms=cachedMemos.filter(m=>(m.folder||'none')===curMemoFolder);if(q)ms=ms.filter(m=>(m.t||'').toLowerCase().includes(q)||(m.b||'').toLowerCase().includes(q));if(!ms.length){el.innerHTML=`<div class="text-center py-16 text-outline"><span class="material-symbols-outlined text-3xl mb-2 block">note_add</span><p class="text-sm">${q?'No results':'Create a new note'}</p></div>`;return;}el.innerHTML=ms.map(m=>{const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});return`<div class="mk-card" onclick="editMemo('${m.id}')"><div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-label font-bold text-sm mb-1 text-on-surface">${m.t||'Untitled'}</div><div class="text-xs text-on-surface-variant truncate">${(m.b||'').substring(0,80).replace(/\n/g,' ')||'—'}</div><div class="text-[11px] text-outline mt-2 font-label">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMemo('${m.id}')">Delete</span></div></div>`;}).join('');}
-function newMemo(){editId=null;document.getElementById('memoTitleInput').value='';document.getElementById('memoBodyInput').value='';showMemoEditor();}
+function newMemo(){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}editId=null;document.getElementById('memoTitleInput').value='';document.getElementById('memoBodyInput').value='';showMemoEditor();}
 function editMemo(id){const m=cachedMemos.find(x=>x.id===id);if(!m)return;editId=id;document.getElementById('memoTitleInput').value=m.t||'';document.getElementById('memoBodyInput').value=m.b||'';showMemoEditor();}
 function showMemoEditor(){document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoFolderView').style.display='none';document.getElementById('memoEditor').style.display='flex';}
-async function saveMemo(){const t=document.getElementById('memoTitleInput').value.trim(),b=document.getElementById('memoBodyInput').value;try{if(editId)await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b,u:Date.now()});else await addDoc(memosCol,{t,b,c:Date.now(),u:Date.now(),folder:curMemoFolder});}catch(e){toast('Save failed');return;}toast('Saved');cancelMemo();}
+async function saveMemo(){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}const t=document.getElementById('memoTitleInput').value.trim(),b=document.getElementById('memoBodyInput').value;try{if(editId)await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b,u:Date.now()});else await addDoc(memosCol,{t,b,c:Date.now(),u:Date.now(),folder:curMemoFolder});}catch(e){toast('Save failed');return;}toast('Saved');cancelMemo();}
 function cancelMemo(){editId=null;document.getElementById('memoEditor').style.display='none';document.getElementById('memoInsideFolder').style.display='';renderMemos();}
-async function delMemo(id){if(!confirm('Delete this note?'))return;try{await deleteDoc(doc(db,'mk_app','data','memos',id));}catch(e){}renderMemos();}
+async function delMemo(id){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}if(!confirm('Delete this note?'))return;try{await deleteDoc(doc(db,'mk_app','data','memos',id));}catch(e){}renderMemos();}
 window.newMemo=newMemo;window.editMemo=editMemo;window.saveMemo=saveMemo;window.cancelMemo=cancelMemo;window.delMemo=delMemo;window.renderMemos=renderMemos;
 
 /* ===== FILE FOLDERS ===== */
@@ -1876,8 +1874,8 @@ async function renderFileFolders(){
     <span class="fc-add-label">New Folder</span>
   </div>`;
 }
-async function newFileFolder(){openIconPicker('New Vault Folder',async(name,icon)=>{try{await addDoc(fileFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderFileFolders();});}
-async function delFileFolder(id){if(!confirm('Delete folder and all files?'))return;try{const s=await getDocs(filesCol);const ps=[];s.forEach(d=>{if(d.data().folder===id){if(d.data().path)ps.push(deleteObject(sRef(stg,d.data().path)).catch(()=>{}));ps.push(deleteDoc(doc(db,'mk_app','data','files',d.id)));}});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','file_folders',id));}catch(e){}renderFileFolders();}
+async function newFileFolder(){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}openIconPicker('New Vault Folder',async(name,icon)=>{try{await addDoc(fileFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderFileFolders();});}
+async function delFileFolder(id){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}if(!confirm('Delete folder and all files?'))return;try{const s=await getDocs(filesCol);const ps=[];s.forEach(d=>{if(d.data().folder===id){if(d.data().path)ps.push(deleteObject(sRef(stg,d.data().path)).catch(()=>{}));ps.push(deleteDoc(doc(db,'mk_app','data','files',d.id)));}});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','file_folders',id));}catch(e){}renderFileFolders();}
 function openFileFolder(id){
   const f=cachedFileFolders.find(x=>x.id===id);
   if(f?.locked){
@@ -1905,7 +1903,7 @@ const dz=document.getElementById('dropZone');
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
 dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');handleFiles(e.dataTransfer.files);});
-async function handleFiles(fl){for(const f of Array.from(fl)){if(f.size>50*1024*1024){toast(f.name+': Max 50MB');continue;}try{const fid='f'+Date.now()+'_'+Math.random().toString(36).substr(2,4);const fr=sRef(stg,'mk_files/'+fid+'_'+f.name);document.getElementById('folderFileUsage').textContent='Uploading: '+f.name;await uploadBytes(fr,f);const url=await getDownloadURL(fr);await addDoc(filesCol,{n:f.name,size:f.size,type:f.type,url,path:fr.fullPath,c:Date.now(),folder:curFileFolder});toast('Uploaded: '+f.name);}catch(e){toast('Upload failed');}}renderFiles();}
+async function handleFiles(fl){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}for(const f of Array.from(fl)){if(f.size>50*1024*1024){toast(f.name+': Max 50MB');continue;}try{const fid='f'+Date.now()+'_'+Math.random().toString(36).substr(2,4);const fr=sRef(stg,'mk_files/'+fid+'_'+f.name);document.getElementById('folderFileUsage').textContent='Uploading: '+f.name;await uploadBytes(fr,f);const url=await getDownloadURL(fr);await addDoc(filesCol,{n:f.name,size:f.size,type:f.type,url,path:fr.fullPath,c:Date.now(),folder:curFileFolder});toast('Uploaded: '+f.name);}catch(e){toast('Upload failed');}}renderFiles();}
 window.handleFiles=handleFiles;
 async function renderFiles(){
   const el=document.getElementById('fileList');
