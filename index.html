@@ -577,7 +577,7 @@
       <iframe src="editorial-layout.html" style="width:100%;height:900px;border:none;display:block;"></iframe>
 
       <!-- ===== Lowtheory Scale iframe ===== -->
-      <iframe id="ltScaleFrame" src="lowtheory-scale.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:1100px;border:none;display:block;margin-top:32px;overflow:hidden;" loading="lazy"></iframe>
+      <iframe id="ltScaleFrame" src="lowtheory-scale.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:1400px;border:none;display:block;margin-top:32px;overflow:hidden;" loading="lazy"></iframe>
 
     </div>
 
@@ -1308,7 +1308,7 @@ function showTextPin(cb){
       return;
     }
     phase++;
-    if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');cb();}
+    if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');notifyLtFrame(true);cb();}
     else{updatePhase();}
   }
 
