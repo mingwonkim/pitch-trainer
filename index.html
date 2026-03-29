@@ -98,9 +98,7 @@
 .icon-picker h3{font-size:16px;font-weight:700;margin-bottom:10px;color:#e5e2e1;}
 .icon-picker .icon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:14px;max-height:240px;overflow-y:auto;}
 .icon-picker .icon-opt{padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;transition:.15s;border:1.5px solid transparent;}.icon-picker .icon-opt:hover{background:#252525;border-color:rgba(255,180,162,.2);}.icon-picker .icon-opt.sel{border-color:#ffb4a2;background:rgba(255,180,162,.08);}
-.music-frame{position:fixed;top:var(--nav-h,64px);left:0;right:0;bottom:0;width:100%;height:calc(100dvh - var(--nav-h,64px));border:none;background:#08080e;z-index:200;}
-.music-app-back{position:fixed;top:calc(var(--nav-h,64px) + 12px);left:16px;z-index:201;display:flex;align-items:center;gap:7px;padding:7px 16px;background:rgba(14,14,14,.88);backdrop-filter:blur(12px);border:1px solid #353535;border-radius:9999px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.2s;}
-.music-app-back:hover{border-color:#ffb4a2;}
+.music-frame{flex:1;border:none;border-radius:12px;min-height:85vh;background:#1c1b1b;}
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#FF3B00;color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}.toast.show{opacity:1;}
 /* ===== NEW PIN OVERLAY ===== */
 .pin-overlay{position:fixed;inset:0;background:#0a0a0e;z-index:9990;display:grid;grid-template-columns:1fr 1fr 1fr;overflow:hidden;}
@@ -670,12 +668,12 @@
           <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">에구치 메소드 + Wong 2025<br>성인 최적화 훈련</p>
           <div class="amc-arrow">→</div>
         </div>
-        <div class="app-module-card" onclick="openMusicApp('chord')">
+        <div class="app-module-card app-module-dim">
           <div class="amc-num">03</div>
-          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">piano</span></div>
-          <h3 class="amc-title">Chord Dictionary</h3>
-          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">코드 사전 · 보이싱 · 진행<br>K-POP 코드 진행 분석</p>
-          <div class="amc-arrow">→</div>
+          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">guitar_chord</span></div>
+          <h3 class="amc-title">Chord Progression</h3>
+          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">화성학 기반 코드 진행 훈련<br>준비 중</p>
+          <div class="amc-badge">Soon</div>
         </div>
         <div class="app-module-card app-module-dim">
           <div class="amc-num">04</div>
@@ -699,6 +697,12 @@
           <div class="amc-arrow">→</div>
         </div>
       </div>
+    </div>
+
+    <!-- Pitch trainer iframe -->
+    <div id="musicAppView" style="display:none;flex:1;flex-direction:column;">
+      <div class="mb-5"><button class="app-ghost-btn" onclick="closeMusicApp()">← 목록</button></div>
+      <iframe class="music-frame" id="musicFrame" style="flex:1;"></iframe>
     </div>
 
     <!-- Music Notes -->
@@ -873,6 +877,10 @@
           oninput="pwInputHandler()" onkeydown="pwKeydownHandler(event)"
           onfocus="this.style.borderColor='rgba(255,180,162,.4)';this.style.boxShadow='0 0 0 3px rgba(255,180,162,.06)'"
           onblur="this.style.borderColor='#2a2a35';this.style.boxShadow='none'">
+        <!-- 3단계 한글 전용 숨김 input -->
+        <input id="pwChangeInputKorean" type="text" autocomplete="off" spellcheck="false"
+          style="position:absolute;top:0;left:0;width:calc(100% - 52px);height:100%;padding:14px 0 14px 18px;background:transparent;border:none;color:transparent;caret-color:#ffb4a2;font-size:18px;font-family:'Space Grotesk',sans-serif;outline:none;display:none;z-index:2;"
+          oninput="pwKoreanInputHandler()" onkeydown="pwKeydownHandler(event)">
         <!-- Eye toggle -->
         <button onclick="pwToggleEye()" id="pwEyeBtn"
           style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;line-height:1;color:#524340;transition:color .2s;padding:4px;"
@@ -1023,16 +1031,26 @@ function changePw(){
 
 function renderPwChange(){
   const cfg=PW_CONFIG[pwChangePhase];
+  const isKorean=(pwChangePhase===2);
   const modeTitle=pwChangeMode==='verify'?'현재 비밀번호 확인':pwChangeMode==='set'?'새 비밀번호 설정':'새 비밀번호 확인';
   document.getElementById('pwChangeTitle').textContent=modeTitle;
   document.getElementById('pwChangeSub').textContent=cfg.sub;
   if(document.getElementById('pwInputLabel'))document.getElementById('pwInputLabel').textContent=cfg.title;
   const inp=document.getElementById('pwChangeInput');
-  inp.value='';
-  inp.type='password';
+  const inpKo=document.getElementById('pwChangeInputKorean');
+  inp.value=''; if(inpKo)inpKo.value='';
+  // 3단계: 숨김 한글 input 활성화, 보이는 input은 readOnly로 * 표시
+  if(isKorean){
+    inp.type='text'; inp.readOnly=true; inp.style.caretColor='transparent'; inp.style.letterSpacing='.08em';
+    if(inpKo){inpKo.style.display='block';}
+    setTimeout(()=>{if(inpKo)inpKo.focus();},50);
+  }else{
+    inp.type='password'; inp.readOnly=false; inp.style.caretColor=''; inp.style.letterSpacing='.08em';
+    if(inpKo)inpKo.style.display='none';
+    setTimeout(()=>inp.focus(),50);
+  }
   if(document.getElementById('pwEyeBtn'))document.getElementById('pwEyeBtn').style.color='#524340';
-  inp.style.borderColor='#2a2a35';
-  inp.style.boxShadow='none';
+  inp.style.borderColor='#2a2a35'; inp.style.boxShadow='none';
   document.getElementById('pwChangeError').textContent='';
   document.getElementById('pwCharCount').textContent=cfg.maxLen===999?'':('0/'+cfg.maxLen);
   for(let i=0;i<3;i++){
@@ -1041,7 +1059,16 @@ function renderPwChange(){
   }
   const isLast=(pwChangePhase===2&&pwChangeMode==='confirm');
   document.getElementById('pwNextBtn').textContent=isLast?'변경 완료 ✓':'다음 →';
-  setTimeout(()=>inp.focus(),50);
+}
+
+function pwKoreanInputHandler(){
+  // 3단계 한글 숨김 input → 보이는 input에 * 마스킹
+  const inpKo=document.getElementById('pwChangeInputKorean');
+  const inp=document.getElementById('pwChangeInput');
+  const pwEyeBtn=document.getElementById('pwEyeBtn');
+  const eyeOn=(pwEyeBtn&&pwEyeBtn.style.color==='rgb(255, 180, 162)');
+  if(inpKo&&inp)inp.value=eyeOn?inpKo.value:'*'.repeat([...inpKo.value].length);
+  document.getElementById('pwChangeError').textContent='';
 }
 
 function pwInputHandler(){
@@ -1060,15 +1087,16 @@ function pwKeydownHandler(e){
 }
 
 function pwNextStep(){
-  const val=document.getElementById('pwChangeInput').value.trim();
+  const isKorean=(pwChangePhase===2);
+  const inpKo=document.getElementById('pwChangeInputKorean');
+  // 3단계는 inpKo 실제값, 나머지는 inp 값
+  const val=isKorean?(inpKo?inpKo.value.trim():''):document.getElementById('pwChangeInput').value.trim();
   const cfg=PW_CONFIG[pwChangePhase];
-  // Validate
   if(!val){showPwError('입력해주세요');return;}
   if(cfg.pattern&&!cfg.pattern.test(val)){showPwError(cfg.hint+' 형식으로 입력하세요');return;}
 
   if(pwChangeMode==='verify'){
     const correct=getPw()[['s1','s2','s3'][pwChangePhase]];
-    // 미설정 단계면 스킵
     if(correct===null||correct===undefined||correct===''){
       pwVerified[pwChangePhase]=val;
       if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
@@ -1088,7 +1116,6 @@ function pwNextStep(){
     pwNewConfirm[pwChangePhase]=val;
     if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
     else{
-      // Save new password
       setPwLocal({s1:pwNew[0],s2:pwNew[1],s3:pwNew[2]});
       isUnlocked=false;sessionStorage.removeItem('mk_unlocked');
       document.getElementById('pwChangeOverlay').style.display='none';
@@ -1101,17 +1128,28 @@ function showPwError(msg){
   const err=document.getElementById('pwChangeError');
   err.textContent=msg;
   const inp=document.getElementById('pwChangeInput');
+  const inpKo=document.getElementById('pwChangeInputKorean');
   inp.style.borderColor='#FF3B00';
   inp.classList.add('shake');
-  setTimeout(()=>{inp.classList.remove('shake');inp.value='';pwInputHandler();},400);
+  setTimeout(()=>{inp.classList.remove('shake');inp.value='';if(inpKo)inpKo.value='';pwInputHandler();},400);
 }
 function cancelPwChange(){document.getElementById('pwChangeOverlay').style.display='none';}
 function pwToggleEye(){
   const inp=document.getElementById('pwChangeInput');
+  const inpKo=document.getElementById('pwChangeInputKorean');
   const btn=document.getElementById('pwEyeBtn');
-  if(inp.type==='password'){inp.type='text';btn.style.color='#ffb4a2';}
-  else{inp.type='password';btn.style.color='#524340';}
+  const isKorean=(pwChangePhase===2);
+  if(isKorean){
+    // 한글 3단계: inpKo 실제값 ↔ * 토글
+    const eyeOn=btn.style.color==='rgb(255, 180, 162)';
+    if(eyeOn){inp.value=inpKo?'*'.repeat([...inpKo.value].length):'';btn.style.color='#524340';}
+    else{inp.value=inpKo?inpKo.value:'';btn.style.color='#ffb4a2';}
+  }else{
+    if(inp.type==='password'){inp.type='text';btn.style.color='#ffb4a2';}
+    else{inp.type='password';btn.style.color='#524340';}
+  }
 }
+
 window.changePw=changePw;window.cancelPwChange=cancelPwChange;window.pwToggleEye=pwToggleEye;
 window.pwInputHandler=pwInputHandler;window.pwKeydownHandler=pwKeydownHandler;window.pwNextStep=pwNextStep;
 
@@ -1403,15 +1441,13 @@ async function renderBgImages(){
 
 /* ===== Music ===== */
 function openMusicApp(a){
+  // Hide all sub-views first
   ['musicHome','musicAppView','musicNotesView','musicFavWhyView','musicPlaylistView'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
   if(a==='pitch'){
-    document.getElementById('musicAppView').style.display='block';
+    document.getElementById('musicAppView').style.display='flex';
     document.getElementById('musicFrame').src='pitch-trainer.html';
-  }else if(a==='chord'){
-    document.getElementById('musicAppView').style.display='block';
-    document.getElementById('musicFrame').src='chord-dictionary.html';
   }else if(a==='notes'){
     document.getElementById('musicNotesView').style.display='';
     renderMusicNotes();
@@ -1843,11 +1879,6 @@ async function rmFile(id){if(!confirm('Delete this file?'))return;const f=cached
 window.dlFile=dlFile;window.rmFile=rmFile;
 
 /* ===== Init ===== */
-(function(){
-  const nav=document.querySelector('nav.fixed.top-0');
-  function setH(){if(nav)document.documentElement.style.setProperty('--nav-h',nav.offsetHeight+'px');}
-  setH();window.addEventListener('resize',setH);
-})();
 loadBgImages().then(()=>renderBgGrid());
 // Hub storage bar
 async function updateHubStorage(){
@@ -2059,11 +2090,5 @@ renderGallery();
   onScroll();
 })();
 </script>
-<!-- Music iframe — body 직속 전체화면 overlay -->
-<div id="musicAppView" style="display:none;">
-  <button class="music-app-back" onclick="closeMusicApp()">← 목록</button>
-  <iframe class="music-frame" id="musicFrame"></iframe>
-</div>
-
 </body>
 </html>
