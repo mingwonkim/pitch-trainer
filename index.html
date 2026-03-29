@@ -577,7 +577,7 @@
       <iframe src="editorial-layout.html" style="width:100%;height:900px;border:none;display:block;"></iframe>
 
       <!-- ===== Lowtheory Scale iframe ===== -->
-      <iframe id="ltScaleFrame" src="lowtheory-scale.html" onload="notifyLtFrame(isUnlocked)" style="width:100%;height:1100px;border:none;display:block;margin-top:32px;" loading="lazy"></iframe>
+      <iframe id="ltScaleFrame" src="lowtheory-scale.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:1100px;border:none;display:block;margin-top:32px;overflow:hidden;" loading="lazy"></iframe>
 
     </div>
 
@@ -1938,6 +1938,12 @@ async function rmFile(id){if(!confirm('Delete this file?'))return;const f=cached
 window.dlFile=dlFile;window.rmFile=rmFile;
 
 function notifyLtFrame(val){const f=document.getElementById('ltScaleFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
+window.addEventListener('message',e=>{
+  if(e.data&&e.data.type==='lt_height'){
+    const f=document.getElementById('ltScaleFrame');
+    if(f)f.style.height=(e.data.value+40)+'px';
+  }
+});
 /* ===== Init ===== */
 (function(){
   const nav=document.querySelector('nav.fixed.top-0');
