@@ -59,14 +59,15 @@
 .folder-card .fc-del:hover,.folder-card .fc-del:active{color:#FF3B00 !important;background:rgba(255,59,0,.1);}
 .folder-card .fc-lock{
   position:absolute;top:10px;right:34px;
-  font-size:13px;color:rgba(255,255,255,.15);cursor:pointer;
-  transition:color .2s;line-height:1;
+  font-size:13px;cursor:pointer;
+  transition:opacity .2s;line-height:1;
   padding:4px 5px;border-radius:6px;
+  opacity:0;
 }
-.folder-card:hover .fc-lock{color:rgba(255,255,255,.4);}
+.folder-card:hover .fc-lock{opacity:1;}
 .folder-card .fc-lock:hover,.folder-card .fc-lock:active{color:#ffb4a2 !important;}
 .folder-card.locked{border-color:rgba(255,180,162,.2);}
-.folder-card.locked .fc-lock{color:rgba(255,180,162,.6);}
+.folder-card.locked .fc-lock{opacity:1;color:rgba(255,180,162,.7);}
 .folder-card.locked .fc-icon{background:rgba(255,180,162,.12);border-color:rgba(255,180,162,.2);}
 .folder-card .fc-icon{
   width:36px;height:36px;border-radius:10px;
@@ -1734,8 +1735,7 @@ async function renderMemoFolders(){
   try{const ms=await getDocs(memosCol);ms.forEach(d=>{const fd=d.data().folder||'none';counts[fd]=(counts[fd]||0)+1;});}catch(e){}
   el.innerHTML=fs.map(f=>`
     <div class="folder-card${f.locked?' locked':''}" onclick="openMemoFolder('${f.id}')">
-      <span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('memo','${f.id}',${!!f.locked})" title="${f.locked?'잠금 해제':'잠금 설정'}">${f.locked?'🔒':'🔓'}</span>
-      <span class="fc-del" onclick="event.stopPropagation();delMemoFolder('${f.id}')">✕</span>
+      ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('memo','${f.id}',true)" title="잠금 해제">🔒</span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delMemoFolder('${f.id}')">✕</span>
       <div class="fc-icon"><span class="material-symbols-outlined">${f.icon||'folder'}</span></div>
       <div class="fc-name">${f.name}</div>
       <div class="fc-meta">${counts[f.id]||0} notes</div>
@@ -1798,21 +1798,35 @@ function openMemoFolder(id){
   _doOpenMemoFolder(id);
 }
 function _doOpenMemoFolder(id){
-  curMemoFolder=id;const f=cachedMemoFolders.find(x=>x.id===id);document.getElementById('memoFolderView').style.display='none';document.getElementById('memoInsideFolder').style.display='';document.getElementById('memoBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToMemoFolders()">Notepad</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>`;renderMemos();
+  curMemoFolder=id;const f=cachedMemoFolders.find(x=>x.id===id);
+  document.getElementById('memoFolderView').style.display='none';
+  document.getElementById('memoInsideFolder').style.display='';
+  const lockBtn=!isUnlocked?'':f?.locked
+    ?`<button onclick="toggleFolderLock('memo','${id}',true)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid rgba(255,180,162,.3);border-radius:8px;background:transparent;color:#ffb4a2;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.background='rgba(255,180,162,.08)'" onmouseout="this.style.background='transparent'"><span style="font-size:14px;">🔒</span>잠금 해제</button>`
+    :`<button onclick="toggleFolderLock('memo','${id}',false)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid #353535;border-radius:8px;background:transparent;color:#a08d88;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.borderColor='#524340'" onmouseout="this.style.borderColor='#353535'"><span style="font-size:14px;">🔓</span>잠금 설정</button>`;
+  document.getElementById('memoBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToMemoFolders()">Notepad</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>${lockBtn}`;
+  renderMemos();
 }
 function backToMemoFolders(){curMemoFolder=null;document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';document.getElementById('memoFolderView').style.display='';renderMemoFolders();}
 // 폴더 잠금 토글
 async function toggleFolderLock(type, id, isLocked){
-  const col = type==='memo' ? memoFoldersCol : fileFoldersCol;
-  const docPath = type==='memo'
-    ? doc(db,'mk_app','data','folders',id)
-    : doc(db,'mk_app','data','file_folders',id);
-  try{
-    await updateDoc(docPath,{locked:!isLocked});
-    toast(isLocked?'🔓 잠금 해제됨':'🔒 폴더 잠금 설정됨');
-    if(type==='memo')renderMemoFolders();
-    else renderFileFolders();
-  }catch(e){toast('설정 실패');}
+  const doToggle = async () => {
+    const docPath = type==='memo'
+      ? doc(db,'mk_app','data','folders',id)
+      : doc(db,'mk_app','data','file_folders',id);
+    try{
+      await updateDoc(docPath,{locked:!isLocked});
+      toast(isLocked?'🔓 잠금 해제됨':'🔒 폴더 잠금 설정됨');
+      // 폴더 목록 캐시 갱신 후 현재 폴더 내부 버튼도 업데이트
+      if(type==='memo'){await loadMemoFolders();_doOpenMemoFolder(id);}
+      else{await loadFileFolders();_doOpenFileFolder(id);}
+    }catch(e){toast('설정 실패');}
+  };
+  if(isLocked){
+    showTextPin(doToggle);
+  }else{
+    doToggle();
+  }
 }
 window.newMemoFolder=newMemoFolder;window.delMemoFolder=delMemoFolder;window.openMemoFolder=openMemoFolder;window.backToMemoFolders=backToMemoFolders;window.renderMemoFolders=renderMemoFolders;window.toggleFolderLock=toggleFolderLock;window._doOpenMemoFolder=_doOpenMemoFolder;window._doOpenFileFolder=_doOpenFileFolder;
 
@@ -1844,8 +1858,7 @@ async function renderFileFolders(){
     const sz=sizes[f.id]||0;
     const szStr=sz<1048576?(sz/1024).toFixed(0)+' KB':(sz/1048576).toFixed(1)+' MB';
     return`<div class="folder-card${f.locked?' locked':''}" onclick="openFileFolder('${f.id}')">
-      <span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('files','${f.id}',${!!f.locked})" title="${f.locked?'잠금 해제':'잠금 설정'}">${f.locked?'🔒':'🔓'}</span>
-      <span class="fc-del" onclick="event.stopPropagation();delFileFolder('${f.id}')">✕</span>
+      ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('files','${f.id}',true)" title="잠금 해제">🔒</span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delFileFolder('${f.id}')">✕</span>
       <div class="fc-icon"><span class="material-symbols-outlined">${f.icon||'folder'}</span></div>
       <div class="fc-name">${f.name}</div>
       <div class="fc-meta">${counts[f.id]||0} files · ${szStr}</div>
@@ -1866,7 +1879,14 @@ function openFileFolder(id){
   _doOpenFileFolder(id);
 }
 function _doOpenFileFolder(id){
-  curFileFolder=id;const f=cachedFileFolders.find(x=>x.id===id);document.getElementById('fileFolderView').style.display='none';document.getElementById('fileInsideFolder').style.display='';document.getElementById('fileBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToFileFolders()">Vault</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>`;renderFiles();
+  curFileFolder=id;const f=cachedFileFolders.find(x=>x.id===id);
+  document.getElementById('fileFolderView').style.display='none';
+  document.getElementById('fileInsideFolder').style.display='';
+  const lockBtn=!isUnlocked?'':f?.locked
+    ?`<button onclick="toggleFolderLock('files','${id}',true)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid rgba(255,180,162,.3);border-radius:8px;background:transparent;color:#ffb4a2;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.background='rgba(255,180,162,.08)'" onmouseout="this.style.background='transparent'"><span style="font-size:14px;">🔒</span>잠금 해제</button>`
+    :`<button onclick="toggleFolderLock('files','${id}',false)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid #353535;border-radius:8px;background:transparent;color:#a08d88;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.borderColor='#524340'" onmouseout="this.style.borderColor='#353535'"><span style="font-size:14px;">🔓</span>잠금 설정</button>`;
+  document.getElementById('fileBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToFileFolders()">Vault</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>${lockBtn}`;
+  renderFiles();
 }
 function backToFileFolders(){curFileFolder=null;document.getElementById('fileInsideFolder').style.display='none';document.getElementById('fileFolderView').style.display='';renderFileFolders();}
 window.newFileFolder=newFileFolder;window.delFileFolder=delFileFolder;window.openFileFolder=openFileFolder;window.backToFileFolders=backToFileFolders;window.renderFileFolders=renderFileFolders;
