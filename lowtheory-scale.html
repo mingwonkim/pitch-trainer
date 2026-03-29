@@ -166,8 +166,8 @@
     justify-self: end;
     align-self: start;
     z-index: 18;
-    transform: translate(var(--film-offset-x, 0px), var(--film-offset-y, 0px));
-    will-change: transform;
+    transform: none;
+    align-self: stretch;
   }
 
   .film-tape {
@@ -230,6 +230,7 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
+    height: 100%;
   }
 
   .opening-composition {
@@ -247,7 +248,7 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) clamp(204px, 16.5vw, 248px);
       column-gap: clamp(24px, 2.6vw, 42px);
-      align-items: start;
+      align-items: stretch;
     }
 
     .film-layout > .relative:first-child {
@@ -267,7 +268,7 @@
   }
 
   .film-chip {
-    display: inline-flex;
+    display: none !important;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 16px;
@@ -419,7 +420,7 @@
 
   @media (max-width: 768px) {
     main section:first-child {
-      height: 980px !important;
+      height: auto !important;
     }
   }
 
@@ -442,7 +443,7 @@
 
 <main class="relative">
   <div class="opening-composition">
-  <section class="relative w-full max-w-[1440px] mx-auto mt-6 px-8 overflow-visible">
+  <section class="relative w-full max-w-[1440px] mx-auto mt-6 px-8" style="overflow:visible;">
     <div class="absolute top-[20%] left-1/2 -translate-x-1/2 z-30 w-80 md:w-[480px] transition-all duration-500">
       <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-32 h-8 tape-texture -rotate-3 z-50"></div>
       <div class="relative paper-board paper-grain w-full aspect-[4/5] shadow-paper-lg overflow-hidden">
