@@ -1961,6 +1961,48 @@ window.addEventListener('message',e=>{
   }
 });
 /* ===== Init ===== */
+
+/* ===== Scroll Background Fade ===== */
+(function(){
+  const BG_BLACK = '#131313';
+  const BG_BEIGE = '#e8e0d0';
+
+  // 배경 전환 CSS
+  document.body.style.transition = 'background-color 1.2s ease';
+
+  // 질감 오버레이 (베이지 구간용)
+  const grain = document.createElement('div');
+  grain.style.cssText = `
+    position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;
+    transition:opacity 1.2s ease;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.18'/%3E%3C/svg%3E");
+    background-size:256px 256px;mix-blend-mode:multiply;
+  `;
+  document.body.appendChild(grain);
+
+  const zones = [
+    { id: 'edLayoutFrame', bg: BG_BLACK, grainOpacity: 0 },
+    { id: 'mbFrame',       bg: BG_BEIGE, grainOpacity: 0.6 },
+    { id: 'p5Frame',       bg: BG_BLACK, grainOpacity: 0 },
+  ];
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const zone = zones.find(z => z.id === entry.target.id);
+      if (!zone) return;
+      document.body.style.backgroundColor = zone.bg;
+      grain.style.opacity = zone.grainOpacity;
+      // 텍스트 색상도 전환
+      document.body.style.color = zone.bg === BG_BEIGE ? '#2a2218' : '#e5e2e1';
+    });
+  }, { threshold: 0.08 });
+
+  zones.forEach(z => {
+    const el = document.getElementById(z.id);
+    if (el) obs.observe(el);
+  });
+})();
 (function(){
   const nav=document.querySelector('nav.fixed.top-0');
   function setH(){if(nav)document.documentElement.style.setProperty('--nav-h',nav.offsetHeight+'px');}
