@@ -22,6 +22,7 @@
     overflow: hidden;
     margin: 0;
     padding: 0;
+    height: fit-content;
   }
 
   /* ── 숨겨진 파일 인풋 ── */
@@ -532,7 +533,8 @@
 <script>
 (function(){
   function sendH(){
-    var h = document.documentElement.scrollHeight;
+    var el = document.getElementById("editorialLayout") || document.body;
+    var h = el.getBoundingClientRect().height || el.offsetHeight;
     window.parent.postMessage({type:'iframe_height',id:'edLayoutFrame',value:h},'*');
   }
   if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
