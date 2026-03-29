@@ -527,5 +527,18 @@
   disableEditing();
 </script>
 
+
+<script>
+(function(){
+  function sendH(){
+    var h = document.documentElement.scrollHeight;
+    window.parent.postMessage({type:'iframe_height',id:'edLayoutFrame',value:h},'*');
+  }
+  if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
+  window.addEventListener('load', sendH);
+  setTimeout(sendH, 500);
+  setTimeout(sendH, 1500);
+})();
+</script>
 </body>
 </html>
