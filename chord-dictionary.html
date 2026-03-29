@@ -4,26 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>코드 사전 — K-POP 피아노</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f8f7f4;--sf:#fff;--sf2:#f0efe9;--bd:#e2e0d8;--tx:#2c2b28;--txd:#8a887f;--txl:#b5b3aa;
---acc:#6c5ce7;--accd:rgba(108,92,231,.1);--ok:#00b894;--okd:rgba(0,184,148,.08);
---warm:#e17055;--warmd:rgba(225,112,85,.1);--pink:#e84393;--pinkd:rgba(232,67,147,.08);
---blue:#0984e3;--blued:rgba(9,132,227,.08);--red:#d63031;--redd:rgba(214,48,49,.08);
---shadow:0 1px 3px rgba(0,0,0,.04);--shadow2:0 4px 20px rgba(0,0,0,.06);--r:14px;}
+:root{
+  --bg:#131313;--sf:#1c1b1b;--sf2:#201f1f;--bd:#353535;
+  --tx:#e5e2e1;--txd:#a08d88;--txl:#524340;
+  --acc:#ffb4a2;--accd:rgba(255,180,162,.12);
+  --ok:#2dd4a0;--okd:rgba(45,212,160,.1);
+  --warm:#FF3B00;--warmd:rgba(255,59,0,.12);
+  --pink:#ffb4a2;--pinkd:rgba(255,180,162,.1);
+  --blue:#ffb4a2;--blued:rgba(255,180,162,.08);
+  --red:#FF3B00;--redd:rgba(255,59,0,.1);
+  --shadow:0 1px 3px rgba(0,0,0,.3);--shadow2:0 4px 20px rgba(0,0,0,.5);--r:14px;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);min-height:100dvh;overflow-x:hidden;-webkit-tap-highlight-color:transparent;}
 .app{max-width:960px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;padding:0 16px;}
-.hd{padding:20px 4px 14px;}.logo{font-size:20px;font-weight:900;}.logo em{font-style:normal;color:var(--acc);font-size:11px;display:block;font-weight:500;}
-.tabs{display:flex;padding:4px;gap:4px;margin-bottom:16px;background:var(--sf2);border-radius:12px;}
-.tb{flex:1;padding:10px 4px;text-align:center;font-size:12px;font-weight:600;color:var(--txd);background:none;border:none;border-radius:10px;cursor:pointer;transition:.2s;font-family:'Noto Sans KR',sans-serif;}.tb.on{background:var(--sf);color:var(--acc);box-shadow:var(--shadow);}
+.hd{padding:20px 4px 14px;}.logo{font-size:18px;font-weight:900;font-family:'Space Grotesk',sans-serif;letter-spacing:-.3px;text-transform:uppercase;}.logo em{font-style:normal;color:var(--acc);font-size:10px;display:block;font-weight:500;letter-spacing:.15em;text-transform:uppercase;margin-top:2px;}
+.tabs{display:flex;padding:4px;gap:4px;margin-bottom:16px;background:var(--sf2);border-radius:12px;border:1px solid var(--bd);}
+.tb{flex:1;padding:10px 4px;text-align:center;font-size:12px;font-weight:600;color:var(--txd);background:none;border:none;border-radius:10px;cursor:pointer;transition:.2s;font-family:'Noto Sans KR',sans-serif;}.tb.on{background:var(--sf);color:var(--acc);box-shadow:0 0 0 1px var(--bd);}
 .sc{display:none;flex-direction:column;flex:1;padding:0 4px 30px;}.sc.on{display:flex;}
 .sh{font-size:14px;font-weight:800;color:var(--acc);margin:16px 0 10px;display:flex;align-items:center;gap:6px;}
 .sh .badge{font-size:10px;background:var(--accd);color:var(--acc);padding:2px 8px;border-radius:6px;font-weight:700;}
 .key-sel{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;}
 .key-btn{padding:8px 12px;border-radius:10px;border:1.5px solid var(--bd);background:var(--sf);color:var(--tx);font-size:13px;font-weight:600;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:.15s;}.key-btn.on{border-color:var(--acc);background:var(--accd);color:var(--acc);}.key-btn:active{transform:scale(.95);}
 .mode-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
-.mode-btn{padding:6px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);color:var(--txd);font-size:11px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:.15s;}.mode-btn.on{border-color:var(--acc);background:var(--acc);color:#fff;}
+.mode-btn{padding:6px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);color:var(--txd);font-size:11px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:.15s;}.mode-btn.on{border-color:var(--acc);background:var(--acc);color:#360e05;}
 .chord-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:14px;}
 .cc{background:var(--sf);border:1.5px solid var(--bd);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.15s;position:relative;}.cc:active{transform:scale(.96);}.cc.playing{border-color:var(--acc);background:var(--accd);}
 .cc .cn{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;margin-bottom:1px;}.cc .ct{font-size:10px;color:var(--txd);margin-bottom:2px;}.cc .cd{font-size:9px;color:var(--txl);font-family:'JetBrains Mono',monospace;}
@@ -37,14 +43,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .pc .pcs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px;}.pc .pch{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;padding:4px 10px;background:var(--sf2);border-radius:8px;}
 .pc .ptags{display:flex;gap:3px;flex-wrap:wrap;}.pc .ptg{font-size:9px;padding:2px 7px;border-radius:5px;font-weight:600;}
 .ptg.t{background:var(--warmd);color:var(--warm);}.ptg.s{background:var(--accd);color:var(--acc);}.ptg.g{background:var(--pinkd);color:var(--pink);}
-.pp{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--acc);background:var(--accd);color:var(--acc);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}.pp:active{transform:scale(.9);}.pp.on{background:var(--acc);color:#fff;}
+.pp{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--acc);background:var(--accd);color:var(--acc);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}.pp:active{transform:scale(.9);}.pp.on{background:var(--acc);color:#360e05;}
 .bpm-label{font-size:10px;color:var(--txd);font-family:'JetBrains Mono',monospace;margin-left:6px;}
 .si{width:100%;padding:10px 16px;border:1.5px solid var(--bd);border-radius:10px;background:var(--sf);color:var(--tx);font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;margin-bottom:12px;}.si:focus{border-color:var(--acc);}
 .fr{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;}.fc{padding:5px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);color:var(--txd);font-size:10px;font-weight:600;cursor:pointer;}.fc.on{border-color:var(--acc);background:var(--accd);color:var(--acc);}
 .add-form{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--shadow);display:none;}.add-form.show{display:block;}
 .add-form input{width:100%;padding:8px 12px;border:1px solid var(--bd);border-radius:8px;font-size:13px;font-family:'Noto Sans KR',sans-serif;margin-bottom:8px;outline:none;background:var(--sf);color:var(--tx);}.add-form input:focus{border-color:var(--acc);}
 .add-form .row{display:flex;gap:8px;}.add-form .row>*{flex:1;}
-.abtn{padding:8px 18px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}.abtn.p{background:var(--acc);color:#fff;}.abtn.s2{background:var(--sf2);color:var(--txd);border:1px solid var(--bd);margin-left:6px;}
+.abtn{padding:8px 18px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}.abtn.p{background:var(--acc);color:#360e05;}.abtn.s2{background:var(--sf2);color:var(--txd);border:1px solid var(--bd);margin-left:6px;}
 .cof-wrap{display:flex;justify-content:center;padding:10px 0 16px;}.cof-svg{max-width:340px;width:100%;}
 .cof-info{text-align:center;margin-bottom:12px;}.cof-info h3{font-size:16px;font-weight:800;margin-bottom:4px;}.cof-info p{font-size:12px;color:var(--txd);line-height:1.6;}
 .tc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
@@ -57,7 +63,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 </head>
 <body>
 <div class="app">
-<div class="hd"><div class="logo">🎸 코드 사전<em>K-POP 피아노 · 코드진행 · 이론</em></div></div>
+<div class="hd"><div class="logo">CHORD DICTIONARY<em>K-POP · 코드진행 · 이론</em></div></div>
 <div class="tabs">
   <button class="tb on" onclick="tab('chords')">코드</button>
   <button class="tb" onclick="tab('prog')">코드진행</button>
@@ -543,7 +549,7 @@ function pProg(i){
 // COF
 const CM=['C','G','D','A','E','B','Gb','Db','Ab','Eb','Bb','F'];const Cm2=['Am','Em','Bm','F#m','C#m','G#m','Ebm','Bbm','Fm','Cm','Gm','Dm'];let cofSel=null;
 function rCOF(){const svg=document.getElementById('cofSvg');const cx=200,cy=200,rO=155,rM=115;let h='';
-  h+=`<circle cx="${cx}" cy="${cy}" r="${rO+12}" fill="none" stroke="#e8e6de" stroke-width="1"/>`;h+=`<circle cx="${cx}" cy="${cy}" r="${rM+4}" fill="none" stroke="#e8e6de" stroke-width="1" stroke-dasharray="3,3"/>`;
+  h+=`<circle cx="${cx}" cy="${cy}" r="${rO+12}" fill="none" stroke="#353535" stroke-width="1"/>`;h+=`<circle cx="${cx}" cy="${cy}" r="${rM+4}" fill="none" stroke="#353535" stroke-width="1" stroke-dasharray="3,3"/>`;
   for(let i=0;i<12;i++){const a=(i*30-90)*Math.PI/180;h+=`<line x1="${cx+Math.cos(a)*80}" y1="${cy+Math.sin(a)*80}" x2="${cx+Math.cos(a)*(rO+8)}" y2="${cy+Math.sin(a)*(rO+8)}" stroke="#eeedea" stroke-width="1"/>`;}
   h+=`<text x="${cx}" y="22" text-anchor="middle" fill="var(--acc)" font-size="10" font-weight="700" font-family="Noto Sans KR">5도 →</text>`;h+=`<text x="${cx}" y="392" text-anchor="middle" fill="var(--pink)" font-size="10" font-weight="700" font-family="Noto Sans KR">← 4도</text>`;
   CM.forEach((k,i)=>{const a=(i*30-90)*Math.PI/180;const x=cx+Math.cos(a)*rO,y=cy+Math.sin(a)*rO;const on=cofSel===k;h+=`<text x="${x}" y="${y+5}" text-anchor="middle" fill="${on?'var(--acc)':'var(--tx)'}" font-size="14" font-weight="${on?900:700}" font-family="JetBrains Mono" onclick="cofSel='${k}';rCOF()" style="cursor:pointer">${k}</text>`;});
