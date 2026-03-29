@@ -49,12 +49,13 @@
 .folder-card:hover::before{opacity:1;}
 .folder-card .fc-del{
   position:absolute;top:10px;right:12px;
-  font-size:11px;color:transparent;cursor:pointer;
-  transition:color .2s;line-height:1;
+  font-size:12px;color:rgba(255,255,255,.2);cursor:pointer;
+  transition:color .2s,background .2s;line-height:1;
   font-family:'Space Grotesk',sans-serif;
+  padding:4px 6px;border-radius:6px;
 }
-.folder-card:hover .fc-del{color:#353535;}
-.folder-card .fc-del:hover{color:#FF3B00 !important;}
+.folder-card:hover .fc-del{color:rgba(255,255,255,.45);}
+.folder-card .fc-del:hover,.folder-card .fc-del:active{color:#FF3B00 !important;background:rgba(255,59,0,.1);}
 .folder-card .fc-icon{
   width:36px;height:36px;border-radius:10px;
   background:rgba(255,180,162,.08);
@@ -98,7 +99,9 @@
 .icon-picker h3{font-size:16px;font-weight:700;margin-bottom:10px;color:#e5e2e1;}
 .icon-picker .icon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:14px;max-height:240px;overflow-y:auto;}
 .icon-picker .icon-opt{padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;transition:.15s;border:1.5px solid transparent;}.icon-picker .icon-opt:hover{background:#252525;border-color:rgba(255,180,162,.2);}.icon-picker .icon-opt.sel{border-color:#ffb4a2;background:rgba(255,180,162,.08);}
-.music-frame{flex:1;border:none;border-radius:12px;min-height:85vh;background:#1c1b1b;}
+.music-frame{position:fixed;top:var(--nav-h,64px);left:0;right:0;bottom:0;width:100%;height:calc(100dvh - var(--nav-h,64px));border:none;background:#08080e;z-index:200;}
+.music-app-back{position:fixed;top:calc(var(--nav-h,64px) + 12px);left:16px;z-index:201;display:flex;align-items:center;gap:7px;padding:7px 16px;background:rgba(14,14,14,.88);backdrop-filter:blur(12px);border:1px solid #353535;border-radius:9999px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.2s;}
+.music-app-back:hover{border-color:#ffb4a2;}
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#FF3B00;color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}.toast.show{opacity:1;}
 /* ===== NEW PIN OVERLAY ===== */
 .pin-overlay{position:fixed;inset:0;background:#0a0a0e;z-index:9990;display:grid;grid-template-columns:1fr 1fr 1fr;overflow:hidden;}
@@ -668,12 +671,12 @@
           <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">에구치 메소드 + Wong 2025<br>성인 최적화 훈련</p>
           <div class="amc-arrow">→</div>
         </div>
-        <div class="app-module-card app-module-dim">
+        <div class="app-module-card" onclick="openMusicApp('chord')">
           <div class="amc-num">03</div>
-          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">guitar_chord</span></div>
-          <h3 class="amc-title">Chord Progression</h3>
-          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">화성학 기반 코드 진행 훈련<br>준비 중</p>
-          <div class="amc-badge">Soon</div>
+          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">piano</span></div>
+          <h3 class="amc-title">Chord Dictionary</h3>
+          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">코드 사전 · 보이싱 · 진행<br>K-POP 코드 진행 분석</p>
+          <div class="amc-arrow">→</div>
         </div>
         <div class="app-module-card app-module-dim">
           <div class="amc-num">04</div>
@@ -697,12 +700,6 @@
           <div class="amc-arrow">→</div>
         </div>
       </div>
-    </div>
-
-    <!-- Pitch trainer iframe -->
-    <div id="musicAppView" style="display:none;flex:1;flex-direction:column;">
-      <div class="mb-5"><button class="app-ghost-btn" onclick="closeMusicApp()">← 목록</button></div>
-      <iframe class="music-frame" id="musicFrame" style="flex:1;"></iframe>
     </div>
 
     <!-- Music Notes -->
@@ -752,6 +749,7 @@
         <div class="app-editor-label">New Song</div>
         <input type="text" class="mk-input" id="favSongTitle" placeholder="노래 제목">
         <input type="text" class="mk-input" id="favSongArtist" placeholder="가수 / 아티스트">
+        <input type="url" class="mk-input" id="favSongYtUrl" placeholder="YouTube URL" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
         <textarea class="mk-textarea !min-h-[110px]" id="favSongReason" placeholder="이 노래를 좋아하는 이유…"></textarea>
         <div class="flex gap-3">
           <button class="app-action-btn" onclick="saveFavSong()"><span class="material-symbols-outlined text-base">save</span> Save</button>
@@ -1441,13 +1439,15 @@ async function renderBgImages(){
 
 /* ===== Music ===== */
 function openMusicApp(a){
-  // Hide all sub-views first
   ['musicHome','musicAppView','musicNotesView','musicFavWhyView','musicPlaylistView'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
   if(a==='pitch'){
-    document.getElementById('musicAppView').style.display='flex';
+    document.getElementById('musicAppView').style.display='block';
     document.getElementById('musicFrame').src='pitch-trainer.html';
+  }else if(a==='chord'){
+    document.getElementById('musicAppView').style.display='block';
+    document.getElementById('musicFrame').src='chord-dictionary.html';
   }else if(a==='notes'){
     document.getElementById('musicNotesView').style.display='';
     renderMusicNotes();
@@ -1575,48 +1575,16 @@ async function openFavDetail(id){
   document.getElementById('favWhyDetailView').style.display='';
   document.getElementById('favDetailTitle').textContent=s.title||'Untitled';
   document.getElementById('favDetailArtist').textContent=s.artist||'';
-  const q=encodeURIComponent((s.title||'')+(s.artist?' '+s.artist:''));
-  const ytUrl=`https://www.youtube.com/results?search_query=${q}`;
   const wrap=document.getElementById('favDetailFrame').parentElement;
-
-  // Show loading state first
-  wrap.innerHTML=`<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(135deg,#0e0e14,#181820);">
-    <div style="width:32px;height:32px;border:2px solid #252525;border-top-color:#ffb4a2;border-radius:50%;animation:spin .8s linear infinite;"></div>
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:#524340;letter-spacing:.12em;text-transform:uppercase;">Loading…</div>
-  </div>`;
-
-  const key=await getYTKey();
-  if(key){
-    // API key 있으면 실제 검색 후 embed
-    fetchYTVideoId(s.title,s.artist).then(videoId=>{
-      if(videoId){
-        wrap.innerHTML=`<iframe id="favDetailFrame" src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
-      }else{
-        showYTFallback(wrap,s.title,s.artist,ytUrl);
-      }
-    });
+  if(s.videoId){
+    wrap.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${s.videoId}?rel=0&modestbranding=1&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
   }else{
-    // API key 없으면 안내 + 버튼
-    showYTFallback(wrap,s.title,s.artist,ytUrl);
+    const q=encodeURIComponent((s.artist?s.artist+' ':'')+s.title+' official MV');
+    wrap.innerHTML=`<iframe src="https://www.youtube.com/embed?listType=search&list=${q}&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
   }
-
   const reasonEl=document.getElementById('favDetailReason');
   if(s.reason){reasonEl.style.display='';reasonEl.innerHTML=`<span class="fav-reason-label">이유</span>${s.reason}`;}
   else{reasonEl.style.display='none';}
-}
-
-async function showYTFallback(wrap,title,artist,ytUrl){
-  const hasKey=!!(await getYTKey());
-  wrap.innerHTML=`
-    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(135deg,#0e0e14,#181820);padding:24px;text-align:center;">
-      <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,59,0,.12);border:1.5px solid rgba(255,59,0,.25);display:flex;align-items:center;justify-content:center;">
-        <span style="font-size:22px;color:#FF3B00;">▶</span>
-      </div>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:800;color:#e5e2e1;letter-spacing:-.3px;">${title||''}</div>
-      <div style="font-family:'Inter',sans-serif;font-size:12px;color:#a08d88;">${artist||''}</div>
-      ${!hasKey?`<div style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:#524340;letter-spacing:.1em;text-transform:uppercase;max-width:220px;line-height:1.6;">Settings에서 YouTube API 키를 등록하면<br>앱 안에서 바로 재생됩니다</div>`:''}
-      <a href="${ytUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#FF3B00;color:#fff;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;" onmouseover="this.style.filter='brightness(1.12)'" onmouseout="this.style.filter='none'">▶ YouTube에서 재생</a>
-    </div>`;
 }
 
 function closeFavDetail(){
@@ -1638,19 +1606,31 @@ async function saveYTKey(){
 }
 window.saveYTKey=saveYTKey;
 
+function parseVideoId(url){
+  if(!url)return null;url=url.trim();
+  let m=url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);if(m)return m[1];
+  m=url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);if(m)return m[1];
+  m=url.match(/embed\/([a-zA-Z0-9_-]{11})/);if(m)return m[1];
+  m=url.match(/^([a-zA-Z0-9_-]{11})$/);if(m)return m[1];
+  return null;
+}
 function newFavSong(){
   editFavSongId=null;
-  ['favSongTitle','favSongArtist','favSongReason'].forEach(id=>document.getElementById(id).value='');
+  ['favSongTitle','favSongArtist','favSongYtUrl','favSongReason'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('favWhyListView').style.display='none';
   document.getElementById('favSongEditor').style.display='flex';
 }
-
 async function saveFavSong(){
   const title=document.getElementById('favSongTitle').value.trim();
   const artist=document.getElementById('favSongArtist').value.trim();
   const reason=document.getElementById('favSongReason').value.trim();
-  if(!title){toast('제목을 입력해주세요');return;}
-  try{await addDoc(favSongsCol,{title,artist,reason,c:Date.now()});}catch(e){toast('Save failed');return;}
+  const ytRaw=document.getElementById('favSongYtUrl')?.value.trim()||'';
+  const videoId=parseVideoId(ytRaw)||null;
+  if(!title){toast('노래 제목을 입력하세요');return;}
+  if(!artist){toast('가수를 입력하세요');return;}
+  if(!ytRaw||!videoId){toast('YouTube URL을 입력하세요');return;}
+  if(!reason){toast('이유를 입력하세요');return;}
+  try{await addDoc(favSongsCol,{title,artist,reason,videoId,c:Date.now()});}catch(e){toast('Save failed');return;}
   toast('Saved');cancelFavSong();
 }
 
@@ -1879,6 +1859,11 @@ async function rmFile(id){if(!confirm('Delete this file?'))return;const f=cached
 window.dlFile=dlFile;window.rmFile=rmFile;
 
 /* ===== Init ===== */
+(function(){
+  const nav=document.querySelector('nav.fixed.top-0');
+  function setH(){if(nav)document.documentElement.style.setProperty('--nav-h',nav.offsetHeight+'px');}
+  setH();window.addEventListener('resize',setH);
+})();
 loadBgImages().then(()=>renderBgGrid());
 // Hub storage bar
 async function updateHubStorage(){
@@ -2090,5 +2075,11 @@ renderGallery();
   onScroll();
 })();
 </script>
+<!-- Music iframe — body 직속 전체화면 overlay -->
+<div id="musicAppView" style="display:none;">
+  <button class="music-app-back" onclick="closeMusicApp()">← 목록</button>
+  <iframe class="music-frame" id="musicFrame"></iframe>
+</div>
+
 </body>
 </html>
