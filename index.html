@@ -194,23 +194,24 @@
 .writing-text-cursor{width:2px;height:13px;background:#ffb4a2;border-radius:1px;animation:cursorBlink .85s step-end infinite;}
 @keyframes cursorBlink{0%,100%{opacity:1;}50%{opacity:0;}}
 /* Music visualizer bars */
-.viz-bar{flex:1;min-width:0;border-radius:3px 3px 0 0;opacity:.9;height:var(--h);animation:vizPulse 0.8s ease-in-out infinite alternate;animation-delay:var(--d);}
-.viz-bar:nth-child(1){background:#ff3b00;}
-.viz-bar:nth-child(2){background:#ff6d00;}
-.viz-bar:nth-child(3){background:#ffb4a2;}
-.viz-bar:nth-child(4){background:#00e5ff;}
-.viz-bar:nth-child(5){background:#ff3b00;}
-.viz-bar:nth-child(6){background:#d500f9;}
-.viz-bar:nth-child(7){background:#00e676;}
-.viz-bar:nth-child(8){background:#ffb4a2;}
-.viz-bar:nth-child(9){background:#2979ff;}
-.viz-bar:nth-child(10){background:#ff6d00;}
-.viz-bar:nth-child(11){background:#00e5ff;}
-.viz-bar:nth-child(12){background:#d500f9;}
-.viz-bar:nth-child(13){background:#00e676;}
-.viz-bar:nth-child(14){background:#ff3b00;}
-.viz-bar:nth-child(15){background:#ffab40;}
-.viz-bar:nth-child(16){background:#69f0ae;}
+.viz-bar{flex:1;min-width:0;border-radius:3px 3px 0 0;height:var(--h);animation:vizPulse 0.8s ease-in-out infinite alternate;animation-delay:var(--d);}
+/* 12음계 색상: C=빨 C#=주황 D=노 D#=연두 E=초록 F=하늘 F#=파 G=남 G#=보 A#=자홍 B=분홍 */
+.viz-bar:nth-child(1) {background:#e74c3c;opacity:.85;}  /* C  빨강 */
+.viz-bar:nth-child(2) {background:#e67e22;opacity:.8;}   /* C# 주황 */
+.viz-bar:nth-child(3) {background:#f1c40f;opacity:.85;}  /* D  노랑 */
+.viz-bar:nth-child(4) {background:#a3cb38;opacity:.8;}   /* D# 연두 */
+.viz-bar:nth-child(5) {background:#27ae60;opacity:.85;}  /* E  초록 */
+.viz-bar:nth-child(6) {background:#1abc9c;opacity:.8;}   /* F  에메랄드 */
+.viz-bar:nth-child(7) {background:#3498db;opacity:.85;}  /* F# 하늘 */
+.viz-bar:nth-child(8) {background:#2980b9;opacity:.8;}   /* G  파랑 */
+.viz-bar:nth-child(9) {background:#8e44ad;opacity:.85;}  /* G# 보라 */
+.viz-bar:nth-child(10){background:#c0392b;opacity:.8;}   /* A  진빨 */
+.viz-bar:nth-child(11){background:#e74c3c;opacity:.85;}  /* A# 빨강 */
+.viz-bar:nth-child(12){background:#e67e22;opacity:.8;}   /* B  주황 */
+.viz-bar:nth-child(13){background:#f1c40f;opacity:.85;}  /* C  노랑 */
+.viz-bar:nth-child(14){background:#27ae60;opacity:.8;}   /* D  초록 */
+.viz-bar:nth-child(15){background:#3498db;opacity:.85;}  /* F  파랑 */
+.viz-bar:nth-child(16){background:#8e44ad;opacity:.8;}   /* G# 보라 */
 @keyframes vizPulse{0%{height:var(--h);opacity:.75;}100%{height:calc(var(--h) * 1.8 + 8px);opacity:1;}}
 @keyframes vizPulse{0%{height:var(--h);opacity:.5;}100%{height:calc(var(--h) * 0.35 + 10%);opacity:.9;}}
 /* ===== Inner page design system ===== */
@@ -497,7 +498,7 @@
             </div>
           </div>
         </div>
-        <button class="w-full bg-[#ffb4a2] text-[#360e05] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:brightness-110 transition-all">Open Records →</button>
+        <button class="w-full border border-[#353535] text-[#ffb4a2] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:bg-[#ffb4a2] group-hover:text-[#360e05] group-hover:border-[#ffb4a2] transition-all">Open Records →</button>
       </section>
 
       <!-- Vault -->
@@ -541,7 +542,7 @@
             <li class="flex items-center gap-4 text-on-surface/60"><span class="w-1.5 h-1.5 rounded-full bg-[#FF3B00] shrink-0"></span><span class="font-body text-sm">Wong 2025 Protocol</span></li>
           </ul>
         </div>
-        <button class="w-full bg-[#ffb4a2] text-[#360e05] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:brightness-110 transition-all">Open Studio →</button>
+        <button class="w-full border border-[#353535] text-[#ffb4a2] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:bg-[#ffb4a2] group-hover:text-[#360e05] group-hover:border-[#ffb4a2] transition-all">Open Studio →</button>
     </div>
 
     <!-- Bottom Bento -->
