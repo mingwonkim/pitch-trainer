@@ -905,7 +905,9 @@
         <!-- 3단계 한글 전용 숨김 input -->
         <input id="pwChangeInputKorean" type="text" autocomplete="off" spellcheck="false"
           style="position:absolute;top:0;left:0;width:calc(100% - 52px);height:100%;padding:14px 0 14px 18px;background:transparent;border:none;color:transparent;caret-color:#ffb4a2;font-size:18px;font-family:'Space Grotesk',sans-serif;outline:none !important;-webkit-tap-highlight-color:transparent;display:none;z-index:3;"
-          oninput="pwKoreanInputHandler()" onkeydown="pwKeydownHandler(event)">
+          oninput="pwKoreanInputHandler()" onkeydown="pwKeydownHandler(event)"
+          oncompositionupdate="setTimeout(pwKoreanInputHandler,0)"
+          oncompositionend="pwKoreanInputHandler()">
         <!-- Eye toggle -->
         <button onclick="pwToggleEye()" id="pwEyeBtn"
           style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;line-height:1;color:#524340;transition:color .2s;padding:4px;"
@@ -1095,12 +1097,15 @@ function renderPwChange(){
 }
 
 function pwKoreanInputHandler(){
-  // 3단계 한글 숨김 input → 보이는 input에 * 마스킹
   const inpKo=document.getElementById('pwChangeInputKorean');
   const inp=document.getElementById('pwChangeInput');
   const pwEyeBtn=document.getElementById('pwEyeBtn');
   const eyeOn=(pwEyeBtn&&pwEyeBtn.style.color==='rgb(255, 180, 162)');
-  if(inpKo&&inp)inp.value=eyeOn?inpKo.value:'*'.repeat([...inpKo.value].length);
+  if(inpKo&&inp){
+    const v=inpKo.value;
+    inp.value=eyeOn?v:'*'.repeat(v.length);
+    inp.style.letterSpacing='0.3em';
+  }
   document.getElementById('pwChangeError').textContent='';
 }
 
@@ -1258,16 +1263,22 @@ function showTextPin(cb){
   const eyeBtn=document.getElementById('tpEyeBtn');
 
   // 한글 커스텀 마스킹
-  inpKo.addEventListener('input',()=>{
-    inp.value=eyeVisible?inpKo.value:'*'.repeat([...inpKo.value].length);
+  function updateKoMask(){
+    inp.value=eyeVisible?inpKo.value:'*'.repeat(inpKo.value.length);
+  }
+  inpKo.addEventListener('input', updateKoMask);
+  inpKo.addEventListener('compositionupdate', ()=>{
+    // IME 조합 중: 현재 value + 조합 중인 글자 포함
+    setTimeout(updateKoMask, 0);
   });
+  inpKo.addEventListener('compositionend', updateKoMask);
   inpKo.onkeydown=e=>{if(e.key==='Enter')tryNext();if(e.key==='Escape')document.body.removeChild(overlay);};
 
   eyeBtn.onclick=()=>{
     eyeVisible=!eyeVisible;
     eyeBtn.style.color=eyeVisible?'#ffb4a2':'#524340';
     if(isKoreanPhase){
-      inp.value=eyeVisible?inpKo.value:'*'.repeat([...inpKo.value].length);
+      inp.value=eyeVisible?inpKo.value:'*'.repeat(inpKo.value.length);
     }else{
       inp.type=eyeVisible?'text':'password';
     }
@@ -2201,47 +2212,5 @@ renderGallery();
 
 
 
-<div id="sbg" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.2s ease;"></div>
-<script>
-(function(){
-  var el=document.getElementById('sbg');
-  var cur=''; // '', 'beige', 'red'
-  var GRAIN="url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.18%22/%3E%3C/svg%3E')";
-  function set(state){
-    if(state===cur)return;
-    cur=state;
-    if(state==='beige'){
-      el.style.background='#e8e0d0';
-      el.style.backgroundImage=GRAIN;
-      el.style.backgroundSize='200px 200px';
-      el.style.opacity='0.92';
-    }else if(state==='red'){
-      el.style.background='#3B0000';
-      el.style.backgroundImage='none';
-      el.style.opacity='0.85';
-    }else{
-      el.style.opacity='0';
-    }
-  }
-  function tick(){
-    var mb=document.getElementById('mbFrame');
-    var p5=document.getElementById('p5Frame');
-    if(!mb||!p5)return;
-    var mbT=mb.getBoundingClientRect().top;
-    var mbB=mb.getBoundingClientRect().bottom;
-    var p5T=p5.getBoundingClientRect().top;
-    var p5B=p5.getBoundingClientRect().bottom;
-    var vh=window.innerHeight;
-    var inMb=(mbT<vh*0.9&&mbB>vh*0.1);
-    var inP5=(p5T<vh*0.9&&p5B>vh*0.1);
-    if(inP5)set('red');
-    else if(inMb)set('beige');
-    else set('');
-  }
-  window.addEventListener('scroll',tick,{passive:true});
-  window.addEventListener('resize',tick,{passive:true});
-  setInterval(tick,200);
-})();
-</script>
 </body>
 </html>
