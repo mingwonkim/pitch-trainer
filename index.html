@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark" lang="ko">
+<html class="dark" lang="ko" style="transform:scale(0.9);transform-origin:top left;width:111.11%;">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
@@ -281,7 +281,7 @@
 .mc-btn{padding:10px 20px;border:none;border-radius:9999px;background:#ffb4a2;color:#360e05;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:all .2s;align-self:flex-start;}
 .mc-btn:hover{filter:brightness(1.1);}.mc-btn-dim{background:#252525;color:#524340;}
 /* BG image grid */
-.bg-grid{position:absolute;inset:0;z-index:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px;pointer-events:none;overflow:hidden;}
+.bg-grid{position:fixed;inset:0;z-index:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px;pointer-events:none;overflow:hidden;}
 @media(min-width:768px){.bg-grid{grid-template-columns:repeat(3,1fr);gap:12px;padding:12px;}}
 .bg-grid .bg-cell{border-radius:8px;overflow:hidden;opacity:.18;}.bg-grid .bg-cell img{width:100%;height:100%;object-fit:cover;}
 /* Settings bg image manager */
@@ -385,7 +385,7 @@
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
-<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container" style="transform:scale(0.9);transform-origin:top left;width:111.11%;">
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
 
 <!-- Black fade overlay -->
 <div id="blackFadeOverlay"></div>
