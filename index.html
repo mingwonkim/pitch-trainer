@@ -1020,10 +1020,12 @@ function hashStr(s){
   return (h>>>0).toString(16).padStart(8,'0')+(h2>>>0).toString(16).padStart(8,'0');
 }
 function getPw(){
-  try{const r=localStorage.getItem('mk_pw4');if(r)return JSON.parse(r);}catch(e){}
-  // 기본값: 5940의 해시
+  try{const r=localStorage.getItem('mk_pw4');if(r){const d=JSON.parse(r);if(d&&d.s1)return d;}}catch(e){}
+  // 기본값: 5940의 해시 - 즉시 저장
   const def=hashStr('5940');
-  return {s1:def,s1len:4,s2:null,s2len:0,s3:null,s3len:0};
+  const defaultPw={s1:def,s1len:4,s2:null,s2len:0,s3:null,s3len:0};
+  try{localStorage.setItem('mk_pw4',JSON.stringify(defaultPw));}catch(e){}
+  return defaultPw;
 }
 function setPwLocal(pw){localStorage.setItem('mk_pw4',JSON.stringify(pw));}
 function checkPwHash(hash,val){
@@ -1213,13 +1215,16 @@ function pwNextStep(){
     pwNewConfirm[pwChangePhase]=val;
     if(pwChangePhase<2){pwChangePhase++;renderPwChange();}
     else{
+      // 기존 비밀번호 유지하면서 변경된 것만 업데이트
+      const existingPw=getPw();
       setPwLocal({
-        s1:pwNew[0]?hashStr(pwNew[0]):null,s1len:pwNew[0]?pwNew[0].length:4,
-        s2:pwNew[1]?hashStr(pwNew[1]):null,s2len:pwNew[1]?pwNew[1].length:0,
-        s3:pwNew[2]?hashStr(pwNew[2]):null,s3len:pwNew[2]?pwNew[2].length:0
+        s1:pwNew[0]?hashStr(pwNew[0]):existingPw.s1,
+        s1len:pwNew[0]?pwNew[0].length:(existingPw.s1len||4),
+        s2:pwNew[1]?hashStr(pwNew[1]):(existingPw.s2||null),
+        s2len:pwNew[1]?pwNew[1].length:(existingPw.s2len||0),
+        s3:pwNew[2]?hashStr(pwNew[2]):(existingPw.s3||null),
+        s3len:pwNew[2]?pwNew[2].length:(existingPw.s3len||0)
       });
-      isUnlocked=false;sessionStorage.removeItem('mk_unlocked');
-      notifyAllFrames(false);
       document.getElementById('pwChangeOverlay').style.display='none';
       toast('비밀번호가 변경됐습니다');
     }
