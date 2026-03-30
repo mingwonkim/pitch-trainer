@@ -182,6 +182,58 @@
   .pin-overlay{grid-template-columns:1fr;}
   .pin-left,.pin-right{display:none;}
   .pin-center{border:none;padding:32px 20px;}
+  /* === Hub 모바일 최적화 === */
+  #page-hub{padding-left:14px!important;padding-right:14px!important;padding-top:72px!important;padding-bottom:90px!important;}
+  #page-hub>.relative{gap:0;}
+  #page-hub>.relative>.space-y-24>*+*{margin-top:48px!important;}
+  /* Hero */
+  #page-hub h1.font-headline{font-size:3rem!important;line-height:.88!important;}
+  #page-hub .font-body.text-lg{font-size:14px!important;line-height:1.6!important;}
+  #page-hub section.grid.gap-10{gap:16px!important;}
+  /* 3 Cards */
+  #page-hub .grid.grid-cols-1.gap-6{gap:14px!important;}
+  #page-hub .hub-card{height:auto!important;min-height:auto;padding:22px 20px!important;}
+  #page-hub .hub-card h2{margin-bottom:14px!important;font-size:24px!important;}
+  #page-hub .hub-card .space-y-8>*+*{margin-top:14px!important;}
+  #page-hub .hub-card button:last-child{margin-top:16px;padding-top:12px!important;padding-bottom:12px!important;}
+  #page-hub .hub-card .mb-12{margin-bottom:12px!important;}
+  #page-hub .hub-card .mb-10{margin-bottom:10px!important;}
+  #page-hub .hub-card .mb-8{margin-bottom:8px!important;}
+  #page-hub .hub-card .mb-6{margin-bottom:8px!important;}
+  /* Vault storage block */
+  #page-hub .vault-storage-block{margin-bottom:14px!important;}
+  /* Music viz bars */
+  #page-hub #hubVizBars{height:40px!important;margin-bottom:14px!important;}
+  /* iframe 간격 축소 */
+  #edLayoutFrame{margin-top:28px!important;}
+  #ltScaleFrame{margin-top:28px!important;}
+  #mbFrame{margin-top:32px!important;}
+  #p4Frame{margin-top:36px!important;}
+  #p5Frame{margin-top:40px!important;}
+  /* Gallery */
+  .gallery-section{margin:0 -14px!important;}
+  .gallery-marquee-item{padding:0 14px!important;}
+  .gallery-marquee-wrap{padding:10px 0!important;}
+  /* Bottom bento */
+  .bento-quick{padding:20px!important;}
+  .bento-quick h3{font-size:28px!important;}
+  .bento-info{padding:14px!important;}
+  .bento-info h4{font-size:13px!important;}
+  /* 내부 페이지들 */
+  .page{padding-left:14px!important;padding-right:14px!important;}
+  /* Folder grid */
+  .folder-card{min-height:100px;padding:16px 14px 14px!important;}
+  .folder-card .fc-name{font-size:12px;}
+  /* Top nav */
+  nav.fixed.top-0{padding-left:14px!important;padding-right:14px!important;padding-top:12px!important;padding-bottom:12px!important;}
+  /* Bottom nav */
+  nav.fixed.bottom-5{bottom:12px!important;}
+}
+/* 아주 작은 화면 (375px 이하) */
+@media(max-width:375px){
+  #page-hub h1.font-headline{font-size:2.5rem!important;}
+  #page-hub .hub-card h2{font-size:22px!important;}
+  .bento-quick h3{font-size:24px!important;}
 }
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}.shake{animation:shake .3s ease-in-out;}
 .setting-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #353535;}.setting-row:last-child{border-bottom:none;}
@@ -478,7 +530,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <!-- Notepad -->
-      <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('memo')">
+      <section class="hub-card bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('memo')">
         <div>
           <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]">edit_note</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">01</span></div>
           <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter">Notepad</h2>
@@ -505,7 +557,7 @@
       </section>
 
       <!-- Vault -->
-      <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] md:-translate-y-8 shadow-2xl shadow-black/30 hover:translate-y-[-16px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('files')">
+      <section class="hub-card bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] md:-translate-y-8 shadow-2xl shadow-black/30 hover:translate-y-[-16px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('files')">
         <div>
           <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]" style="font-variation-settings:'FILL' 1;">inventory_2</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">02</span></div>
           <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter">Vault</h2>
@@ -532,7 +584,7 @@
       </section>
 
       <!-- Music -->
-      <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('music')">
+      <section class="hub-card bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('music')">
         <div>
           <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]">music_note</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">03</span></div>
           <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter">Music</h2>
@@ -550,13 +602,13 @@
 
     <!-- Bottom Bento -->
     <section class="grid grid-cols-1 md:grid-cols-12 gap-6">
-      <div class="md:col-span-4 bg-[#FF3B00] p-8 md:p-10 rounded-2xl flex flex-col justify-center cursor-pointer hover:brightness-110 transition-all" onclick="openApp('memo')">
+      <div class="bento-quick md:col-span-4 bg-[#FF3B00] p-8 md:p-10 rounded-2xl flex flex-col justify-center cursor-pointer hover:brightness-110 transition-all" onclick="openApp('memo')">
         <span class="font-label text-[10px] tracking-[.2em] uppercase text-white/50 mb-3">Quick_Action</span>
         <h3 class="font-headline text-4xl md:text-5xl font-bold text-white leading-[.95] uppercase">New<br/>Fragment</h3>
       </div>
       <div class="md:col-span-8 grid grid-cols-2 gap-6">
-        <div class="bg-[#1c1b1b] border border-[#252525] backdrop-blur-md p-7 rounded-2xl"><span class="font-label text-[#FF3B00] text-[10px] tracking-[0.25em] uppercase block mb-3">Integrations</span><h4 class="font-headline text-xl font-semibold uppercase tracking-tight">Seamless Workflow</h4></div>
-        <div class="bg-[#1c1b1b] border border-[#252525] backdrop-blur-md p-7 rounded-2xl"><span class="font-label text-[#FF3B00] text-[10px] tracking-[0.25em] uppercase block mb-3">Performance</span><h4 class="font-headline text-xl font-semibold uppercase tracking-tight">Zero Friction</h4></div>
+        <div class="bento-info bg-[#1c1b1b] border border-[#252525] backdrop-blur-md p-7 rounded-2xl"><span class="font-label text-[#FF3B00] text-[10px] tracking-[0.25em] uppercase block mb-3">Integrations</span><h4 class="font-headline text-xl font-semibold uppercase tracking-tight">Seamless Workflow</h4></div>
+        <div class="bento-info bg-[#1c1b1b] border border-[#252525] backdrop-blur-md p-7 rounded-2xl"><span class="font-label text-[#FF3B00] text-[10px] tracking-[0.25em] uppercase block mb-3">Performance</span><h4 class="font-headline text-xl font-semibold uppercase tracking-tight">Zero Friction</h4></div>
       </div>
     </section>
 
