@@ -322,8 +322,9 @@
 
     @media (max-width: 767px) {
       html {
-        zoom: 0.32 !important;
-        overflow-x: hidden !important;
+        width: 1220px !important;
+        zoom: 0.31 !important;
+        overflow: hidden !important;
       }
       body {
         overflow: hidden !important;
@@ -590,7 +591,9 @@ CMYK: 0 83 62 72</div>
 (function(){
   function sendH(){
     var h = document.documentElement.scrollHeight;
-    window.parent.postMessage({type:'iframe_height',id:'mbFrame',value:h-30},'*');
+    var isMobile = window.matchMedia('(max-width:767px)').matches;
+    var val = isMobile ? Math.ceil(h * 0.31) : h - 30;
+    window.parent.postMessage({type:'iframe_height',id:'mbFrame',value:val},'*');
   }
   if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
   window.addEventListener('load', sendH);

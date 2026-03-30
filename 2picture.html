@@ -450,11 +450,12 @@
   main section:first-child { overflow: visible !important; }
   .opening-composition { overflow: visible !important; }
 
-  /* === 모바일: 전체 축소로 데스크톱 레이아웃 유지 === */
+  /* === 모바일: 강제 와이드 레이아웃 + zoom 축소 === */
   @media (max-width: 767px) {
     html {
+      width: 1440px !important;
       zoom: 0.26 !important;
-      overflow-x: hidden !important;
+      overflow: hidden !important;
     }
     body {
       transform: none !important;
@@ -650,7 +651,9 @@ setEditMode(false);
 // 부모 iframe 높이 자동 조절
 function sendHeight(){
   const h=document.documentElement.scrollHeight||document.body.scrollHeight;
-  window.parent.postMessage({type:'lt_height',value:h},'*');
+  const isMobile=window.matchMedia('(max-width:767px)').matches;
+  const val=isMobile?Math.ceil(h*0.26):h;
+  window.parent.postMessage({type:'lt_height',value:val},'*');
 }
 if(window.ResizeObserver){
   new ResizeObserver(sendHeight).observe(document.body);
@@ -662,7 +665,9 @@ window.addEventListener('load',sendHeight);
 (function(){
   function sendH(){
     var h = document.documentElement.scrollHeight;
-    window.parent.postMessage({type:'iframe_height',id:'ltScaleFrame',value:h-40},'*');
+    var isMobile = window.matchMedia('(max-width:767px)').matches;
+    var val = isMobile ? Math.ceil(h * 0.26) : h - 40;
+    window.parent.postMessage({type:'iframe_height',id:'ltScaleFrame',value:val},'*');
   }
   if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
   window.addEventListener('load', sendH);

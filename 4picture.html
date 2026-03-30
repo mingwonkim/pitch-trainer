@@ -166,8 +166,9 @@
     /* === 모바일 최적화 === */
     @media(max-width:767px){
         html {
+            width: 1400px !important;
             zoom: 0.27 !important;
-            overflow-x: hidden !important;
+            overflow: hidden !important;
         }
         body {
             overflow: hidden !important;
@@ -506,7 +507,9 @@
 <script>
 function sendHeight(){
   var h=document.documentElement.scrollHeight||document.body.scrollHeight;
-  window.parent.postMessage({type:'iframe_height',id:'p4Frame',value:h-40},'*');
+  var isMobile=window.matchMedia('(max-width:767px)').matches;
+  var val=isMobile?Math.ceil(h*0.27):h-40;
+  window.parent.postMessage({type:'iframe_height',id:'p4Frame',value:val},'*');
 }
 if(window.ResizeObserver){new ResizeObserver(sendHeight).observe(document.body);}
 window.addEventListener('load',sendHeight);
