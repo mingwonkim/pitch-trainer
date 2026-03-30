@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preconnect" href="https://firestore.googleapis.com"/>
 <title>MK.HUB</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
@@ -213,7 +216,6 @@
 .viz-bar:nth-child(14){background:#27ae60;opacity:.8;}   /* D  초록 */
 .viz-bar:nth-child(15){background:#3498db;opacity:.85;}  /* F  파랑 */
 .viz-bar:nth-child(16){background:#8e44ad;opacity:.8;}   /* G# 보라 */
-@keyframes vizPulse{0%{height:var(--h);opacity:.75;}100%{height:calc(var(--h) * 1.8 + 8px);opacity:1;}}
 @keyframes vizPulse{0%{height:var(--h);opacity:.5;}100%{height:calc(var(--h) * 0.35 + 10%);opacity:.9;}}
 /* ===== Inner page design system ===== */
 /* Back button */
@@ -391,7 +393,7 @@
 <div id="blackFadeOverlay"></div>
 
 <!-- Top Nav -->
-<nav class="fixed top-0 w-full z-50 bg-[#131313]/85 backdrop-blur-2xl" style="will-change:transform; flex justify-between items-center px-6 md:px-8 py-5 border-b border-white/[.03]">
+<nav class="fixed top-0 w-full z-50 bg-[#131313]/85 backdrop-blur-2xl flex justify-between items-center px-6 md:px-8 py-5 border-b border-white/[.03]" style="will-change:transform;">
   <div class="text-sm font-bold tracking-[.2em] text-[#ffb4a2] font-['Space_Grotesk'] uppercase cursor-pointer" onclick="goHub()">MONOLITH_OS</div>
   <div class="hidden md:flex gap-8 items-center">
     <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="hub" onclick="goHub()">Hub</a>
@@ -406,7 +408,7 @@
 
 <!-- Bottom Nav -->
 <nav class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
-  <div class="bg-[#131313]/60 backdrop-blur-3xl rounded-2xl" style="will-change:transform; px-5 py-2.5 shadow-2xl shadow-black/30 flex gap-7 md:gap-10 items-center justify-center border border-[#252525]">
+  <div class="bg-[#131313]/60 backdrop-blur-3xl rounded-2xl px-5 py-2.5 shadow-2xl shadow-black/30 flex gap-7 md:gap-10 items-center justify-center border border-[#252525]" style="will-change:transform;">
     <a class="bnav flex flex-col items-center justify-center transition-all duration-400 cursor-pointer py-1 px-2 text-[#ffb4a2]" data-page="hub" onclick="goHub()"><span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1;">grid_view</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Hub</span></a>
     <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="memo" onclick="openApp('memo')"><span class="material-symbols-outlined text-[20px]">edit_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Note</span></a>
     <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="files" onclick="openApp('files')"><span class="material-symbols-outlined text-[20px]">folder</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Vault</span></a>
@@ -575,7 +577,7 @@
       </div>
 
       <!-- ===== Editorial Layout iframe ===== -->
-      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
+      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
 
       <!-- ===== Lowtheory Scale ===== -->
       <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:80px;overflow:hidden;" loading="lazy"></iframe>
