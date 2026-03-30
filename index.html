@@ -897,8 +897,8 @@
     <div style="width:100%;background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:18px;padding:24px;margin-bottom:8px;position:relative;">
       <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.2em;color:#524340;text-transform:uppercase;margin-bottom:10px;" id="pwInputLabel">입력</div>
       <div style="position:relative;">
-        <input id="pwChangeInput" type="password" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false"
-          style="width:100%;padding:14px 52px 14px 18px;background:rgba(255,255,255,.03);border:1px solid #2a2a35;border-radius:12px;color:#e5e2e1;font-size:18px;font-family:'Space Grotesk',sans-serif;outline:none;letter-spacing:.08em;transition:border-color .25s,box-shadow .25s;"
+        <input id="pwChangeInput" type="text" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false"
+          style="width:100%;padding:14px 52px 14px 18px;background:rgba(255,255,255,.03);border:1px solid #2a2a35;border-radius:12px;color:#e5e2e1;font-size:18px;font-family:'Space Grotesk',sans-serif;outline:none;letter-spacing:.08em;transition:border-color .25s,box-shadow .25s;-webkit-text-security:disc;text-security:disc;"
           oninput="pwInputHandler()" onkeydown="pwKeydownHandler(event)"
           onfocus="this.style.borderColor='rgba(255,180,162,.4)';this.style.boxShadow='0 0 0 3px rgba(255,180,162,.06)'"
           onblur="this.style.borderColor='#2a2a35';this.style.boxShadow='none'">
@@ -1067,24 +1067,11 @@ function renderPwChange(){
   const inp=document.getElementById('pwChangeInput');
   inp.value=''; inp._realValue='';
   // 3단계: 숨김 한글 input 활성화, 보이는 input은 readOnly로 * 표시
-  if(isKorean){
-    // 한글: type=text + 실시간 * 마스킹 (Korean IME 대응)
-    inp.type='text'; inp.readOnly=false; inp.style.pointerEvents=''; inp.tabIndex=0;
-    inp.style.caretColor='#ffb4a2'; inp.style.outline='none';
-    inp._realValue=''; // 실제값 저장
-    inp.oninput=null; // pwInputHandler 비활성
-    // 조합완성 시 실제값 저장 + 마스킹
-    inp.addEventListener('compositionend', pwKoreanDirectHandler);
-    inp.addEventListener('input', pwKoreanDirectHandler);
-    setTimeout(()=>inp.focus(),50);
-  }else{
-    inp.type='password'; inp.readOnly=false; inp.style.caretColor=''; inp.style.pointerEvents=''; inp.tabIndex=0;
-    inp.removeEventListener('compositionend', pwKoreanDirectHandler);
-    inp.removeEventListener('input', pwKoreanDirectHandler);
-    inp.oninput=pwInputHandler;
-    inp._realValue='';
-    setTimeout(()=>inp.focus(),50);
-  }
+  inp.readOnly=false;
+  inp.style.pointerEvents='';
+  inp.tabIndex=0;
+  inp.oninput=isKorean?null:pwInputHandler;
+  setTimeout(()=>inp.focus(),50);
   if(document.getElementById('pwEyeBtn'))document.getElementById('pwEyeBtn').style.color='#524340';
   inp.style.borderColor='#2a2a35'; inp.style.boxShadow='none';
   document.getElementById('pwChangeError').textContent='';
@@ -1137,8 +1124,7 @@ function pwKeydownHandler(e){
 
 function pwNextStep(){
   const isKorean=(pwChangePhase===2);
-  const inp2=document.getElementById('pwChangeInput');
-  const val=isKorean?(inp2._realValue||'').trim():inp2.value.trim();
+  const val=document.getElementById('pwChangeInput').value.trim();
   const cfg=PW_CONFIG[pwChangePhase];
   if(!val){showPwError('입력해주세요');return;}
   if(cfg.pattern&&!cfg.pattern.test(val)){showPwError(cfg.hint+' 형식으로 입력하세요');return;}
