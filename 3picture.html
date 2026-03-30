@@ -507,9 +507,24 @@ CMYK: 0 83 62 72</div>
         img.src = e.target.result;
         const placeholder = document.querySelector(`[data-placeholder-for="${imageId}"]`);
         if (placeholder) placeholder.hidden = true;
+        // localStorage 저장
+        try { localStorage.setItem('mb_img_'+imageId, e.target.result); } catch(err) {}
       };
       reader.readAsDataURL(file);
     }
+
+    // 저장된 이미지 복원
+    ['img-1','img-2','img-3','img-4','img-5'].forEach(function(id) {
+      try {
+        const saved = localStorage.getItem('mb_img_'+id);
+        if (saved) {
+          const img = document.getElementById(id);
+          if (img) { img.src = saved; }
+          const ph = document.querySelector('[data-placeholder-for="'+id+'"]');
+          if (ph) ph.hidden = true;
+        }
+      } catch(err) {}
+    });
 
     function resetPhotos() {
       ['img-2', 'img-3', 'img-4', 'img-5'].forEach(id => {
