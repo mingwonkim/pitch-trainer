@@ -362,7 +362,7 @@ let Q={lv:null,qs:[],c:0,ok:0,ng:0,a:false,cur:null,cb:0,txp:0,t0:0,tid:null,rti
 
 function tab(t){document.querySelectorAll('.tb').forEach((b,i)=>b.classList.toggle('on',['train','endless','stats','guide'][i]===t));document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));clrTimers();if(t==='train'){ss('train');rCards();}else if(t==='endless'){ss('endless');rEndlessOpts();}else if(t==='stats'){ss('stats');rSt();}else ss('guide');}
 function ss(n){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));document.getElementById('sc-'+n).classList.add('on');}
-function clrTimers(){if(Q.tid){clearInterval(Q.tid);Q.tid=null;}if(Q.rtid){clearInterval(Q.rtid);Q.rtid=null;}}
+function clrTimers(){if(Q.tid){clearInterval(Q.tid);Q.tid=null;}if(Q.rtid){clearInterval(Q.rtid);Q.rtid=null;}if(E.tid){clearInterval(E.tid);E.tid=null;}E.running=false;}
 
 function rCards(){
   const nc=document.getElementById('noteCards'),cc=document.getElementById('chordCards');
@@ -542,7 +542,13 @@ function finish(){
   else if(pct>=60){document.getElementById('rE').textContent='💪';document.getElementById('rT').textContent='좋은 시도!';document.getElementById('rS').textContent='조금만 더!';}
   else{document.getElementById('rE').textContent='🎯';document.getElementById('rT').textContent='계속 도전!';document.getElementById('rS').textContent='반복이 핵심';}
   const nb=document.getElementById('nxB');
-  if(unlk){nb.style.display='block';nb.innerHTML='다음 레벨 → <span class="nw">NEW</span>';}else nb.style.display='none';
+  // 다음 레벨이 존재하면 항상 버튼 표시
+  let hasNext=false;
+  if(Q.lv.cat==='note'){const idx=NL.findIndex(l=>l.id===Q.lv.id);hasNext=idx+1<NL.length&&idx+1<S.nul;}
+  else{const idx=CL.findIndex(l=>l.id===Q.lv.id);hasNext=idx+1<CL.length&&idx+1<S.cul;}
+  if(unlk){nb.style.display='block';nb.innerHTML='다음 레벨 → <span class="nw">NEW</span>';}
+  else if(hasNext){nb.style.display='block';nb.innerHTML='다음 레벨 →';}
+  else{nb.style.display='none';}
   ss('result');
 }
 function retry(){startLv(Q.lv.id,Q.lv.cat);}

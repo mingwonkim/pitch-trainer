@@ -178,64 +178,131 @@
 @keyframes encPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 .pin-enc-badge .enc-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#ffb4a2;font-weight:600;}
 /* Mobile: single column */
+/* ===== Desktop: 래퍼 투명 ===== */
+.gallery-preview-grid,.iframe-pw{display:contents;}
+.pw-label{display:none;}
+
 @media(max-width:767px){
-  html{overflow-x:hidden!important;}
+  /* 전역 */
+  html,body{overflow-x:hidden!important;max-width:100vw!important;}
   .pin-overlay{grid-template-columns:1fr;}
   .pin-left,.pin-right{display:none;}
   .pin-center{border:none;padding:32px 20px;}
-  /* === Hub 모바일 최적화 === */
-  #page-hub{padding-left:14px!important;padding-right:14px!important;padding-top:72px!important;padding-bottom:90px!important;}
-  #page-hub>.relative{gap:0;}
-  #page-hub>.relative>.space-y-24>*+*{margin-top:48px!important;}
+
+  /* Hub */
+  #page-hub{padding:68px 16px 100px!important;}
+  #page-hub>.relative.z-10{gap:0;}
+  #page-hub .space-y-24>*+*{margin-top:36px!important;}
+
   /* Hero */
-  #page-hub h1.font-headline{font-size:3rem!important;line-height:.88!important;}
-  #page-hub .font-body.text-lg{font-size:14px!important;line-height:1.6!important;}
-  #page-hub section.grid.gap-10{gap:16px!important;}
-  /* 3 Cards */
-  #page-hub .grid.grid-cols-1.gap-6{gap:14px!important;}
-  #page-hub .hub-card{height:auto!important;min-height:auto;padding:22px 20px!important;}
-  #page-hub .hub-card h2{margin-bottom:14px!important;font-size:24px!important;}
-  #page-hub .hub-card .space-y-8>*+*{margin-top:14px!important;}
-  #page-hub .hub-card button:last-child{margin-top:16px;padding-top:12px!important;padding-bottom:12px!important;}
-  #page-hub .hub-card .mb-12{margin-bottom:12px!important;}
-  #page-hub .hub-card .mb-10{margin-bottom:10px!important;}
-  #page-hub .hub-card .mb-8{margin-bottom:8px!important;}
+  #page-hub h1.font-headline{font-size:2.8rem!important;line-height:.9!important;}
+  #page-hub .font-body.text-lg{font-size:13px!important;line-height:1.55!important;max-width:100%!important;}
+  #page-hub section.grid.gap-10{gap:12px!important;}
+  #page-hub .max-w-sm{max-width:100%!important;}
+
+  /* === 3 Cards: Notepad+Vault 나란히, Music 아래 === */
+  #page-hub .grid.md\:grid-cols-3{
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+  }
+  #page-hub .grid.md\:grid-cols-3>section:nth-child(3){
+    grid-column:1/-1!important;
+  }
+  #page-hub .hub-card{
+    height:auto!important;min-height:0!important;
+    padding:16px 14px!important;transform:none!important;
+    backdrop-filter:blur(12px)!important;
+  }
+  #page-hub .hub-card .flex.justify-between.items-start.mb-6{margin-bottom:8px!important;}
+  #page-hub .hub-card .material-symbols-outlined.text-3xl{font-size:22px!important;}
+  #page-hub .hub-card h2{margin-bottom:10px!important;font-size:18px!important;}
+  #page-hub .hub-card .mb-12,
+  #page-hub .hub-card .mb-10,
+  #page-hub .hub-card .mb-8,
   #page-hub .hub-card .mb-6{margin-bottom:8px!important;}
-  /* Vault storage block */
-  #page-hub .vault-storage-block{margin-bottom:14px!important;}
-  /* Music viz bars */
-  #page-hub #hubVizBars{height:40px!important;margin-bottom:14px!important;}
-  /* iframe 간격 축소 */
-  #edLayoutFrame{margin-top:28px!important;}
-  #ltScaleFrame{margin-top:28px!important;}
-  #mbFrame{margin-top:32px!important;}
-  #p4Frame{margin-top:36px!important;}
-  #p5Frame{margin-top:40px!important;}
-  /* Gallery */
-  .gallery-section{margin:0 -14px!important;overflow-x:hidden!important;}
-  .gallery-section iframe{overflow:hidden!important;}
-  .gallery-marquee-item{padding:0 14px!important;}
-  .gallery-marquee-wrap{padding:10px 0!important;}
-  /* Bottom bento */
-  .bento-quick{padding:20px!important;}
-  .bento-quick h3{font-size:28px!important;}
-  .bento-info{padding:14px!important;}
-  .bento-info h4{font-size:13px!important;}
-  /* 내부 페이지들 */
-  .page{padding-left:14px!important;padding-right:14px!important;}
-  /* Folder grid */
-  .folder-card{min-height:100px;padding:16px 14px 14px!important;}
-  .folder-card .fc-name{font-size:12px;}
-  /* Top nav */
-  nav.fixed.top-0{padding-left:14px!important;padding-right:14px!important;padding-top:12px!important;padding-bottom:12px!important;}
-  /* Bottom nav */
-  nav.fixed.bottom-5{bottom:12px!important;}
-}
-/* 아주 작은 화면 (375px 이하) */
-@media(max-width:375px){
-  #page-hub h1.font-headline{font-size:2.5rem!important;}
-  #page-hub .hub-card h2{font-size:22px!important;}
+  #page-hub .hub-card .space-y-8>*+*{margin-top:10px!important;}
+  #page-hub .hub-card .font-body.text-sm{font-size:12px!important;}
+  #page-hub .hub-card button:last-child{margin-top:12px;padding:8px!important;font-size:10px!important;}
+  #page-hub .vault-storage-block{margin-bottom:8px!important;}
+  #page-hub #hubVizBars{height:32px!important;margin-bottom:8px!important;}
+  /* Notepad writing lines 축소 */
+  .writing-line{padding:10px 0!important;}
+  .writing-text{font-size:11px!important;}
+
+  /* === Gallery 섹션: 프리뷰 그리드 === */
+  .gallery-section{margin:0!important;overflow:hidden!important;}
+  .gallery-marquee-item{padding:0 12px!important;font-size:28px!important;}
+  .gallery-marquee-wrap{padding:8px 0!important;}
+
+  .gallery-preview-grid{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    padding:16px 0 0!important;
+  }
+  .iframe-pw{
+    display:block!important;
+    position:relative!important;
+    overflow:hidden!important;
+    border-radius:12px!important;
+    border:1px solid rgba(255,180,162,.12)!important;
+    height:200px!important;
+    cursor:pointer!important;
+    background:#0e0e0e!important;
+  }
+  .iframe-pw.pw-wide{
+    grid-column:1/-1!important;
+    height:160px!important;
+  }
+  .iframe-pw iframe{
+    position:absolute!important;
+    top:0!important;left:0!important;
+    width:1440px!important;
+    height:2000px!important;
+    margin:0!important;
+    transform:scale(0.115)!important;
+    transform-origin:top left!important;
+    pointer-events:none!important;
+    border:none!important;
+  }
+  .iframe-pw.pw-wide iframe{
+    transform:scale(0.24)!important;
+  }
+  .pw-label{
+    display:block!important;
+    position:absolute!important;
+    bottom:0!important;left:0!important;right:0!important;
+    padding:20px 10px 8px!important;
+    background:linear-gradient(transparent,rgba(10,10,10,.85))!important;
+    font-family:'Space Grotesk',sans-serif!important;
+    font-size:9px!important;
+    font-weight:700!important;
+    letter-spacing:.1em!important;
+    text-transform:uppercase!important;
+    color:rgba(255,180,162,.7)!important;
+    pointer-events:none!important;
+  }
+
+  /* Bottom Bento */
+  .bento-quick{padding:18px!important;border-radius:14px!important;}
   .bento-quick h3{font-size:24px!important;}
+  .bento-info{padding:14px!important;border-radius:14px!important;}
+  .bento-info h4{font-size:13px!important;}
+
+  /* 내부 페이지 */
+  .page{padding-left:16px!important;padding-right:16px!important;}
+  .folder-card{min-height:90px;padding:14px 12px 12px!important;}
+  .folder-card .fc-name{font-size:12px;}
+
+  /* Nav */
+  nav.fixed.top-0{padding:10px 14px!important;}
+  nav.fixed.bottom-5{bottom:10px!important;}
+}
+@media(max-width:375px){
+  #page-hub h1.font-headline{font-size:2.2rem!important;}
+  #page-hub .hub-card h2{font-size:16px!important;}
+  .bento-quick h3{font-size:20px!important;}
+  .gallery-marquee-item{font-size:24px!important;}
 }
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}.shake{animation:shake .3s ease-in-out;}
 .setting-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #353535;}.setting-row:last-child{border-bottom:none;}
@@ -600,6 +667,7 @@
           </ul>
         </div>
         <button class="w-full border border-[#353535] text-[#ffb4a2] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:bg-[#ffb4a2] group-hover:text-[#360e05] group-hover:border-[#ffb4a2] transition-all">Open Studio →</button>
+      </section>
     </div>
 
     <!-- Bottom Bento -->
@@ -630,20 +698,28 @@
         </div>
       </div>
 
-      <!-- ===== Editorial Layout iframe ===== -->
-      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
-
-      <!-- ===== Lowtheory Scale ===== -->
-      <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:80px;overflow:hidden;" loading="lazy"></iframe>
-
-      <!-- ===== Moodboard ===== -->
-      <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:120px;" loading="lazy"></iframe>
-
-      <!-- ===== 4PICTURE ===== -->
-      <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:200px;" loading="lazy"></iframe>
-
-      <!-- ===== 5PICTURE ===== -->
-      <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:300px;" loading="lazy"></iframe>
+      <div class="gallery-preview-grid">
+        <div class="iframe-pw" onclick="openPicExpand('1picture.html',this)">
+          <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
+          <div class="pw-label">Editorial Layout</div>
+        </div>
+        <div class="iframe-pw" onclick="openPicExpand('2picture.html',this)">
+          <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:80px;overflow:hidden;" loading="lazy"></iframe>
+          <div class="pw-label">Lowtheory Scale</div>
+        </div>
+        <div class="iframe-pw" onclick="openPicExpand('3picture.html',this)">
+          <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:120px;" loading="lazy"></iframe>
+          <div class="pw-label">Moodboard</div>
+        </div>
+        <div class="iframe-pw" onclick="openPicExpand('4picture.html',this)">
+          <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:200px;" loading="lazy"></iframe>
+          <div class="pw-label">Archive Layout</div>
+        </div>
+        <div class="iframe-pw pw-wide" onclick="openPicExpand('5picture.html',this)">
+          <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:300px;" loading="lazy"></iframe>
+          <div class="pw-label">Grid Archive</div>
+        </div>
+      </div>
 
     </div>
 
@@ -1524,9 +1600,11 @@ function openMusicApp(a){
   if(a==='pitch'){
     document.getElementById('musicAppView').style.display='block';
     document.getElementById('musicFrame').src='pitch-trainer.html';
+    document.getElementById('bgGrid').style.display='none';
   }else if(a==='chord'){
     document.getElementById('musicAppView').style.display='block';
     document.getElementById('musicFrame').src='chord-dictionary.html';
+    document.getElementById('bgGrid').style.display='none';
   }else if(a==='notes'){
     document.getElementById('musicNotesView').style.display='';
     renderMusicNotes();
@@ -1542,6 +1620,7 @@ function closeMusicApp(){
   document.getElementById('musicAppView').style.display='none';
   document.getElementById('musicHome').style.display='';
   document.getElementById('musicFrame').src='';
+  document.getElementById('bgGrid').style.display='';
 }
 function closeMusicSubView(){
   ['musicNotesView','musicFavWhyView','musicPlaylistView'].forEach(id=>{
@@ -2001,15 +2080,33 @@ function notifyP4Frame(val){const f=document.getElementById('p4Frame');if(f&&f.c
 function notifyP5Frame(val){const f=document.getElementById('p5Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyAllFrames(val){notifyLtFrame(val);notifyEdFrame(val);notifyMbFrame(val);notifyP4Frame(val);notifyP5Frame(val);}
 window.addEventListener('message',e=>{
+  const isMob=window.matchMedia('(max-width:767px)').matches;
   if(e.data&&e.data.type==='lt_height'){
     const f=document.getElementById('ltScaleFrame');
-    if(f)f.style.height=(e.data.value+40)+'px';
+    if(f&&!isMob)f.style.height=(e.data.value+40)+'px';
   }
   if(e.data&&e.data.type==='iframe_height'&&e.data.id){
     const f=document.getElementById(e.data.id);
-    if(f)f.style.height=(e.data.value+40)+'px';
+    if(f&&!isMob)f.style.height=(e.data.value+40)+'px';
   }
 });
+/* ===== Picture Expand (mobile) ===== */
+function openPicExpand(src,el){
+  if(!window.matchMedia('(max-width:767px)').matches)return;
+  var modal=document.getElementById('picExpandModal');
+  var frame=document.getElementById('picExpandFrame');
+  frame.src=src;
+  modal.style.display='block';
+  document.body.style.overflow='hidden';
+}
+function closePicExpand(){
+  var modal=document.getElementById('picExpandModal');
+  var frame=document.getElementById('picExpandFrame');
+  modal.style.display='none';
+  frame.src='';
+  document.body.style.overflow='';
+}
+
 /* ===== Init ===== */
 (function(){
   const nav=document.querySelector('nav.fixed.top-0');
@@ -2238,5 +2335,13 @@ renderGallery();
 
 
 
+
+<!-- Picture Expand Modal (mobile) -->
+<div id="picExpandModal" style="display:none;position:fixed;inset:0;z-index:10000;background:#0a0a0a;">
+  <div style="position:absolute;top:0;left:0;right:0;z-index:10001;display:flex;align-items:center;justify-content:between;padding:12px 16px;background:linear-gradient(180deg,rgba(10,10,10,.95),transparent);">
+    <button onclick="closePicExpand()" style="display:flex;align-items:center;gap:6px;background:none;border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;">← Back</button>
+  </div>
+  <iframe id="picExpandFrame" style="width:100%;height:100%;border:none;background:#0a0a0a;"></iframe>
+</div>
 </body>
 </html>
