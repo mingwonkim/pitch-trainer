@@ -535,7 +535,7 @@
   function sendH(){
     var el = document.getElementById("editorialLayout") || document.body;
     var h = el.getBoundingClientRect().height || el.offsetHeight;
-    window.parent.postMessage({type:'iframe_height',id:'edLayoutFrame',value:h-50},'*');
+    window.parent.postMessage({type:'iframe_height',id:'edLayoutFrame',value:h},'*');
   }
   if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
   window.addEventListener('load', sendH);

@@ -376,8 +376,7 @@ CMYK: 0 1 5 0</div>
             <div class="photo-placeholder" data-placeholder-for="img-1" hidden>사진 넣기</div>
           </div>
           <div class="upload-bar">
-            <button class="upload-btn" onclick="document.getElementById('file-1').click()">사진 넣기</button>
-            <input class="hidden-input" id="file-1" type="file" accept="image/*" onchange="loadImage(event, 'img-1')">
+            <button class="upload-btn" onclick="mbPickImage('img-1')">사진 넣기</button>
           </div>
         </div>
       </div>
@@ -401,8 +400,7 @@ CMYK: 0 26 26 99</div>
             <div class="photo-placeholder" data-placeholder-for="img-2">사진 넣기</div>
           </div>
           <div class="upload-bar">
-            <button class="upload-btn" onclick="document.getElementById('file-2').click()">사진 넣기</button>
-            <input class="hidden-input" id="file-2" type="file" accept="image/*" onchange="loadImage(event, 'img-2')">
+            <button class="upload-btn" onclick="mbPickImage('img-2')">사진 넣기</button>
           </div>
         </div>
       </div>
@@ -426,8 +424,7 @@ CMYK: 0 0 2 5</div>
             <div class="photo-placeholder" data-placeholder-for="img-3">사진 넣기</div>
           </div>
           <div class="upload-bar">
-            <button class="upload-btn" onclick="document.getElementById('file-3').click()">사진 넣기</button>
-            <input class="hidden-input" id="file-3" type="file" accept="image/*" onchange="loadImage(event, 'img-3')">
+            <button class="upload-btn" onclick="mbPickImage('img-3')">사진 넣기</button>
           </div>
         </div>
       </div>
@@ -451,8 +448,7 @@ CMYK: 0 11 11 84</div>
             <div class="photo-placeholder" data-placeholder-for="img-4">사진 넣기</div>
           </div>
           <div class="upload-bar">
-            <button class="upload-btn" onclick="document.getElementById('file-4').click()">사진 넣기</button>
-            <input class="hidden-input" id="file-4" type="file" accept="image/*" onchange="loadImage(event, 'img-4')">
+            <button class="upload-btn" onclick="mbPickImage('img-4')">사진 넣기</button>
           </div>
         </div>
       </div>
@@ -465,8 +461,7 @@ CMYK: 0 11 11 84</div>
             <div class="photo-placeholder" data-placeholder-for="img-5">사진 넣기</div>
           </div>
           <div class="upload-bar">
-            <button class="upload-btn" onclick="document.getElementById('file-5').click()">사진 넣기</button>
-            <input class="hidden-input" id="file-5" type="file" accept="image/*" onchange="loadImage(event, 'img-5')">
+            <button class="upload-btn" onclick="mbPickImage('img-5')">사진 넣기</button>
           </div>
         </div>
       </div>
@@ -592,6 +587,29 @@ CMYK: 0 83 62 72</div>
   setTimeout(sendH, 500);
   setTimeout(sendH, 1500);
 })();
+</script>
+
+<input type="file" id="mb-global-file" accept="image/*" style="display:none;">
+<script>
+var _mbCurrentImgId = null;
+document.getElementById('mb-global-file').addEventListener('change', function(e) {
+  var file = e.target.files && e.target.files[0];
+  if (!file || !_mbCurrentImgId) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var img = document.getElementById(_mbCurrentImgId);
+    if (img) img.src = ev.target.result;
+    var ph = document.querySelector('[data-placeholder-for="'+_mbCurrentImgId+'"]');
+    if (ph) ph.hidden = true;
+    try { localStorage.setItem('mb_img_'+_mbCurrentImgId, ev.target.result); } catch(err) {}
+  };
+  reader.readAsDataURL(file);
+  this.value = '';
+});
+function mbPickImage(imgId) {
+  _mbCurrentImgId = imgId;
+  document.getElementById('mb-global-file').click();
+}
 </script>
 </body>
 </html>
