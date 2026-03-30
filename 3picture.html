@@ -595,21 +595,35 @@ var _mbCurrentImgId = null;
 document.getElementById('mb-global-file').addEventListener('change', function(e) {
   var file = e.target.files && e.target.files[0];
   if (!file || !_mbCurrentImgId) return;
+  var imgId = _mbCurrentImgId;
+  // 즉시 표시 (createObjectURL)
+  var img = document.getElementById(imgId);
+  if (img) img.src = URL.createObjectURL(file);
+  var ph = document.querySelector('[data-placeholder-for="'+imgId+'"]');
+  if (ph) ph.hidden = true;
+  // localStorage 저장 (백그라운드)
   var reader = new FileReader();
   reader.onload = function(ev) {
-    var img = document.getElementById(_mbCurrentImgId);
-    if (img) img.src = ev.target.result;
-    var ph = document.querySelector('[data-placeholder-for="'+_mbCurrentImgId+'"]');
-    if (ph) ph.hidden = true;
-    try { localStorage.setItem('mb_img_'+_mbCurrentImgId, ev.target.result); } catch(err) {}
+    try { localStorage.setItem('mb_img_'+imgId, ev.target.result); } catch(err) {}
   };
   reader.readAsDataURL(file);
-  this.value = '';
+  // input 초기화는 표시 후 처리
+  var inp = this;
+  setTimeout(function(){ inp.value = ''; }, 100);
 });
 function mbPickImage(imgId) {
   _mbCurrentImgId = imgId;
   document.getElementById('mb-global-file').click();
 }
+// placeholder 클릭 시 파일 선택 (편집 모드일 때)
+document.querySelectorAll('.photo-placeholder').forEach(function(ph) {
+  ph.style.cursor = 'pointer';
+  ph.addEventListener('click', function() {
+    if (!mbEditMode) return;
+    var imgId = this.getAttribute('data-placeholder-for');
+    if (imgId) mbPickImage(imgId);
+  });
+});
 </script>
 </body>
 </html>
