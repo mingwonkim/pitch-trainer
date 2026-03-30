@@ -906,7 +906,8 @@
         <input id="pwChangeInputKorean" type="text" autocomplete="off" spellcheck="false"
           style="position:absolute;top:0;left:0;width:calc(100% - 52px);height:100%;padding:14px 0 14px 18px;background:transparent;border:none;color:transparent;caret-color:#ffb4a2;font-size:18px;font-family:'Space Grotesk',sans-serif;outline:none !important;-webkit-tap-highlight-color:transparent;display:none;z-index:3;"
           oninput="pwKoreanInputHandler()" onkeydown="pwKeydownHandler(event)"
-          oncompositionupdate="setTimeout(pwKoreanInputHandler,0)"
+          oncompositionstart="pwKoreanInputHandler()"
+          oncompositionupdate="pwKoreanInputHandler()"
           oncompositionend="pwKoreanInputHandler()">
         <!-- Eye toggle -->
         <button onclick="pwToggleEye()" id="pwEyeBtn"
@@ -1103,7 +1104,9 @@ function pwKoreanInputHandler(){
   const eyeOn=(pwEyeBtn&&pwEyeBtn.style.color==='rgb(255, 180, 162)');
   if(inpKo&&inp){
     const v=inpKo.value;
-    inp.value=eyeOn?v:'*'.repeat(v.length);
+    // 조합 중인 글자 포함해서 길이 계산
+    const len=v.length;
+    inp.value=eyeOn?v:'*'.repeat(len);
     inp.style.letterSpacing='0.3em';
   }
   document.getElementById('pwChangeError').textContent='';
@@ -1267,10 +1270,8 @@ function showTextPin(cb){
     inp.value=eyeVisible?inpKo.value:'*'.repeat(inpKo.value.length);
   }
   inpKo.addEventListener('input', updateKoMask);
-  inpKo.addEventListener('compositionupdate', ()=>{
-    // IME 조합 중: 현재 value + 조합 중인 글자 포함
-    setTimeout(updateKoMask, 0);
-  });
+  inpKo.addEventListener('compositionstart', updateKoMask);
+  inpKo.addEventListener('compositionupdate', updateKoMask);
   inpKo.addEventListener('compositionend', updateKoMask);
   inpKo.onkeydown=e=>{if(e.key==='Enter')tryNext();if(e.key==='Escape')document.body.removeChild(overlay);};
 
