@@ -162,9 +162,27 @@
         opacity: 1;
         transform: translateX(-50%) translateY(0);
     }
+
+    /* === 모바일 최적화 === */
+    @media(max-width:767px){
+        body { overflow-x: hidden !important; }
+        main { overflow-x: hidden !important; }
+        .grid.grid-cols-12{gap:8px !important; padding-left:8px !important; padding-right:8px !important;}
+        /* 네거티브 마진 제거 */
+        [class*="-ml-4"], [class*="-ml-12"] {margin-left:0 !important;}
+        /* 딥레드 블록 높이 축소 */
+        .min-h-\[400px\]{min-height:240px !important;}
+        /* 텍스트 overflow 방지 */
+        h2, p, span { word-break: break-word !important; overflow-wrap: break-word !important; }
+        .text-4xl{font-size:1.5rem !important;}
+        .text-3xl{font-size:1.25rem !important;}
+        .text-2xl{font-size:1.125rem !important;}
+        /* 하단 큰 폴라로이드 margin 축소 */
+        .col-span-12.mt-16{margin-top:1.5rem !important;}
+    }
 </style>
 </head>
-<body class="bg-surface-bright text-on-surface font-body selection:bg-primary selection:text-white overflow-x-hidden">
+<body class="bg-surface-bright text-on-surface font-body selection:bg-primary selection:text-white overflow-x-hidden" style="overflow-x:hidden;">
 <button id="p4-edit-btn"
   style="display:none;position:sticky;top:12px;float:right;z-index:9999;
     align-items:center;gap:6px;padding:7px 16px;margin:12px 12px 0 0;
