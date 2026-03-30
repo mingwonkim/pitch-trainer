@@ -179,6 +179,7 @@
 .pin-enc-badge .enc-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#ffb4a2;font-weight:600;}
 /* Mobile: single column */
 @media(max-width:767px){
+  html{overflow-x:hidden!important;}
   .pin-overlay{grid-template-columns:1fr;}
   .pin-left,.pin-right{display:none;}
   .pin-center{border:none;padding:32px 20px;}
@@ -211,7 +212,8 @@
   #p4Frame{margin-top:36px!important;}
   #p5Frame{margin-top:40px!important;}
   /* Gallery */
-  .gallery-section{margin:0 -14px!important;}
+  .gallery-section{margin:0 -14px!important;overflow-x:hidden!important;}
+  .gallery-section iframe{overflow:hidden!important;}
   .gallery-marquee-item{padding:0 14px!important;}
   .gallery-marquee-wrap{padding:10px 0!important;}
   /* Bottom bento */

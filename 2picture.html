@@ -450,15 +450,16 @@
   main section:first-child { overflow: visible !important; }
   .opening-composition { overflow: visible !important; }
 
-  /* === 모바일: body 스케일 제거 + overflow 방지 === */
+  /* === 모바일: 전체 축소로 데스크톱 레이아웃 유지 === */
   @media (max-width: 767px) {
+    html {
+      zoom: 0.26 !important;
+      overflow-x: hidden !important;
+    }
     body {
       transform: none !important;
       width: 100% !important;
-      overflow-x: hidden !important;
-    }
-    .opening-composition {
-      zoom: 0.28;
+      overflow: hidden !important;
     }
   }
 </style>
