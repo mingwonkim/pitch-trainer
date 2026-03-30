@@ -897,11 +897,14 @@
     <div style="width:100%;background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:18px;padding:24px;margin-bottom:8px;position:relative;">
       <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.2em;color:#524340;text-transform:uppercase;margin-bottom:10px;" id="pwInputLabel">입력</div>
       <div style="position:relative;">
+        <!-- 보이는 display (클릭하면 실제 input에 포커스) -->
+        <div id="pwChangeDisplay"
+          onclick="document.getElementById('pwChangeInput').focus()"
+          style="width:100%;padding:14px 52px 14px 18px;background:rgba(255,255,255,.03);border:1px solid #2a2a35;border-radius:12px;color:#e5e2e1;font-size:18px;font-family:'Space Grotesk',sans-serif;letter-spacing:.3em;transition:border-color .25s,box-shadow .25s;min-height:54px;cursor:text;display:flex;align-items:center;"></div>
+        <!-- 실제 input: 완전 투명, 포커스/입력 담당 -->
         <input id="pwChangeInput" type="text" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false"
-          style="width:100%;padding:14px 52px 14px 18px;background:rgba(255,255,255,.03);border:1px solid #2a2a35;border-radius:12px;color:#e5e2e1;font-size:18px;font-family:'Space Grotesk',sans-serif;outline:none;letter-spacing:.08em;transition:border-color .25s,box-shadow .25s;-webkit-text-security:disc;text-security:disc;"
-          oninput="pwInputHandler()" onkeydown="pwKeydownHandler(event)"
-          onfocus="this.style.borderColor='rgba(255,180,162,.4)';this.style.boxShadow='0 0 0 3px rgba(255,180,162,.06)'"
-          onblur="this.style.borderColor='#2a2a35';this.style.boxShadow='none'">
+          style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;border:none;outline:none;background:transparent;font-size:18px;padding:14px 52px 14px 18px;box-sizing:border-box;"
+          onkeydown="pwKeydownHandler(event)">
 
         <!-- Eye toggle -->
         <button onclick="pwToggleEye()" id="pwEyeBtn"
@@ -1070,7 +1073,14 @@ function renderPwChange(){
   inp.readOnly=false;
   inp.style.pointerEvents='';
   inp.tabIndex=0;
-  inp.oninput=isKorean?null:pwInputHandler;
+  // display 초기화
+  const disp=document.getElementById('pwChangeDisplay');
+  if(disp) disp.textContent='';
+  // 포커스 이벤트
+  inp.onfocus=()=>{if(disp){disp.style.borderColor='rgba(255,180,162,.4)';disp.style.boxShadow='0 0 0 3px rgba(255,180,162,.06)';}};
+  inp.onblur=()=>{if(disp){disp.style.borderColor='#2a2a35';disp.style.boxShadow='none';}};
+  // 실제 입력 처리
+  setupPwMask(inp, disp);
   setTimeout(()=>inp.focus(),50);
   if(document.getElementById('pwEyeBtn'))document.getElementById('pwEyeBtn').style.color='#524340';
   inp.style.borderColor='#2a2a35'; inp.style.boxShadow='none';
@@ -1084,7 +1094,58 @@ function renderPwChange(){
   document.getElementById('pwNextBtn').textContent=isLast?'변경 완료 ✓':'다음 →';
 }
 
-function pwKoreanInputHandler(){}  // 더 이상 사용 안함
+function pwKoreanInputHandler(){}
+
+// 마스킹 핵심 함수
+function setupPwMask(inp, disp){
+  let committed='';
+  let composing=false;
+  let eyeOn=false;
+  inp._realValue='';
+  inp.value='';
+
+  function render(composingChar){
+    const eyeBtn=document.getElementById('pwEyeBtn');
+    eyeOn=eyeBtn&&eyeBtn.style.color==='rgb(255, 180, 162)';
+    let shown;
+    if(eyeOn){
+      shown=committed+(composingChar||'');
+    }else{
+      shown='*'.repeat(committed.length)+(composingChar?'*':'');
+    }
+    if(disp) disp.textContent=shown;
+    inp._realValue=committed;
+  }
+
+  inp.oncompositionstart=()=>{composing=true;};
+  inp.oncompositionupdate=e=>{render(e.data);};
+  inp.oncompositionend=e=>{
+    composing=false;
+    committed+=e.data||'';
+    inp.value='';
+    render('');
+  };
+  inp.oninput=e=>{
+    if(composing) return;
+    // 조합 아닐 때: 백스페이스 등
+    if(inp.value.length===0 && committed.length>0){
+      committed=committed.slice(0,-1);
+    } else if(inp.value.length>0){
+      // 영문/숫자 입력
+      committed+=inp.value;
+      inp.value='';
+    }
+    render('');
+  };
+  inp.onkeydown=e=>{
+    if(e.key==='Backspace'&&!composing){
+      committed=committed.slice(0,-1);
+      render('');
+      e.preventDefault();
+    }
+    pwKeydownHandler(e);
+  };
+}
 
 function pwKoreanDirectHandler(e){
   const inp=document.getElementById('pwChangeInput');
@@ -1124,7 +1185,8 @@ function pwKeydownHandler(e){
 
 function pwNextStep(){
   const isKorean=(pwChangePhase===2);
-  const val=document.getElementById('pwChangeInput').value.trim();
+  const inp3=document.getElementById('pwChangeInput');
+  const val=(inp3._realValue!==undefined&&isKorean?inp3._realValue:inp3.value).trim();
   const cfg=PW_CONFIG[pwChangePhase];
   if(!val){showPwError('입력해주세요');return;}
   if(cfg.pattern&&!cfg.pattern.test(val)){showPwError(cfg.hint+' 형식으로 입력하세요');return;}
