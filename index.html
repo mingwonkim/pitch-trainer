@@ -178,11 +178,8 @@
 @keyframes encPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 .pin-enc-badge .enc-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#ffb4a2;font-weight:600;}
 /* Mobile: single column */
-/* ===== Desktop: 래퍼 투명 블록 ===== */
-.gallery-preview-grid{display:block;}
-.iframe-pw{display:block;}
-.pw-label,.pw-touch{display:none;}
-/* ===== Expand modal transition ===== */
+/* ===== Mobile gallery grid (데스크톱에서는 숨김) ===== */
+.mob-gallery-grid{display:none;}
 #picExpandModal{transition:opacity .3s ease;}
 
 @media(max-width:767px){
@@ -231,47 +228,36 @@
   .writing-line{padding:8px 0!important;}
   .writing-text{font-size:10px!important;}
 
-  /* === Gallery: Instagram 3열 정사각형 === */
+  /* === Gallery === */
   .gallery-section{margin:0!important;overflow:hidden!important;}
   .gallery-marquee-item{padding:0 10px!important;font-size:26px!important;}
   .gallery-marquee-wrap{padding:6px 0!important;}
-
-  .gallery-preview-grid{
+  /* 데스크톱 iframe 숨기기 */
+  .gallery-section>iframe{display:none!important;}
+  /* Instagram 3열 그리드 */
+  .mob-gallery-grid{
     display:grid!important;
     grid-template-columns:repeat(3,1fr)!important;
     gap:2px!important;
     padding:2px 0 0!important;
   }
-  .iframe-pw{
-    display:block!important;
-    position:relative!important;
-    overflow:hidden!important;
-    border-radius:0!important;
-    border:none!important;
-    aspect-ratio:1/1!important;
-    height:auto!important;
-    cursor:pointer!important;
-    background:#0e0e0e!important;
+  .mob-gal-item{
+    aspect-ratio:1/1;
+    background:#0e0e0e;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
   }
-  .iframe-pw iframe{
-    position:absolute!important;
-    top:0!important;left:0!important;
-    width:1440px!important;
-    height:1440px!important;
-    margin:0!important;margin-top:0!important;
-    transform-origin:top left!important;
-    pointer-events:none!important;
-    border:none!important;
-    transform:scale(0.087)!important;
-  }
-  /* 터치 오버레이 — iframe 위를 덮어서 클릭 가능하게 */
-  .pw-touch{
-    display:block!important;
-    position:absolute!important;
-    inset:0!important;
-    z-index:10!important;
-    background:transparent!important;
-    cursor:pointer!important;
+  .mob-gal-item:nth-child(1){background:linear-gradient(135deg,#1a1208 30%,#2a1a0a 70%);}
+  .mob-gal-item:nth-child(2){background:linear-gradient(135deg,#0e0e0e 30%,#1a1410 70%);}
+  .mob-gal-item:nth-child(3){background:linear-gradient(135deg,#120c0c 30%,#2a1010 70%);}
+  .mob-gal-item:nth-child(4){background:linear-gradient(135deg,#fbf9f4 30%,#e8e9e0 70%);}
+  .mob-gal-item:nth-child(5){background:linear-gradient(135deg,#1a1b18 30%,#31332c 70%);}
+  .mob-gal-item::after{
+    content:attr(data-num);
+    position:absolute;bottom:6px;right:6px;
+    font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;
+    color:rgba(255,180,162,.5);letter-spacing:.08em;
   }
 
   /* Bottom Bento */
@@ -294,7 +280,6 @@
   #page-hub .hub-card h2{font-size:16px!important;}
   .bento-quick h3{font-size:20px!important;}
   .gallery-marquee-item{font-size:22px!important;}
-  .iframe-pw iframe{transform:scale(0.082)!important;}
 }
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}.shake{animation:shake .3s ease-in-out;}
 .setting-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #353535;}.setting-row:last-child{border-bottom:none;}
@@ -690,27 +675,20 @@
         </div>
       </div>
 
-      <div class="gallery-preview-grid">
-        <div class="iframe-pw" onclick="openPicExpand('1picture.html',this)">
-          <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
-          <div class="pw-touch"></div>
-        </div>
-        <div class="iframe-pw" onclick="openPicExpand('2picture.html',this)">
-          <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:80px;overflow:hidden;" loading="lazy"></iframe>
-          <div class="pw-touch"></div>
-        </div>
-        <div class="iframe-pw" onclick="openPicExpand('3picture.html',this)">
-          <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:120px;" loading="lazy"></iframe>
-          <div class="pw-touch"></div>
-        </div>
-        <div class="iframe-pw" onclick="openPicExpand('4picture.html',this)">
-          <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:200px;" loading="lazy"></iframe>
-          <div class="pw-touch"></div>
-        </div>
-        <div class="iframe-pw" onclick="openPicExpand('5picture.html',this)">
-          <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:300px;" loading="lazy"></iframe>
-          <div class="pw-touch"></div>
-        </div>
+      <!-- Desktop: 원래 iframe 구조 그대로 -->
+      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
+      <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:80px;overflow:hidden;" loading="lazy"></iframe>
+      <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:120px;" loading="lazy"></iframe>
+      <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:200px;" loading="lazy"></iframe>
+      <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:300px;" loading="lazy"></iframe>
+
+      <!-- Mobile: Instagram 그리드 (모바일에서만 보임) -->
+      <div id="mobileGalleryGrid" class="mob-gallery-grid">
+        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"></div>
+        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"></div>
+        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"></div>
+        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"></div>
+        <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"></div>
       </div>
 
     </div>
@@ -2072,14 +2050,13 @@ function notifyP4Frame(val){const f=document.getElementById('p4Frame');if(f&&f.c
 function notifyP5Frame(val){const f=document.getElementById('p5Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyAllFrames(val){notifyLtFrame(val);notifyEdFrame(val);notifyMbFrame(val);notifyP4Frame(val);notifyP5Frame(val);}
 window.addEventListener('message',e=>{
-  const isMob=window.matchMedia('(max-width:767px)').matches;
   if(e.data&&e.data.type==='lt_height'){
     const f=document.getElementById('ltScaleFrame');
-    if(f&&!isMob)f.style.height=(e.data.value+40)+'px';
+    if(f)f.style.height=(e.data.value+40)+'px';
   }
   if(e.data&&e.data.type==='iframe_height'&&e.data.id){
     const f=document.getElementById(e.data.id);
-    if(f&&!isMob)f.style.height=(e.data.value+40)+'px';
+    if(f)f.style.height=(e.data.value+40)+'px';
   }
 });
 /* ===== Picture Expand (mobile) ===== */
@@ -2103,58 +2080,7 @@ function closePicExpand(){
   document.body.style.overflow='';
 }
 
-/* ===== Mobile Layout Controller (JS) ===== */
-(function(){
-  var isMobile=function(){return window.innerWidth<768;};
-  function applyMobileLayout(){
-    if(!isMobile())return;
-    // Cards: 2열 그리드
-    var cg=document.getElementById('hubCardGrid');
-    if(cg){
-      cg.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:10px;';
-      var cards=cg.querySelectorAll('.hub-card');
-      cards.forEach(function(c,i){
-        c.style.height='auto';c.style.minHeight='0';
-        c.style.padding='16px 14px';c.style.transform='none';
-        if(i===2)c.style.gridColumn='1/-1'; // Music 풀폭
-      });
-    }
-    // Gallery: 3열 정사각형 그리드
-    var gg=document.querySelector('.gallery-preview-grid');
-    if(gg){
-      gg.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px 0 0;';
-      var pws=gg.querySelectorAll('.iframe-pw');
-      var vw=window.innerWidth;
-      var cellW=Math.floor((vw-4)/3); // 2px gap × 2
-      pws.forEach(function(pw){
-        pw.style.cssText='display:block;position:relative;overflow:hidden;border-radius:0;border:none;width:'+cellW+'px;height:'+cellW+'px;cursor:pointer;background:#0e0e0e;';
-        var ifr=pw.querySelector('iframe');
-        if(ifr){
-          var sc=cellW/1440;
-          ifr.style.cssText='position:absolute;top:0;left:0;width:1440px;height:1440px;margin:0;border:none;transform:scale('+sc+');transform-origin:top left;pointer-events:none;';
-        }
-        var touch=pw.querySelector('.pw-touch');
-        if(touch){
-          touch.style.cssText='display:block;position:absolute;inset:0;z-index:10;background:transparent;cursor:pointer;';
-          // 직접 터치 핸들러 등록
-          var src=pw.getAttribute('onclick');
-          if(src){
-            var m=src.match(/openPicExpand\('([^']+)'/);
-            if(m)(function(s){touch.onclick=function(e){e.stopPropagation();openPicExpand(s);};})(m[1]);
-          }
-        }
-      });
-    }
-  }
-  // Run on load + resize
-  window.addEventListener('load',applyMobileLayout);
-  window.addEventListener('resize',function(){
-    if(isMobile())applyMobileLayout();
-  });
-  // Also run immediately
-  if(document.readyState!=='loading')applyMobileLayout();
-  else document.addEventListener('DOMContentLoaded',applyMobileLayout);
-})();
+
 
 /* ===== Init ===== */
 (function(){
@@ -2373,70 +2299,7 @@ renderGallery();
   onScroll();
 })();
 
-/* ===== Mobile Layout Override (JS) ===== */
-(function(){
-  function isMob(){return window.innerWidth<=767;}
-  function applyMobile(){
-    if(!isMob())return;
-    // 카드 그리드: 2열 (Notepad+Vault), Music 풀폭
-    var g=document.getElementById('hubCardGrid');
-    if(g){
-      g.style.setProperty('display','grid','important');
-      g.style.setProperty('grid-template-columns','1fr 1fr','important');
-      g.style.setProperty('gap','10px','important');
-      var cards=g.querySelectorAll('.hub-card');
-      cards.forEach(function(c,i){
-        c.style.height='auto';c.style.minHeight='0';c.style.padding='16px 14px';c.style.transform='none';
-        if(i===2) c.style.setProperty('grid-column','1/-1','important');
-      });
-    }
-    // 갤러리 프리뷰: 3열 정사각형
-    var grid=document.querySelector('.gallery-preview-grid');
-    if(grid){
-      grid.style.setProperty('display','grid','important');
-      grid.style.setProperty('grid-template-columns','repeat(3,1fr)','important');
-      grid.style.setProperty('gap','2px','important');
-      grid.style.paddingTop='2px';
-    }
-    var pw=document.querySelectorAll('.iframe-pw');
-    pw.forEach(function(el){
-      el.style.cssText='display:block;position:relative;overflow:hidden;border-radius:0;border:none;aspect-ratio:1/1;height:auto;cursor:pointer;background:#0e0e0e;';
-      var w=el.offsetWidth||Math.floor((window.innerWidth-4)/3);
-      var iframe=el.querySelector('iframe');
-      if(iframe){
-        iframe.style.cssText='position:absolute;top:0;left:0;width:1440px;height:1440px;margin:0;transform-origin:top left;pointer-events:none;border:none;transform:scale('+(w/1440)+');';
-      }
-      var touch=el.querySelector('.pw-touch');
-      if(touch) touch.style.cssText='display:block;position:absolute;inset:0;z-index:10;background:transparent;cursor:pointer;';
-    });
-  }
-  function resetDesktop(){
-    if(isMob())return;
-    var g=document.getElementById('hubCardGrid');
-    if(g){
-      g.style.removeProperty('display');g.style.removeProperty('grid-template-columns');g.style.removeProperty('gap');
-      g.querySelectorAll('.hub-card').forEach(function(c){
-        c.style.removeProperty('height');c.style.removeProperty('min-height');c.style.removeProperty('padding');c.style.removeProperty('transform');c.style.removeProperty('grid-column');
-      });
-    }
-    var grid=document.querySelector('.gallery-preview-grid');
-    if(grid){grid.style.removeProperty('display');grid.style.removeProperty('grid-template-columns');grid.style.removeProperty('gap');grid.style.removeProperty('padding-top');}
-    document.querySelectorAll('.iframe-pw').forEach(function(el){
-      el.style.cssText='';
-      var iframe=el.querySelector('iframe');if(iframe)iframe.style.cssText='';
-      var touch=el.querySelector('.pw-touch');if(touch)touch.style.cssText='';
-    });
-  }
-  // 초기 + 리사이즈
-  function onResize(){if(isMob())applyMobile();else resetDesktop();}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(onResize,100);});
-  else setTimeout(onResize,100);
-  window.addEventListener('resize',onResize);
-  // Tailwind CDN 로드 후에도 재적용
-  setTimeout(onResize,500);
-  setTimeout(onResize,1500);
-  setTimeout(onResize,3000);
-})();
+
 </script>
 <!-- Music iframe — body 직속 전체화면 overlay -->
 <div id="musicAppView" style="display:none;">
