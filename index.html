@@ -180,7 +180,7 @@
 /* Mobile: single column */
 /* ===== Desktop: 래퍼 투명 ===== */
 .gallery-preview-grid,.iframe-pw{display:contents;}
-.pw-label{display:none;}
+.pw-label,.pw-touch{display:none;}
 /* ===== Expand modal transition ===== */
 #picExpandModal{transition:opacity .3s ease;}
 
@@ -196,7 +196,7 @@
   #page-hub>.relative.z-10{gap:0;}
   #page-hub .space-y-24>*+*{margin-top:32px!important;}
 
-  /* Hero — 잘림 방지 */
+  /* Hero */
   #page-hub h1.font-headline{font-size:2.6rem!important;line-height:.9!important;}
   #page-hub .font-body.text-lg{font-size:12px!important;line-height:1.5!important;max-width:100%!important;}
   #page-hub section.grid.gap-10{gap:10px!important;}
@@ -204,11 +204,11 @@
   #page-hub .md\:col-span-4{padding-bottom:0!important;}
 
   /* === 3 Cards: Notepad+Vault 나란히, Music 풀폭 === */
-  #page-hub .grid.md\:grid-cols-3{
+  #hubCardGrid{
     grid-template-columns:1fr 1fr!important;
     gap:10px!important;
   }
-  #page-hub .grid.md\:grid-cols-3>section:nth-child(3){
+  #hubCardGrid>section:nth-child(3){
     grid-column:1/-1!important;
   }
   #page-hub .hub-card{
@@ -230,7 +230,7 @@
   .writing-line{padding:8px 0!important;}
   .writing-text{font-size:10px!important;}
 
-  /* === Gallery: Instagram 3열 정사각형 그리드 === */
+  /* === Gallery: Instagram 3열 정사각형 === */
   .gallery-section{margin:0!important;overflow:hidden!important;}
   .gallery-marquee-item{padding:0 10px!important;font-size:26px!important;}
   .gallery-marquee-wrap{padding:6px 0!important;}
@@ -257,12 +257,20 @@
     top:0!important;left:0!important;
     width:1440px!important;
     height:1440px!important;
-    margin:0!important;
+    margin:0!important;margin-top:0!important;
     transform-origin:top left!important;
     pointer-events:none!important;
     border:none!important;
-    /* scale = container_width / 1440.  ~125px / 1440 ≈ 0.087 */
     transform:scale(0.087)!important;
+  }
+  /* 터치 오버레이 — iframe 위를 덮어서 클릭 가능하게 */
+  .pw-touch{
+    display:block!important;
+    position:absolute!important;
+    inset:0!important;
+    z-index:10!important;
+    background:transparent!important;
+    cursor:pointer!important;
   }
 
   /* Bottom Bento */
@@ -580,7 +588,7 @@
       </div>
     </section>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="hubCardGrid">
       <!-- Notepad -->
       <section class="hub-card bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('memo')">
         <div>
@@ -684,18 +692,23 @@
       <div class="gallery-preview-grid">
         <div class="iframe-pw" onclick="openPicExpand('1picture.html',this)">
           <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
+          <div class="pw-touch"></div>
         </div>
         <div class="iframe-pw" onclick="openPicExpand('2picture.html',this)">
           <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:80px;overflow:hidden;" loading="lazy"></iframe>
+          <div class="pw-touch"></div>
         </div>
         <div class="iframe-pw" onclick="openPicExpand('3picture.html',this)">
           <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:120px;" loading="lazy"></iframe>
+          <div class="pw-touch"></div>
         </div>
         <div class="iframe-pw" onclick="openPicExpand('4picture.html',this)">
           <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:200px;" loading="lazy"></iframe>
+          <div class="pw-touch"></div>
         </div>
         <div class="iframe-pw" onclick="openPicExpand('5picture.html',this)">
           <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:300px;" loading="lazy"></iframe>
+          <div class="pw-touch"></div>
         </div>
       </div>
 
@@ -2304,6 +2317,71 @@ renderGallery();
   const hubPage=document.getElementById('page-hub');
   if(hubPage)observer.observe(hubPage,{attributes:true,attributeFilter:['class']});
   onScroll();
+})();
+
+/* ===== Mobile Layout Override (JS) ===== */
+(function(){
+  function isMob(){return window.innerWidth<=767;}
+  function applyMobile(){
+    if(!isMob())return;
+    // 카드 그리드: 2열 (Notepad+Vault), Music 풀폭
+    var g=document.getElementById('hubCardGrid');
+    if(g){
+      g.style.setProperty('display','grid','important');
+      g.style.setProperty('grid-template-columns','1fr 1fr','important');
+      g.style.setProperty('gap','10px','important');
+      var cards=g.querySelectorAll('.hub-card');
+      cards.forEach(function(c,i){
+        c.style.height='auto';c.style.minHeight='0';c.style.padding='16px 14px';c.style.transform='none';
+        if(i===2) c.style.setProperty('grid-column','1/-1','important');
+      });
+    }
+    // 갤러리 프리뷰: 3열 정사각형
+    var grid=document.querySelector('.gallery-preview-grid');
+    if(grid){
+      grid.style.setProperty('display','grid','important');
+      grid.style.setProperty('grid-template-columns','repeat(3,1fr)','important');
+      grid.style.setProperty('gap','2px','important');
+      grid.style.paddingTop='2px';
+    }
+    var pw=document.querySelectorAll('.iframe-pw');
+    pw.forEach(function(el){
+      el.style.cssText='display:block;position:relative;overflow:hidden;border-radius:0;border:none;aspect-ratio:1/1;height:auto;cursor:pointer;background:#0e0e0e;';
+      var w=el.offsetWidth||Math.floor((window.innerWidth-4)/3);
+      var iframe=el.querySelector('iframe');
+      if(iframe){
+        iframe.style.cssText='position:absolute;top:0;left:0;width:1440px;height:1440px;margin:0;transform-origin:top left;pointer-events:none;border:none;transform:scale('+(w/1440)+');';
+      }
+      var touch=el.querySelector('.pw-touch');
+      if(touch) touch.style.cssText='display:block;position:absolute;inset:0;z-index:10;background:transparent;cursor:pointer;';
+    });
+  }
+  function resetDesktop(){
+    if(isMob())return;
+    var g=document.getElementById('hubCardGrid');
+    if(g){
+      g.style.removeProperty('display');g.style.removeProperty('grid-template-columns');g.style.removeProperty('gap');
+      g.querySelectorAll('.hub-card').forEach(function(c){
+        c.style.removeProperty('height');c.style.removeProperty('min-height');c.style.removeProperty('padding');c.style.removeProperty('transform');c.style.removeProperty('grid-column');
+      });
+    }
+    var grid=document.querySelector('.gallery-preview-grid');
+    if(grid){grid.style.removeProperty('display');grid.style.removeProperty('grid-template-columns');grid.style.removeProperty('gap');grid.style.removeProperty('padding-top');}
+    document.querySelectorAll('.iframe-pw').forEach(function(el){
+      el.style.cssText='';
+      var iframe=el.querySelector('iframe');if(iframe)iframe.style.cssText='';
+      var touch=el.querySelector('.pw-touch');if(touch)touch.style.cssText='';
+    });
+  }
+  // 초기 + 리사이즈
+  function onResize(){if(isMob())applyMobile();else resetDesktop();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(onResize,100);});
+  else setTimeout(onResize,100);
+  window.addEventListener('resize',onResize);
+  // Tailwind CDN 로드 후에도 재적용
+  setTimeout(onResize,500);
+  setTimeout(onResize,1500);
+  setTimeout(onResize,3000);
 })();
 </script>
 <!-- Music iframe — body 직속 전체화면 overlay -->
