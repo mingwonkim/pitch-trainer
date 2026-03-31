@@ -181,6 +181,8 @@
 /* ===== Desktop: 래퍼 투명 ===== */
 .gallery-preview-grid,.iframe-pw{display:contents;}
 .pw-label{display:none;}
+/* ===== Expand modal transition ===== */
+#picExpandModal{transition:opacity .3s ease;}
 
 @media(max-width:767px){
   /* 전역 */
@@ -192,15 +194,16 @@
   /* Hub */
   #page-hub{padding:68px 16px 100px!important;}
   #page-hub>.relative.z-10{gap:0;}
-  #page-hub .space-y-24>*+*{margin-top:36px!important;}
+  #page-hub .space-y-24>*+*{margin-top:32px!important;}
 
-  /* Hero */
-  #page-hub h1.font-headline{font-size:2.8rem!important;line-height:.9!important;}
-  #page-hub .font-body.text-lg{font-size:13px!important;line-height:1.55!important;max-width:100%!important;}
-  #page-hub section.grid.gap-10{gap:12px!important;}
+  /* Hero — 잘림 방지 */
+  #page-hub h1.font-headline{font-size:2.6rem!important;line-height:.9!important;}
+  #page-hub .font-body.text-lg{font-size:12px!important;line-height:1.5!important;max-width:100%!important;}
+  #page-hub section.grid.gap-10{gap:10px!important;}
   #page-hub .max-w-sm{max-width:100%!important;}
+  #page-hub .md\:col-span-4{padding-bottom:0!important;}
 
-  /* === 3 Cards: Notepad+Vault 나란히, Music 아래 === */
+  /* === 3 Cards: Notepad+Vault 나란히, Music 풀폭 === */
   #page-hub .grid.md\:grid-cols-3{
     grid-template-columns:1fr 1fr!important;
     gap:10px!important;
@@ -211,7 +214,6 @@
   #page-hub .hub-card{
     height:auto!important;min-height:0!important;
     padding:16px 14px!important;transform:none!important;
-    backdrop-filter:blur(12px)!important;
   }
   #page-hub .hub-card .flex.justify-between.items-start.mb-6{margin-bottom:8px!important;}
   #page-hub .hub-card .material-symbols-outlined.text-3xl{font-size:22px!important;}
@@ -221,73 +223,53 @@
   #page-hub .hub-card .mb-8,
   #page-hub .hub-card .mb-6{margin-bottom:8px!important;}
   #page-hub .hub-card .space-y-8>*+*{margin-top:10px!important;}
-  #page-hub .hub-card .font-body.text-sm{font-size:12px!important;}
+  #page-hub .hub-card .font-body.text-sm{font-size:11px!important;}
   #page-hub .hub-card button:last-child{margin-top:12px;padding:8px!important;font-size:10px!important;}
   #page-hub .vault-storage-block{margin-bottom:8px!important;}
-  #page-hub #hubVizBars{height:32px!important;margin-bottom:8px!important;}
-  /* Notepad writing lines 축소 */
-  .writing-line{padding:10px 0!important;}
-  .writing-text{font-size:11px!important;}
+  #page-hub #hubVizBars{height:28px!important;margin-bottom:8px!important;}
+  .writing-line{padding:8px 0!important;}
+  .writing-text{font-size:10px!important;}
 
-  /* === Gallery 섹션: 프리뷰 그리드 === */
+  /* === Gallery: Instagram 3열 정사각형 그리드 === */
   .gallery-section{margin:0!important;overflow:hidden!important;}
-  .gallery-marquee-item{padding:0 12px!important;font-size:28px!important;}
-  .gallery-marquee-wrap{padding:8px 0!important;}
+  .gallery-marquee-item{padding:0 10px!important;font-size:26px!important;}
+  .gallery-marquee-wrap{padding:6px 0!important;}
 
   .gallery-preview-grid{
     display:grid!important;
-    grid-template-columns:1fr 1fr!important;
-    gap:8px!important;
-    padding:16px 0 0!important;
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:2px!important;
+    padding:2px 0 0!important;
   }
   .iframe-pw{
     display:block!important;
     position:relative!important;
     overflow:hidden!important;
-    border-radius:12px!important;
-    border:1px solid rgba(255,180,162,.12)!important;
-    height:200px!important;
+    border-radius:0!important;
+    border:none!important;
+    aspect-ratio:1/1!important;
+    height:auto!important;
     cursor:pointer!important;
     background:#0e0e0e!important;
-  }
-  .iframe-pw.pw-wide{
-    grid-column:1/-1!important;
-    height:160px!important;
   }
   .iframe-pw iframe{
     position:absolute!important;
     top:0!important;left:0!important;
     width:1440px!important;
-    height:2000px!important;
+    height:1440px!important;
     margin:0!important;
-    transform:scale(0.115)!important;
     transform-origin:top left!important;
     pointer-events:none!important;
     border:none!important;
-  }
-  .iframe-pw.pw-wide iframe{
-    transform:scale(0.24)!important;
-  }
-  .pw-label{
-    display:block!important;
-    position:absolute!important;
-    bottom:0!important;left:0!important;right:0!important;
-    padding:20px 10px 8px!important;
-    background:linear-gradient(transparent,rgba(10,10,10,.85))!important;
-    font-family:'Space Grotesk',sans-serif!important;
-    font-size:9px!important;
-    font-weight:700!important;
-    letter-spacing:.1em!important;
-    text-transform:uppercase!important;
-    color:rgba(255,180,162,.7)!important;
-    pointer-events:none!important;
+    /* scale = container_width / 1440.  ~125px / 1440 ≈ 0.087 */
+    transform:scale(0.087)!important;
   }
 
   /* Bottom Bento */
-  .bento-quick{padding:18px!important;border-radius:14px!important;}
-  .bento-quick h3{font-size:24px!important;}
-  .bento-info{padding:14px!important;border-radius:14px!important;}
-  .bento-info h4{font-size:13px!important;}
+  .bento-quick{padding:16px!important;border-radius:14px!important;}
+  .bento-quick h3{font-size:22px!important;}
+  .bento-info{padding:12px!important;border-radius:14px!important;}
+  .bento-info h4{font-size:12px!important;}
 
   /* 내부 페이지 */
   .page{padding-left:16px!important;padding-right:16px!important;}
@@ -302,7 +284,8 @@
   #page-hub h1.font-headline{font-size:2.2rem!important;}
   #page-hub .hub-card h2{font-size:16px!important;}
   .bento-quick h3{font-size:20px!important;}
-  .gallery-marquee-item{font-size:24px!important;}
+  .gallery-marquee-item{font-size:22px!important;}
+  .iframe-pw iframe{transform:scale(0.082)!important;}
 }
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}.shake{animation:shake .3s ease-in-out;}
 .setting-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #353535;}.setting-row:last-child{border-bottom:none;}
@@ -701,23 +684,18 @@
       <div class="gallery-preview-grid">
         <div class="iframe-pw" onclick="openPicExpand('1picture.html',this)">
           <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
-          <div class="pw-label">Editorial Layout</div>
         </div>
         <div class="iframe-pw" onclick="openPicExpand('2picture.html',this)">
           <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:80px;overflow:hidden;" loading="lazy"></iframe>
-          <div class="pw-label">Lowtheory Scale</div>
         </div>
         <div class="iframe-pw" onclick="openPicExpand('3picture.html',this)">
           <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:120px;" loading="lazy"></iframe>
-          <div class="pw-label">Moodboard</div>
         </div>
         <div class="iframe-pw" onclick="openPicExpand('4picture.html',this)">
           <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:200px;" loading="lazy"></iframe>
-          <div class="pw-label">Archive Layout</div>
         </div>
-        <div class="iframe-pw pw-wide" onclick="openPicExpand('5picture.html',this)">
+        <div class="iframe-pw" onclick="openPicExpand('5picture.html',this)">
           <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:300px;" loading="lazy"></iframe>
-          <div class="pw-label">Grid Archive</div>
         </div>
       </div>
 
@@ -2091,19 +2069,23 @@ window.addEventListener('message',e=>{
   }
 });
 /* ===== Picture Expand (mobile) ===== */
+var _picTitles={'1picture.html':'01 / 05','2picture.html':'02 / 05','3picture.html':'03 / 05','4picture.html':'04 / 05','5picture.html':'05 / 05'};
 function openPicExpand(src,el){
   if(!window.matchMedia('(max-width:767px)').matches)return;
   var modal=document.getElementById('picExpandModal');
   var frame=document.getElementById('picExpandFrame');
   frame.src=src;
+  document.getElementById('picExpandTitle').textContent=_picTitles[src]||'';
   modal.style.display='block';
+  modal.style.opacity='0';
+  requestAnimationFrame(function(){modal.style.opacity='1';});
   document.body.style.overflow='hidden';
 }
 function closePicExpand(){
   var modal=document.getElementById('picExpandModal');
   var frame=document.getElementById('picExpandFrame');
-  modal.style.display='none';
-  frame.src='';
+  modal.style.opacity='0';
+  setTimeout(function(){modal.style.display='none';frame.src='';},250);
   document.body.style.overflow='';
 }
 
@@ -2338,10 +2320,11 @@ renderGallery();
 
 <!-- Picture Expand Modal (mobile) -->
 <div id="picExpandModal" style="display:none;position:fixed;inset:0;z-index:10000;background:#0a0a0a;">
-  <div style="position:absolute;top:0;left:0;right:0;z-index:10001;display:flex;align-items:center;justify-content:between;padding:12px 16px;background:linear-gradient(180deg,rgba(10,10,10,.95),transparent);">
-    <button onclick="closePicExpand()" style="display:flex;align-items:center;gap:6px;background:none;border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;">← Back</button>
+  <div id="picExpandHeader" style="position:fixed;top:0;left:0;right:0;z-index:10001;display:flex;align-items:center;padding:14px 16px;background:linear-gradient(180deg,rgba(10,10,10,.92) 60%,transparent);">
+    <button onclick="closePicExpand()" style="display:flex;align-items:center;gap:6px;background:rgba(20,20,20,.7);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(8px);">← Back</button>
+    <span id="picExpandTitle" style="flex:1;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,180,162,.5);padding-right:80px;"></span>
   </div>
-  <iframe id="picExpandFrame" style="width:100%;height:100%;border:none;background:#0a0a0a;"></iframe>
+  <iframe id="picExpandFrame" style="width:100%;height:100%;border:none;background:#0a0a0a;" allow="autoplay"></iframe>
 </div>
 </body>
 </html>
