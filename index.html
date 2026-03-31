@@ -712,7 +712,7 @@
   <div class="max-w-4xl mx-auto">
     <!-- Page header -->
     <div class="mb-10">
-      <button class="app-ghost-btn mb-4" onclick="goHub()">← Back</button>
+      <button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button>
       <div class="app-page-label">01 — Notepad</div>
       <h1 class="app-page-title">Records</h1>
     </div>
@@ -747,7 +747,7 @@
   <div class="max-w-4xl mx-auto">
     <div class="flex items-center justify-between mb-10">
       <div>
-        <button class="app-ghost-btn mb-4" onclick="goHub()">← Back</button>
+        <button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button>
         <div class="app-page-label">02 — Vault</div>
         <h1 class="app-page-title">Storage</h1>
       </div>
@@ -781,7 +781,7 @@
 <div class="page min-h-screen pt-24 pb-40 px-6" id="page-music">
   <div class="max-w-4xl mx-auto">
     <div class="mb-10">
-      <button class="app-ghost-btn mb-4" onclick="goHub()">← Back</button>
+      <button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button>
       <div class="app-page-label">03 — Music</div>
       <h1 class="app-page-title">Studio</h1>
     </div>
@@ -922,7 +922,7 @@
 <div class="page min-h-screen pt-24 pb-40 px-6" id="page-settings">
   <div class="max-w-lg mx-auto">
     <div class="mb-10">
-      <button class="app-ghost-btn mb-4" onclick="goHub()">← Back</button>
+      <button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button>
       <div class="app-page-label">System</div>
       <h1 class="app-page-title">Settings</h1>
     </div>
@@ -1273,13 +1273,19 @@ window.pwInputHandler=pwInputHandler;window.pwKeydownHandler=pwKeydownHandler;wi
 
 /* ===== Navigation ===== */
 let curPage='hub';
+let navHistory=[];
 function setPage(p){
+  if(curPage&&curPage!==p)navHistory.push(curPage);
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   const pg=document.getElementById('page-'+p);if(pg)pg.classList.add('active');curPage=p;
   document.querySelectorAll('.nav-link').forEach(a=>{const act=a.dataset.page===p;a.className=`nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer ${act?'text-[#ffb4a2] font-bold':'text-[#ffb4a2]/40 hover:text-[#ffb4a2]'}`;});
   document.querySelectorAll('.bnav').forEach(a=>{const act=a.dataset.page===p;a.classList.toggle('text-[#ffb4a2]',act);a.classList.toggle('text-[#ffb4a2]/30',!act);a.classList.remove('text-white/40','scale-110');if(act)a.classList.add('scale-105');const ic=a.querySelector('.material-symbols-outlined');if(ic)ic.style.fontVariationSettings=act?"'FILL' 1":"'FILL' 0";});
   // Hub에서만 배경 이미지 표시
   window.scrollTo({top:0,behavior:'smooth'});
+}
+function goBack(){
+  if(navHistory.length>0){setPage(navHistory.pop());navHistory.pop();}
+  else{setPage('hub');}
 }
 function goHub(){setPage('hub');}
 function openApp(a){
@@ -1439,7 +1445,7 @@ function doOpenApp(a){
   }
   setPage(a);
 }
-window.goHub=goHub;window.openApp=openApp;
+window.goHub=goHub;window.goBack=goBack;window.openApp=openApp;
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
 
