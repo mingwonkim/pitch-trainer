@@ -236,7 +236,7 @@
     grid-template-columns:repeat(3,1fr)!important;
     gap:2px!important;
     padding:0!important;
-    margin-top:20px!important;
+    margin-top:24px!important;
   }
   .mob-gal-item{
     aspect-ratio:1/1;
@@ -246,17 +246,19 @@
     overflow:hidden;
   }
   .mob-gal-item iframe{
-    position:absolute;top:0;left:0;
+    position:absolute;left:0;
     width:1440px;height:2400px;
     border:none;margin:0;
     transform-origin:top left;
     transform:scale(0.084);
     pointer-events:none;
+    /* 기본: 약간 아래 콘텐츠 보이게 */
+    top:-18px;
   }
-  /* 1~3picture: 아래쪽 콘텐츠 보이게 오프셋 */
-  .mob-gal-item iframe.mg-off1{top:-200px;}
-  .mob-gal-item iframe.mg-off2{top:-350px;}
-  .mob-gal-item iframe.mg-off3{top:-150px;}
+  /* 개별 오프셋 (스케일된 좌표) */
+  .mob-gal-item iframe.mg-off1{top:-22px;}
+  .mob-gal-item iframe.mg-off2{top:-30px;}
+  .mob-gal-item iframe.mg-off3{top:-10px;}
   /* 터치 오버레이 */
   .mg-touch{
     position:absolute;inset:0;z-index:10;
@@ -681,7 +683,7 @@
 
       <!-- Desktop: 원래 iframe 구조 그대로 -->
       <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
-      <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:80px;overflow:hidden;" loading="lazy"></iframe>
+      <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:140px;overflow:hidden;" loading="lazy"></iframe>
       <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:120px;" loading="lazy"></iframe>
       <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:200px;" loading="lazy"></iframe>
       <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:300px;" loading="lazy"></iframe>
@@ -2058,8 +2060,7 @@ window.addEventListener('message',e=>{
 });
 /* ===== Picture Expand (mobile) ===== */
 var _picTitles={'1picture.html':'01 / 05','2picture.html':'02 / 05','3picture.html':'03 / 05','4picture.html':'04 / 05','5picture.html':'05 / 05'};
-function openPicExpand(src,el){
-  if(!window.matchMedia('(max-width:767px)').matches)return;
+function openPicExpand(src){
   var modal=document.getElementById('picExpandModal');
   var frame=document.getElementById('picExpandFrame');
   frame.src=src;
@@ -2076,6 +2077,7 @@ function closePicExpand(){
   setTimeout(function(){modal.style.display='none';frame.src='';},250);
   document.body.style.overflow='';
 }
+window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
 
 
 
