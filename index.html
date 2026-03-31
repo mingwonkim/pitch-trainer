@@ -361,7 +361,7 @@
 /* Fav song detail YouTube embed */
 .fav-yt-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;}
 .fav-yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
-.fav-song-reason{padding:16px 20px;background:#1c1b1b;border:1px solid #252525;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;color:#a08d88;line-height:1.75;}
+.fav-song-reason{padding:16px 20px;background:#1c1b1b;border:1px solid #252525;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;color:#a08d88;line-height:1.75;min-height:80px;max-height:120px;overflow-y:auto;}
 .fav-reason-label{display:inline-block;font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FF3B00;margin-right:8px;vertical-align:middle;}
 /* Music cards (old — keep for safety) */
 .music-card{background:#1c1b1b;border:1px solid #252525;border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:14px;cursor:pointer;transition:all .25s;}
@@ -767,7 +767,7 @@
 
 <!-- ============ MUSIC PAGE ============ -->
 <div class="page min-h-screen pt-24 pb-40 px-6" id="page-music">
-  <div class="max-w-4xl mx-auto">
+  <div class="max-w-5xl mx-auto">
     <div class="flex items-center gap-5 mb-10">
       <button class="app-back-btn" onclick="musicSmartBack()"><span class="material-symbols-outlined text-[18px]">arrow_back</span></button>
       <div>
@@ -1270,6 +1270,8 @@ function setPage(p){
   const pg=document.getElementById('page-'+p);if(pg)pg.classList.add('active');curPage=p;
   document.querySelectorAll('.nav-link').forEach(a=>{const act=a.dataset.page===p;a.className=`nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer ${act?'text-[#ffb4a2] font-bold':'text-[#ffb4a2]/40 hover:text-[#ffb4a2]'}`;});
   document.querySelectorAll('.bnav').forEach(a=>{const act=a.dataset.page===p;a.classList.toggle('text-[#ffb4a2]',act);a.classList.toggle('text-[#ffb4a2]/30',!act);a.classList.remove('text-white/40','scale-110');if(act)a.classList.add('scale-105');const ic=a.querySelector('.material-symbols-outlined');if(ic)ic.style.fontVariationSettings=act?"'FILL' 1":"'FILL' 0";});
+  // Hub에서만 배경 이미지 표시
+  var bg=document.getElementById('bgGrid');if(bg)bg.style.display=p==='hub'?'':'none';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function goHub(){setPage('hub');}
@@ -1562,11 +1564,9 @@ function openMusicApp(a){
   if(a==='pitch'){
     document.getElementById('musicAppView').style.display='block';
     document.getElementById('musicFrame').src='pitch-trainer.html';
-    document.getElementById('bgGrid').style.display='none';
   }else if(a==='chord'){
     document.getElementById('musicAppView').style.display='block';
     document.getElementById('musicFrame').src='chord-dictionary.html';
-    document.getElementById('bgGrid').style.display='none';
   }else if(a==='notes'){
     document.getElementById('musicNotesView').style.display='';
     renderMusicNotes();
@@ -1582,7 +1582,6 @@ function closeMusicApp(){
   document.getElementById('musicAppView').style.display='none';
   document.getElementById('musicHome').style.display='';
   document.getElementById('musicFrame').src='';
-  document.getElementById('bgGrid').style.display='';
 }
 function closeMusicSubView(){
   ['musicNotesView','musicFavWhyView','musicPlaylistView'].forEach(id=>{
