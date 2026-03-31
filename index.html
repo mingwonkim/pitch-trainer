@@ -178,8 +178,9 @@
 @keyframes encPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 .pin-enc-badge .enc-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#ffb4a2;font-weight:600;}
 /* Mobile: single column */
-/* ===== Desktop: 래퍼 투명 ===== */
-.gallery-preview-grid,.iframe-pw{display:contents;}
+/* ===== Desktop: 래퍼 투명 블록 ===== */
+.gallery-preview-grid{display:block;}
+.iframe-pw{display:block;}
 .pw-label,.pw-touch{display:none;}
 /* ===== Expand modal transition ===== */
 #picExpandModal{transition:opacity .3s ease;}
@@ -2101,6 +2102,59 @@ function closePicExpand(){
   setTimeout(function(){modal.style.display='none';frame.src='';},250);
   document.body.style.overflow='';
 }
+
+/* ===== Mobile Layout Controller (JS) ===== */
+(function(){
+  var isMobile=function(){return window.innerWidth<768;};
+  function applyMobileLayout(){
+    if(!isMobile())return;
+    // Cards: 2열 그리드
+    var cg=document.getElementById('hubCardGrid');
+    if(cg){
+      cg.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:10px;';
+      var cards=cg.querySelectorAll('.hub-card');
+      cards.forEach(function(c,i){
+        c.style.height='auto';c.style.minHeight='0';
+        c.style.padding='16px 14px';c.style.transform='none';
+        if(i===2)c.style.gridColumn='1/-1'; // Music 풀폭
+      });
+    }
+    // Gallery: 3열 정사각형 그리드
+    var gg=document.querySelector('.gallery-preview-grid');
+    if(gg){
+      gg.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px 0 0;';
+      var pws=gg.querySelectorAll('.iframe-pw');
+      var vw=window.innerWidth;
+      var cellW=Math.floor((vw-4)/3); // 2px gap × 2
+      pws.forEach(function(pw){
+        pw.style.cssText='display:block;position:relative;overflow:hidden;border-radius:0;border:none;width:'+cellW+'px;height:'+cellW+'px;cursor:pointer;background:#0e0e0e;';
+        var ifr=pw.querySelector('iframe');
+        if(ifr){
+          var sc=cellW/1440;
+          ifr.style.cssText='position:absolute;top:0;left:0;width:1440px;height:1440px;margin:0;border:none;transform:scale('+sc+');transform-origin:top left;pointer-events:none;';
+        }
+        var touch=pw.querySelector('.pw-touch');
+        if(touch){
+          touch.style.cssText='display:block;position:absolute;inset:0;z-index:10;background:transparent;cursor:pointer;';
+          // 직접 터치 핸들러 등록
+          var src=pw.getAttribute('onclick');
+          if(src){
+            var m=src.match(/openPicExpand\('([^']+)'/);
+            if(m)(function(s){touch.onclick=function(e){e.stopPropagation();openPicExpand(s);};})(m[1]);
+          }
+        }
+      });
+    }
+  }
+  // Run on load + resize
+  window.addEventListener('load',applyMobileLayout);
+  window.addEventListener('resize',function(){
+    if(isMobile())applyMobileLayout();
+  });
+  // Also run immediately
+  if(document.readyState!=='loading')applyMobileLayout();
+  else document.addEventListener('DOMContentLoaded',applyMobileLayout);
+})();
 
 /* ===== Init ===== */
 (function(){
