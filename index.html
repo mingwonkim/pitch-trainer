@@ -254,10 +254,10 @@
     pointer-events:none;
     top:0;
   }
-  /* 각 picture 콘텐츠 시작점으로 오프셋 (iframe 원본 좌표 기준) */
-  .mob-gal-item iframe.mg-off1{top:-500px;}
-  .mob-gal-item iframe.mg-off2{top:-400px;}
-  .mob-gal-item iframe.mg-off3{top:-300px;}
+  /* 스케일 후 보이는 영역 = top * 0.084. 셀 ~125px */
+  .mob-gal-item iframe.mg-off1{top:-25px;}
+  .mob-gal-item iframe.mg-off2{top:-35px;}
+  .mob-gal-item iframe.mg-off3{top:-15px;}
   /* 터치 오버레이 */
   .mg-touch{
     position:absolute;inset:0;z-index:10;
@@ -2081,22 +2081,61 @@ window.addEventListener('message',e=>{
 });
 /* ===== Picture Expand (mobile) ===== */
 var _picTitles={'1picture.html':'01 / 05','2picture.html':'02 / 05','3picture.html':'03 / 05','4picture.html':'04 / 05','5picture.html':'05 / 05'};
+var _pan={x:0,y:0,sx:0,sy:0,lx:0,ly:0,active:false,scale:0.28};
 function openPicExpand(src){
   var modal=document.getElementById('picExpandModal');
   var frame=document.getElementById('picExpandFrame');
-  // 모바일: 1440px 폭으로 강제 + zoom 축소
   var vw=window.innerWidth;
-  var zm=vw/1440;
+  var vh=window.innerHeight;
+  _pan.scale=vw/1440;
+  var s=_pan.scale;
   frame.style.width='1440px';
-  frame.style.height=Math.ceil(100/zm)+'vh';
-  frame.style.zoom=zm;
+  frame.style.height=(5000)+'px';
   frame.style.transformOrigin='top left';
+  frame.style.transform='scale('+s+')';
+  // 초기 위치: 중앙 상단
+  _pan.x=0;_pan.y=0;
+  frame.style.left=_pan.x+'px';
+  frame.style.top=_pan.y+'px';
   frame.src=src;
   document.getElementById('picExpandTitle').textContent=_picTitles[src]||'';
   modal.style.display='block';
   modal.style.opacity='0';
   requestAnimationFrame(function(){modal.style.opacity='1';});
   document.body.style.overflow='hidden';
+  // 터치 팬 이벤트
+  var wrap=document.getElementById('picPanWrap');
+  wrap.ontouchstart=function(e){
+    if(e.touches.length===1){_pan.active=true;_pan.sx=e.touches[0].clientX-_pan.x;_pan.sy=e.touches[0].clientY-_pan.y;}
+  };
+  wrap.ontouchmove=function(e){
+    if(!_pan.active||e.touches.length!==1)return;
+    e.preventDefault();
+    var nx=e.touches[0].clientX-_pan.sx;
+    var ny=e.touches[0].clientY-_pan.sy;
+    // 범위 제한
+    var s=_pan.scale;
+    var maxX=0;var minX=vw-1440*s;
+    var maxY=0;var minY=vh-5000*s;
+    _pan.x=Math.min(maxX,Math.max(minX,nx));
+    _pan.y=Math.min(maxY,Math.max(minY,ny));
+    frame.style.left=_pan.x+'px';
+    frame.style.top=_pan.y+'px';
+  };
+  wrap.ontouchend=function(){_pan.active=false;};
+  // 마우스 드래그
+  wrap.onmousedown=function(e){_pan.active=true;_pan.sx=e.clientX-_pan.x;_pan.sy=e.clientY-_pan.y;e.preventDefault();};
+  wrap.onmousemove=function(e){
+    if(!_pan.active)return;
+    var nx=e.clientX-_pan.sx;
+    var ny=e.clientY-_pan.sy;
+    var s=_pan.scale;
+    _pan.x=Math.min(0,Math.max(vw-1440*s,nx));
+    _pan.y=Math.min(0,Math.max(vh-5000*s,ny));
+    frame.style.left=_pan.x+'px';
+    frame.style.top=_pan.y+'px';
+  };
+  wrap.onmouseup=function(){_pan.active=false;};
 }
 function closePicExpand(){
   var modal=document.getElementById('picExpandModal');
@@ -2105,7 +2144,11 @@ function closePicExpand(){
   setTimeout(function(){
     modal.style.display='none';
     frame.src='';
-    frame.style.zoom='';frame.style.width='100%';frame.style.height='100%';
+    frame.style.transform='';frame.style.width='';frame.style.height='';
+    frame.style.left='0';frame.style.top='0';
+    var wrap=document.getElementById('picPanWrap');
+    wrap.ontouchstart=wrap.ontouchmove=wrap.ontouchend=null;
+    wrap.onmousedown=wrap.onmousemove=wrap.onmouseup=null;
   },250);
   document.body.style.overflow='';
 }
@@ -2345,12 +2388,14 @@ renderGallery();
 
 
 <!-- Picture Expand Modal (mobile) -->
-<div id="picExpandModal" style="display:none;position:fixed;inset:0;z-index:10000;background:#0a0a0a;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+<div id="picExpandModal" style="display:none;position:fixed;inset:0;z-index:10000;background:#0a0a0a;overflow:hidden;touch-action:none;">
   <div id="picExpandHeader" style="position:fixed;top:0;left:0;right:0;z-index:10001;display:flex;align-items:center;padding:14px 16px;background:linear-gradient(180deg,rgba(10,10,10,.92) 60%,transparent);">
     <button onclick="closePicExpand()" style="display:flex;align-items:center;gap:6px;background:rgba(20,20,20,.7);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(8px);">← Back</button>
     <span id="picExpandTitle" style="flex:1;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,180,162,.5);padding-right:80px;"></span>
   </div>
-  <iframe id="picExpandFrame" style="width:100%;height:100%;border:none;background:#0a0a0a;" allow="autoplay"></iframe>
+  <div id="picPanWrap" style="position:absolute;inset:0;overflow:hidden;">
+    <iframe id="picExpandFrame" style="border:none;background:#0a0a0a;position:absolute;top:0;left:0;" allow="autoplay"></iframe>
+  </div>
 </div>
 </body>
 </html>
