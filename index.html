@@ -190,8 +190,8 @@
   .pin-center{border:none;padding:32px 20px;}
 
   /* Hub */
-  #page-hub{padding:68px 16px 100px!important;}
-  #page-hub>.relative.z-10{gap:0;}
+  #page-hub{padding:68px 16px 100px!important;overflow-x:hidden!important;max-width:100vw!important;}
+  #page-hub>.relative.z-10{gap:0;max-width:100%!important;overflow:hidden!important;}
   #page-hub .space-y-24>*+*{margin-top:32px!important;}
 
   /* Hero */
@@ -201,35 +201,30 @@
   #page-hub .max-w-sm{max-width:100%!important;}
   #page-hub .md\:col-span-4{padding-bottom:0!important;}
 
-  /* === 3 Cards: Notepad+Vault 나란히, Music 풀폭 === */
+  /* === 3 Cards: 세로 1열 (Notepad → Vault → Music) === */
   #hubCardGrid{
-    grid-template-columns:1fr 1fr!important;
-    gap:10px!important;
-  }
-  #hubCardGrid>section:nth-child(3){
-    grid-column:1/-1!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:12px!important;
   }
   #page-hub .hub-card{
     height:auto!important;min-height:0!important;
-    padding:16px 14px!important;transform:none!important;
+    padding:20px 16px!important;transform:none!important;
+    width:100%!important;max-width:100%!important;
+    box-sizing:border-box!important;
   }
-  #page-hub .hub-card .flex.justify-between.items-start.mb-6{margin-bottom:8px!important;}
-  #page-hub .hub-card .material-symbols-outlined.text-3xl{font-size:22px!important;}
-  #page-hub .hub-card h2{margin-bottom:10px!important;font-size:18px!important;}
+  #page-hub .hub-card h2{margin-bottom:12px!important;font-size:22px!important;}
   #page-hub .hub-card .mb-12,
   #page-hub .hub-card .mb-10,
   #page-hub .hub-card .mb-8,
-  #page-hub .hub-card .mb-6{margin-bottom:8px!important;}
-  #page-hub .hub-card .space-y-8>*+*{margin-top:10px!important;}
-  #page-hub .hub-card .font-body.text-sm{font-size:11px!important;}
-  #page-hub .hub-card button:last-child{margin-top:12px;padding:8px!important;font-size:10px!important;}
-  #page-hub .vault-storage-block{margin-bottom:8px!important;}
-  #page-hub #hubVizBars{height:28px!important;margin-bottom:8px!important;}
-  .writing-line{padding:8px 0!important;}
-  .writing-text{font-size:10px!important;}
+  #page-hub .hub-card .mb-6{margin-bottom:10px!important;}
+  #page-hub .hub-card .space-y-8>*+*{margin-top:12px!important;}
+  #page-hub .hub-card button:last-child{margin-top:14px;padding:10px!important;}
+  #page-hub .vault-storage-block{margin-bottom:10px!important;}
+  #page-hub #hubVizBars{height:32px!important;margin-bottom:10px!important;}
 
   /* === Gallery === */
-  .gallery-section{margin:0!important;overflow:hidden!important;}
+  .gallery-section{margin:0 -16px!important;overflow:hidden!important;}
   .gallery-marquee-item{padding:0 10px!important;font-size:26px!important;}
   .gallery-marquee-wrap{padding:6px 0!important;}
   /* 데스크톱 iframe 숨기기 */
@@ -239,7 +234,7 @@
     display:grid!important;
     grid-template-columns:repeat(3,1fr)!important;
     gap:2px!important;
-    padding:2px 0 0!important;
+    padding:0!important;
   }
   .mob-gal-item{
     aspect-ratio:1/1;
@@ -248,16 +243,13 @@
     position:relative;
     overflow:hidden;
   }
-  .mob-gal-item:nth-child(1){background:linear-gradient(135deg,#1a1208 30%,#2a1a0a 70%);}
-  .mob-gal-item:nth-child(2){background:linear-gradient(135deg,#0e0e0e 30%,#1a1410 70%);}
-  .mob-gal-item:nth-child(3){background:linear-gradient(135deg,#120c0c 30%,#2a1010 70%);}
-  .mob-gal-item:nth-child(4){background:linear-gradient(135deg,#fbf9f4 30%,#e8e9e0 70%);}
-  .mob-gal-item:nth-child(5){background:linear-gradient(135deg,#1a1b18 30%,#31332c 70%);}
-  .mob-gal-item::after{
-    content:attr(data-num);
-    position:absolute;bottom:6px;right:6px;
-    font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;
-    color:rgba(255,180,162,.5);letter-spacing:.08em;
+  .mob-gal-item iframe{
+    position:absolute;top:0;left:0;
+    width:1440px;height:1440px;
+    border:none;margin:0;
+    transform-origin:top left;
+    transform:scale(0.084);
+    pointer-events:none;
   }
 
   /* Bottom Bento */
@@ -684,11 +676,11 @@
 
       <!-- Mobile: Instagram 그리드 (모바일에서만 보임) -->
       <div id="mobileGalleryGrid" class="mob-gallery-grid">
-        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"></div>
-        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"></div>
-        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"></div>
-        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"></div>
-        <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"></div>
+        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="lazy" scrolling="no"></iframe></div>
+        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="lazy" scrolling="no"></iframe></div>
+        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="lazy" scrolling="no"></iframe></div>
+        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="lazy" scrolling="no"></iframe></div>
+        <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="lazy" scrolling="no"></iframe></div>
       </div>
 
     </div>
@@ -1703,12 +1695,14 @@ async function openFavDetail(id){
   document.getElementById('favWhyDetailView').style.display='';
   document.getElementById('favDetailTitle').textContent=s.title||'Untitled';
   document.getElementById('favDetailArtist').textContent=s.artist||'';
-  const wrap=document.getElementById('favDetailFrame').parentElement;
+  // 이전 영상 정리 후 새로 로드
+  const wrap=document.querySelector('.fav-yt-wrap');
+  if(!wrap)return;
   if(s.videoId){
-    wrap.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${s.videoId}?rel=0&modestbranding=1&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+    wrap.innerHTML=`<iframe id="favDetailFrame" src="https://www.youtube-nocookie.com/embed/${s.videoId}?rel=0&modestbranding=1&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
   }else{
     const q=encodeURIComponent((s.artist?s.artist+' ':'')+s.title+' official MV');
-    wrap.innerHTML=`<iframe src="https://www.youtube.com/embed?listType=search&list=${q}&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+    wrap.innerHTML=`<iframe id="favDetailFrame" src="https://www.youtube.com/embed?listType=search&list=${q}&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
   }
   const reasonEl=document.getElementById('favDetailReason');
   if(s.reason){reasonEl.style.display='';reasonEl.innerHTML=`<span class="fav-reason-label">이유</span>${s.reason}`;}
@@ -1716,8 +1710,8 @@ async function openFavDetail(id){
 }
 
 function closeFavDetail(){
-  const wrap=document.getElementById('favDetailFrame');
-  if(wrap&&wrap.parentElement)wrap.parentElement.innerHTML=`<iframe id="favDetailFrame" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  const wrap=document.querySelector('.fav-yt-wrap');
+  if(wrap)wrap.innerHTML=`<iframe id="favDetailFrame" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
   document.getElementById('favWhyDetailView').style.display='none';
   document.getElementById('favWhyListView').style.display='';
 }
