@@ -244,12 +244,13 @@
     position:relative;
     overflow:hidden;
   }
-
-
-  /* 터치 오버레이 */
-  .mg-touch{
-    position:absolute;inset:0;z-index:10;
-    background:transparent;cursor:pointer;
+  .mob-gal-item iframe{
+    position:absolute;top:0;left:0;
+    width:375px;height:375px;
+    border:none;
+    transform-origin:top left;
+    transform:scale(0.34);
+    pointer-events:none;
   }
 
   /* Bottom Bento */
@@ -678,11 +679,11 @@
 
       <!-- Mobile: Instagram 그리드 (모바일에서만 보임) -->
       <div id="mobileGalleryGrid" class="mob-gallery-grid">
-        <div class="mob-gal-item mg-1" onclick="openPicExpand('1picture.html')"><span>01</span></div>
-        <div class="mob-gal-item mg-2" onclick="openPicExpand('2picture.html')"><span>02</span></div>
-        <div class="mob-gal-item mg-3" onclick="openPicExpand('3picture.html')"><span>03</span></div>
-        <div class="mob-gal-item mg-4" onclick="openPicExpand('4picture.html')"><span>04</span></div>
-        <div class="mob-gal-item mg-5" onclick="openPicExpand('5picture.html')"><span>05</span></div>
+        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="lazy" sandbox="allow-same-origin allow-scripts" scrolling="no"></iframe></div>
+        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="lazy" sandbox="allow-same-origin allow-scripts" scrolling="no"></iframe></div>
+        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="lazy" sandbox="allow-same-origin allow-scripts" scrolling="no"></iframe></div>
+        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="lazy" sandbox="allow-same-origin allow-scripts" scrolling="no"></iframe></div>
+        <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="lazy" sandbox="allow-same-origin allow-scripts" scrolling="no"></iframe></div>
       </div>
 
     </div>
