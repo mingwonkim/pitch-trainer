@@ -12,7 +12,13 @@
   }else{setTimeout(initTW,50);}
 })();
 </script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preconnect" href="https://firestore.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preconnect" href="https://firestore.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>
 
@@ -214,7 +220,7 @@
 .viz-bar:nth-child(15){background:#3498db;opacity:.85;}  /* F  파랑 */
 .viz-bar:nth-child(16){background:#8e44ad;opacity:.8;}   /* G# 보라 */
 @keyframes vizPulse{0%{height:var(--h);opacity:.75;}100%{height:calc(var(--h) * 1.8 + 8px);opacity:1;}}
-@keyframes vizPulse{0%{height:var(--h);opacity:.5;}100%{height:calc(var(--h) * 0.35 + 10%);opacity:.9;}}
+
 /* ===== Inner page design system ===== */
 /* Back button */
 .app-back-btn{width:40px;height:40px;border-radius:10px;border:1px solid #252525;background:transparent;color:#a08d88;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;}
@@ -383,6 +389,40 @@
   transition:opacity .05s linear;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== Weekly To-Do Hub Widget ===== */
+.todo-hub-section{margin-top:0;}
+.todo-hub-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.todo-day{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:10px;padding:10px 8px;min-height:90px;transition:all .2s;}
+.todo-day:hover{border-color:rgba(255,180,162,.12);}
+.todo-day-head{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#524340;margin-bottom:2px;}
+.todo-day-num{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#e5e2e1;margin-bottom:8px;}
+.todo-day.today{border-color:#FF3B00;background:rgba(255,59,0,.06);}
+.todo-day.today .todo-day-num{color:#FF3B00;}
+.todo-mini{font-family:'Noto Sans KR','Inter',sans-serif;font-size:11px;color:#a08d88;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.todo-mini.done{text-decoration:line-through;opacity:.4;}
+.todo-more{font-family:'Space Grotesk',sans-serif;font-size:9px;color:#FF3B00;margin-top:3px;}
+/* ===== To-Do Full Page (Calendar) ===== */
+.todo-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.todo-cal-head{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:#524340;text-align:center;padding:8px 0;}
+.todo-cal-cell{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:8px;padding:8px;min-height:110px;cursor:pointer;transition:all .2s;}
+.todo-cal-cell:hover{border-color:rgba(255,180,162,.12);}
+.todo-cal-cell.today{border-color:#FF3B00;background:rgba(255,59,0,.06);}
+.todo-cal-cell.other-month{opacity:.25;}
+.todo-cal-num{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#e5e2e1;margin-bottom:6px;}
+.todo-cal-cell.today .todo-cal-num{color:#FF3B00;}
+.todo-cal-item{display:flex;align-items:center;gap:4px;margin-bottom:3px;}
+.todo-cal-item input[type=checkbox]{accent-color:#FF3B00;width:13px;height:13px;cursor:pointer;flex-shrink:0;}
+.todo-cal-item span{font-size:11px;color:#a08d88;line-height:1.3;}
+.todo-cal-item.done span{text-decoration:line-through;opacity:.4;}
+.todo-cal-item .todo-del{cursor:pointer;color:#524340;font-size:10px;margin-left:auto;opacity:0;transition:opacity .2s;}
+.todo-cal-item:hover .todo-del{opacity:1;}
+.todo-input-row{display:flex;gap:8px;margin-bottom:20px;}
+.todo-input-row input{flex:1;}
+.todo-month-nav{display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:16px;}
+.todo-month-nav button{background:none;border:1px solid #353535;border-radius:999px;width:36px;height:36px;color:#ffb4a2;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.todo-month-nav button:hover{border-color:#ffb4a2;}
+.todo-month-label{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;letter-spacing:.06em;color:#e5e2e1;}
 </style>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
@@ -391,7 +431,7 @@
 <div id="blackFadeOverlay"></div>
 
 <!-- Top Nav -->
-<nav class="fixed top-0 w-full z-50 bg-[#131313]/85 backdrop-blur-2xl" style="will-change:transform; flex justify-between items-center px-6 md:px-8 py-5 border-b border-white/[.03]">
+<nav class="fixed top-0 w-full z-50 bg-[#131313]/85 backdrop-blur-2xl flex justify-between items-center px-6 md:px-8 py-5 border-b border-white/[.03]" style="will-change:transform;">
   <div class="text-sm font-bold tracking-[.2em] text-[#ffb4a2] font-['Space_Grotesk'] uppercase cursor-pointer" onclick="goHub()">MONOLITH_OS</div>
   <div class="hidden md:flex gap-8 items-center">
     <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="hub" onclick="goHub()">Hub</a>
@@ -406,7 +446,7 @@
 
 <!-- Bottom Nav -->
 <nav class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
-  <div class="bg-[#131313]/60 backdrop-blur-3xl rounded-2xl" style="will-change:transform; px-5 py-2.5 shadow-2xl shadow-black/30 flex gap-7 md:gap-10 items-center justify-center border border-[#252525]">
+  <div class="bg-[#131313]/60 backdrop-blur-3xl rounded-2xl px-5 py-2.5 shadow-2xl shadow-black/30 flex gap-7 md:gap-10 items-center justify-center border border-[#252525]" style="will-change:transform;">
     <a class="bnav flex flex-col items-center justify-center transition-all duration-400 cursor-pointer py-1 px-2 text-[#ffb4a2]" data-page="hub" onclick="goHub()"><span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1;">grid_view</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Hub</span></a>
     <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="memo" onclick="openApp('memo')"><span class="material-symbols-outlined text-[20px]">edit_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Note</span></a>
     <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="files" onclick="openApp('files')"><span class="material-symbols-outlined text-[20px]">folder</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Vault</span></a>
@@ -546,16 +586,16 @@
         <button class="w-full border border-[#353535] text-[#ffb4a2] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:bg-[#ffb4a2] group-hover:text-[#360e05] group-hover:border-[#ffb4a2] transition-all">Open Studio →</button>
     </div>
 
-    <!-- Bottom Bento -->
-    <section class="grid grid-cols-1 md:grid-cols-12 gap-6">
-      <div class="md:col-span-4 bg-[#FF3B00] p-8 md:p-10 rounded-2xl flex flex-col justify-center cursor-pointer hover:brightness-110 transition-all" onclick="openApp('memo')">
-        <span class="font-label text-[10px] tracking-[.2em] uppercase text-white/50 mb-3">Quick_Action</span>
-        <h3 class="font-headline text-4xl md:text-5xl font-bold text-white leading-[.95] uppercase">New<br/>Fragment</h3>
+    <!-- ===== Weekly To-Do ===== -->
+    <section class="todo-hub-section bg-[#1c1b1b]/80 backdrop-blur-xl rounded-2xl border border-[#252525] p-6 md:p-8 cursor-pointer hover:border-[#ffb4a2]/15 transition-all" onclick="openApp('todo')">
+      <div class="flex justify-between items-center mb-5">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-[#FF3B00] text-xl" style="font-variation-settings:'FILL' 1;">checklist</span>
+          <h3 class="font-headline text-lg md:text-xl font-bold uppercase tracking-tight">Weekly To-Do</h3>
+        </div>
+        <span class="font-label text-[10px] tracking-[.15em] uppercase text-outline/40" id="todoWeekLabel"></span>
       </div>
-      <div class="md:col-span-8 grid grid-cols-2 gap-6">
-        <div class="bg-[#1c1b1b] border border-[#252525] backdrop-blur-md p-7 rounded-2xl"><span class="font-label text-[#FF3B00] text-[10px] tracking-[0.25em] uppercase block mb-3">Integrations</span><h4 class="font-headline text-xl font-semibold uppercase tracking-tight">Seamless Workflow</h4></div>
-        <div class="bg-[#1c1b1b] border border-[#252525] backdrop-blur-md p-7 rounded-2xl"><span class="font-label text-[#FF3B00] text-[10px] tracking-[0.25em] uppercase block mb-3">Performance</span><h4 class="font-headline text-xl font-semibold uppercase tracking-tight">Zero Friction</h4></div>
-      </div>
+      <div id="todoHubWeek" class="todo-hub-grid"></div>
     </section>
 
     <!-- ===== Photo Gallery ===== -->
@@ -575,7 +615,7 @@
       </div>
 
       <!-- ===== Editorial Layout iframe ===== -->
-      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
+      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
 
       <!-- ===== Lowtheory Scale ===== -->
       <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:180px;overflow:hidden;" loading="lazy"></iframe>
@@ -943,6 +983,7 @@ const db=getFirestore(app),stg=getStorage(app);
 const memosCol=collection(db,'mk_app','data','memos'),memoFoldersCol=collection(db,'mk_app','data','folders');
 const filesCol=collection(db,'mk_app','data','files'),fileFoldersCol=collection(db,'mk_app','data','file_folders');
 const bgImagesDoc=doc(db,'mk_app','bg_images');
+const todosCol=collection(db,'mk_app','data','todos');
 
 /* ===== Passwords ===== */
 let isUnlocked=sessionStorage.getItem('mk_unlocked')==='1';
@@ -1318,6 +1359,7 @@ function showTextPin(cb){
   setTimeout(()=>inp.focus(),100);
 }
 function doOpenApp(a){
+  if(a==='todo'){setPage('todo');loadTodos().then(function(){renderTodoCal();});return;}
   if(a==='memo'){curMemoFolder=null;document.getElementById('memoFolderView').style.display='';document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';renderMemoFolders();}
   if(a==='files'){curFileFolder=null;document.getElementById('fileFolderView').style.display='';document.getElementById('fileInsideFolder').style.display='none';renderFileFolders();}
   if(a==='music'){document.getElementById('musicHome').style.display='';document.getElementById('musicAppView').style.display='none';}
@@ -1958,6 +2000,93 @@ window.addEventListener('message',e=>{
     if(f)f.style.height=(e.data.value+40)+'px';
   }
 });
+
+/* ===== To-Do ===== */
+var _todos=[];var _todoMonth=new Date();
+async function loadTodos(){
+  try{const s=await getDocs(todosCol);_todos=[];s.forEach(d=>_todos.push({id:d.id,...d.data()}));}catch(e){_todos=[];}
+}
+async function addTodo(){
+  if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
+  var text=document.getElementById('todoNewText').value.trim();if(!text)return;
+  var date=document.getElementById('todoNewDate').value||new Date().toISOString().slice(0,10);
+  await addDoc(todosCol,{text:text,date:date,done:false,c:Date.now()});
+  document.getElementById('todoNewText').value='';
+  await loadTodos();renderTodoCal();renderTodoHub();
+}
+async function toggleTodo(id){
+  var t=_todos.find(x=>x.id===id);if(!t)return;
+  await updateDoc(doc(db,'mk_app','data','todos',id),{done:!t.done});
+  t.done=!t.done;renderTodoCal();renderTodoHub();
+}
+async function delTodo(id){
+  if(!confirm('삭제?'))return;
+  await deleteDoc(doc(db,'mk_app','data','todos',id));
+  _todos=_todos.filter(x=>x.id!==id);renderTodoCal();renderTodoHub();
+}
+window.addTodo=addTodo;window.toggleTodo=toggleTodo;window.delTodo=delTodo;
+
+function renderTodoHub(){
+  var now=new Date();var dow=now.getDay();
+  var mon=new Date(now);mon.setDate(now.getDate()-(dow===0?6:dow-1));
+  var days=['월','화','수','목','금','토','일'];
+  var wkStart=mon.toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
+  var sun=new Date(mon);sun.setDate(mon.getDate()+6);
+  var wkEnd=sun.toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
+  var el=document.getElementById('todoWeekLabel');if(el)el.textContent=wkStart+' ~ '+wkEnd;
+  var grid=document.getElementById('todoHubWeek');if(!grid)return;
+  var html='';
+  for(var i=0;i<7;i++){
+    var d=new Date(mon);d.setDate(mon.getDate()+i);
+    var ds=d.toISOString().slice(0,10);
+    var isToday=ds===now.toISOString().slice(0,10);
+    var dt=_todos.filter(function(t){return t.date===ds;}).sort(function(a,b){return a.done-b.done;});
+    html+='<div class="todo-day'+(isToday?' today':'')+'">';
+    html+='<div class="todo-day-head">'+days[i]+'</div>';
+    html+='<div class="todo-day-num">'+d.getDate()+'</div>';
+    for(var j=0;j<Math.min(dt.length,3);j++){
+      html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+dt[j].text+'</div>';
+    }
+    if(dt.length>3)html+='<div class="todo-more">+'+(dt.length-3)+'</div>';
+    html+='</div>';
+  }
+  grid.innerHTML=html;
+}
+
+function todoNavMonth(d){_todoMonth.setMonth(_todoMonth.getMonth()+d);renderTodoCal();}
+window.todoNavMonth=todoNavMonth;
+
+function renderTodoCal(){
+  var now=new Date();var todayStr=now.toISOString().slice(0,10);
+  var y=_todoMonth.getFullYear(),m=_todoMonth.getMonth();
+  var ml=document.getElementById('todoMonthLabel');if(ml)ml.textContent=y+'년 '+(m+1)+'월';
+  var nd=document.getElementById('todoNewDate');if(nd)nd.value=todayStr;
+  var first=new Date(y,m,1);var startDow=first.getDay();startDow=startDow===0?6:startDow-1;
+  var totalDays=new Date(y,m+1,0).getDate();
+  var grid=document.getElementById('todoCalGrid');if(!grid)return;
+  var html='';
+  var prevLast=new Date(y,m,0);
+  for(var i=startDow-1;i>=0;i--){html+='<div class="todo-cal-cell other-month"><div class="todo-cal-num">'+(prevLast.getDate()-i)+'</div></div>';}
+  for(var d=1;d<=totalDays;d++){
+    var ds=y+'-'+(m+1<10?'0':'')+(m+1)+'-'+(d<10?'0':'')+d;
+    var isToday=ds===todayStr;
+    var dt=_todos.filter(function(t){return t.date===ds;});
+    html+='<div class="todo-cal-cell'+(isToday?' today':'')+'">';
+    html+='<div class="todo-cal-num">'+d+'</div>';
+    dt.forEach(function(t){
+      html+='<div class="todo-cal-item'+(t.done?' done':'')+'">';
+      html+='<input type="checkbox" '+(t.done?'checked':'')+' onchange="toggleTodo(\''+t.id+'\')">';
+      html+='<span>'+t.text+'</span>';
+      html+='<span class="todo-del" onclick="event.stopPropagation();delTodo(\''+t.id+'\')">✕</span>';
+      html+='</div>';
+    });
+    html+='</div>';
+  }
+  var endDow=(startDow+totalDays)%7;
+  if(endDow>0){for(var i=1;i<=7-endDow;i++){html+='<div class="todo-cal-cell other-month"><div class="todo-cal-num">'+i+'</div></div>';}}
+  grid.innerHTML=html;
+}
+
 /* ===== Init ===== */
 (function(){
   const nav=document.querySelector('nav.fixed.top-0');
@@ -1965,6 +2094,7 @@ window.addEventListener('message',e=>{
   setH();window.addEventListener('resize',setH);
 })();
 loadBgImages().then(()=>renderBgGrid());
+loadTodos().then(function(){renderTodoHub();});
 // Hub storage bar
 async function updateHubStorage(){
   try{
@@ -2175,6 +2305,35 @@ renderGallery();
   onScroll();
 })();
 </script>
+
+<!-- ============ TODO PAGE ============ -->
+<div class="page min-h-screen pt-24 pb-40 px-6" id="page-todo">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex items-center gap-5 mb-10">
+      <button class="app-back-btn" onclick="goHub()"><span class="material-symbols-outlined text-[18px]">arrow_back</span></button>
+      <div>
+        <div class="app-page-label">04 — Planner</div>
+        <h1 class="app-page-title">To-Do</h1>
+      </div>
+    </div>
+    <div class="todo-input-row">
+      <input type="text" class="mk-input" id="todoNewText" placeholder="새 할 일..." onkeydown="if(event.key==='Enter')addTodo()">
+      <input type="date" class="mk-input" id="todoNewDate" style="max-width:160px;">
+      <button class="app-action-btn" onclick="addTodo()"><span class="material-symbols-outlined text-base">add</span></button>
+    </div>
+    <div class="todo-month-nav">
+      <button onclick="todoNavMonth(-1)">‹</button>
+      <span class="todo-month-label" id="todoMonthLabel"></span>
+      <button onclick="todoNavMonth(1)">›</button>
+    </div>
+    <div class="todo-cal-grid" style="margin-bottom:0;">
+      <div class="todo-cal-head">월</div><div class="todo-cal-head">화</div><div class="todo-cal-head">수</div>
+      <div class="todo-cal-head">목</div><div class="todo-cal-head">금</div><div class="todo-cal-head">토</div><div class="todo-cal-head">일</div>
+    </div>
+    <div class="todo-cal-grid" id="todoCalGrid"></div>
+  </div>
+</div>
+
 <!-- Music iframe — body 직속 전체화면 overlay -->
 <div id="musicAppView" style="display:none;">
   <button class="music-app-back" onclick="closeMusicApp()">← 목록</button>
