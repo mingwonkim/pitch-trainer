@@ -390,103 +390,7 @@
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ===== Weekly To-Do Hub Widget ===== */
-.todo-hub-section{margin-top:0;}
-.todo-hub-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
-.todo-day{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:10px;padding:10px 8px;min-height:90px;transition:all .2s;}
-.todo-day:hover{border-color:rgba(255,180,162,.12);}
-.todo-day-head{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#524340;margin-bottom:2px;}
-.todo-day-num{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#e5e2e1;margin-bottom:8px;}
-.todo-day.today{border-color:#FF3B00;background:rgba(255,59,0,.06);}
-.todo-day.today .todo-day-num{color:#FF3B00;}
-.todo-mini{font-family:'Noto Sans KR','Inter',sans-serif;font-size:11px;color:#a08d88;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.todo-mini.done{text-decoration:line-through;opacity:.4;}
-.todo-more{font-family:'Space Grotesk',sans-serif;font-size:9px;color:#FF3B00;margin-top:3px;}
-/* ===== To-Do Full Page (Calendar) ===== */
-.todo-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-.todo-cal-head{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:#524340;text-align:center;padding:8px 0;}
-.todo-cal-cell{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:8px;padding:8px;min-height:110px;cursor:pointer;transition:all .2s;}
-.todo-cal-cell:hover{border-color:rgba(255,180,162,.12);}
-.todo-cal-cell.today{border-color:#FF3B00;background:rgba(255,59,0,.06);}
-.todo-cal-cell.other-month{opacity:.25;}
-.todo-cal-num{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#e5e2e1;margin-bottom:6px;}
-.todo-cal-cell.today .todo-cal-num{color:#FF3B00;}
-.todo-cal-item{display:flex;align-items:center;gap:4px;margin-bottom:3px;}
-.todo-cal-item input[type=checkbox]{accent-color:#FF3B00;width:13px;height:13px;cursor:pointer;flex-shrink:0;}
-.todo-cal-item span{font-size:11px;color:#a08d88;line-height:1.3;}
-.todo-cal-item.done span{text-decoration:line-through;opacity:.4;}
-.todo-cal-item .todo-del{cursor:pointer;color:#524340;font-size:10px;margin-left:auto;opacity:0;transition:opacity .2s;}
-.todo-cal-item:hover .todo-del{opacity:1;}
-.todo-input-row{display:flex;gap:8px;margin-bottom:20px;}
-.todo-input-row input{flex:1;}
-.todo-month-nav{display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:16px;}
-.todo-month-nav button{background:none;border:1px solid #353535;border-radius:999px;width:36px;height:36px;color:#ffb4a2;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.todo-month-nav button:hover{border-color:#ffb4a2;}
-.todo-month-label{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;letter-spacing:.06em;color:#e5e2e1;}
-
-/* ===== Mobile gallery (데스크톱에서 숨김) ===== */
-.mob-gallery-grid{display:none;}
-#picExpandModal{transition:opacity .3s ease;}
-
-@media(max-width:767px){
-  html,body{overflow-x:hidden!important;max-width:100vw!important;}
-  .pin-overlay{grid-template-columns:1fr;}
-  .pin-left,.pin-right{display:none;}
-  .pin-center{border:none;padding:32px 20px;}
-
-  #page-hub{padding:60px 16px 120px!important;overflow-x:hidden!important;max-width:100vw!important;box-sizing:border-box!important;}
-  #page-hub>.relative.z-10{gap:0;max-width:100%!important;overflow:hidden!important;box-sizing:border-box!important;}
-  #page-hub .space-y-24>*+*{margin-top:24px!important;}
-
-  #page-hub h1.font-headline{font-size:2.6rem!important;line-height:.9!important;}
-  #page-hub .font-body.text-lg{font-size:12px!important;line-height:1.5!important;max-width:100%!important;}
-  #page-hub section.grid.gap-10{gap:10px!important;}
-  #page-hub .max-w-sm{max-width:100%!important;}
-
-  #hubCardGrid{display:flex!important;flex-direction:column!important;gap:12px!important;}
-  #page-hub .hub-card{height:auto!important;min-height:0!important;padding:20px 16px!important;transform:none!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;}
-  #page-hub .hub-card h2{margin-bottom:12px!important;font-size:22px!important;}
-  #page-hub .hub-card button:last-child{margin-top:14px;padding:10px!important;}
-
-  .gallery-section{margin:0 -16px!important;overflow:hidden!important;}
-  .gallery-section>iframe{display:none!important;}
-  .gallery-marquee-item{padding:0 10px!important;font-size:26px!important;}
-  .gallery-marquee-wrap{padding:6px 0!important;}
-
-  .mob-gallery-grid{
-    display:grid!important;grid-template-columns:repeat(3,1fr)!important;
-    gap:2px!important;padding:0!important;margin-top:24px!important;
-  }
-  .mob-gal-item{aspect-ratio:1/1;background:#0e0e0e;cursor:pointer;position:relative;overflow:hidden;}
-  .mob-gal-item iframe{
-    position:absolute;left:0;width:1440px;height:900px;border:none;
-    transform-origin:top left;transform:scale(0.087);pointer-events:none;top:23px;
-  }
-  .mob-gal-item:nth-child(2) iframe{top:-7px;}
-  .mob-gal-item:nth-child(3) iframe{top:14px;}
-  .mob-gal-item:nth-child(4) iframe{top:6px;}
-  .mob-gal-item:nth-child(5) iframe{top:19px;}
-
-  .todo-hub{padding:14px!important;border-radius:14px!important;}
-  .todo-hub h3{font-size:14px!important;}
-  .todo-week-grid{gap:2px!important;}
-  .todo-day{padding:5px 3px!important;min-height:60px!important;border-radius:6px!important;}
-  .todo-day-num{font-size:12px!important;}
-  .todo-mini{font-size:8px!important;}
-  .todo-cal-grid{gap:2px!important;}
-  .todo-cal-cell{padding:4px!important;min-height:60px!important;}
-
-  .page{padding-left:16px!important;padding-right:16px!important;}
-  nav.fixed.top-0{padding:10px 14px!important;}
-  nav.fixed.bottom-5{bottom:10px!important;}
-}
-@media(max-width:375px){
-  #page-hub h1.font-headline{font-size:2.2rem!important;}
-  .gallery-marquee-item{font-size:22px!important;}
-}
-
-/* ===== To-Do ===== */
-.todo-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+/* Todo day cells */
 .todo-day{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:10px;padding:10px 8px;min-height:90px;transition:.2s;}
 .todo-day:hover{border-color:rgba(255,180,162,.12);}
 .todo-day.today{border-color:#FF3B00;background:rgba(255,59,0,.06);}
@@ -496,25 +400,31 @@
 .todo-mini{font-family:'Noto Sans KR','Inter',sans-serif;font-size:11px;color:#a08d88;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .todo-mini.done{text-decoration:line-through;opacity:.35;}
 .todo-more{font-family:'Space Grotesk',sans-serif;font-size:9px;color:#FF3B00;margin-top:3px;}
-.todo-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-.todo-cal-head{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;}
-.todo-cal-cell{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:8px;padding:8px;min-height:110px;cursor:default;transition:.2s;}
-.todo-cal-cell:hover{border-color:rgba(255,180,162,.1);}
+.todo-cal-cell{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:8px;padding:8px;min-height:110px;transition:.2s;}
 .todo-cal-cell.today{border-color:#FF3B00;background:rgba(255,59,0,.04);}
-.todo-cal-cell.other{opacity:.25;pointer-events:none;}
+.todo-cal-cell.other{opacity:.25;}
 .todo-cal-num{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#e5e2e1;margin-bottom:6px;}
 .todo-cal-cell.today .todo-cal-num{color:#FF3B00;}
 .todo-item{display:flex;align-items:flex-start;gap:5px;margin-bottom:3px;}
 .todo-item input[type=checkbox]{accent-color:#FF3B00;width:13px;height:13px;margin-top:2px;cursor:pointer;flex-shrink:0;}
 .todo-item span{font-family:'Noto Sans KR','Inter',sans-serif;font-size:11px;color:#a08d88;line-height:1.4;}
 .todo-item.done span{text-decoration:line-through;opacity:.35;}
-.todo-item .del{cursor:pointer;color:#524340;font-size:10px;margin-left:auto;flex-shrink:0;}
-.todo-month-nav{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:16px;}
-.todo-month-nav button{background:none;border:1px solid #353535;border-radius:999px;width:36px;height:36px;color:#ffb4a2;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.todo-month-nav button:hover{border-color:#ffb4a2;}
-.todo-month-label{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;letter-spacing:.08em;color:#e5e2e1;}
-.todo-input-row{display:flex;gap:8px;margin-bottom:16px;}
-.todo-input-row input{flex:1;}
+/* Mobile */
+@media(max-width:767px){
+  #page-hub{padding:60px 16px 120px!important;overflow-x:hidden!important;max-width:100vw!important;box-sizing:border-box!important;}
+  #hubCardGrid{display:flex!important;flex-direction:column!important;gap:12px!important;}
+  #page-hub .hub-card,#hubCardGrid>section{height:auto!important;min-height:0!important;padding:20px 16px!important;transform:none!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;}
+  .gallery-section{margin:0 -16px!important;overflow:hidden!important;}
+  .gallery-section>iframe{display:none!important;}
+  .gallery-marquee-item{font-size:26px!important;}
+  #mobileGalleryGrid{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:2px!important;margin-top:24px!important;}
+  .mob-gal-item{aspect-ratio:1/1;background:#0e0e0e;cursor:pointer;position:relative;overflow:hidden;}
+  .mob-gal-item iframe{position:absolute;left:0;width:1440px;height:900px;border:none;transform-origin:top left;transform:scale(0.087);pointer-events:none;top:23px;}
+  .mob-gal-item:nth-child(2) iframe{top:-7px;}
+  .mob-gal-item:nth-child(3) iframe{top:14px;}
+  .mob-gal-item:nth-child(4) iframe{top:6px;}
+  .mob-gal-item:nth-child(5) iframe{top:19px;}
+}
 </style>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
@@ -678,16 +588,13 @@
         <button class="w-full border border-[#353535] text-[#ffb4a2] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:bg-[#ffb4a2] group-hover:text-[#360e05] group-hover:border-[#ffb4a2] transition-all">Open Studio →</button>
     </div>
 
-    <!-- ===== Weekly To-Do ===== -->
-    <section class="todo-hub-section bg-[#1c1b1b]/80 backdrop-blur-xl rounded-2xl border border-[#252525] p-6 md:p-8 cursor-pointer hover:border-[#ffb4a2]/15 transition-all" onclick="openApp('todo')">
+    <!-- Weekly To-Do -->
+    <section class="todo-hub bg-[#1c1b1b]/80 backdrop-blur-xl rounded-2xl border border-[#252525] p-6 md:p-8 cursor-pointer hover:border-[#ffb4a2]/15 transition-all" onclick="openApp('todo')">
       <div class="flex justify-between items-center mb-5">
-        <div class="flex items-center gap-3">
-          <span class="material-symbols-outlined text-[#FF3B00] text-xl" style="font-variation-settings:'FILL' 1;">checklist</span>
-          <h3 class="font-headline text-lg md:text-xl font-bold uppercase tracking-tight">Weekly To-Do</h3>
-        </div>
+        <div class="flex items-center gap-3"><span class="material-symbols-outlined text-[#FF3B00] text-xl" style="font-variation-settings:'FILL' 1;">checklist</span><h3 class="font-headline text-lg md:text-xl font-bold uppercase tracking-tight">Weekly To-Do</h3></div>
         <span class="font-label text-[10px] tracking-[.15em] uppercase text-outline/40" id="todoWeekLabel"></span>
       </div>
-      <div id="todoHubWeek" class="todo-hub-grid"></div>
+      <div id="todoHubWeek" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"></div>
     </section>
 
     <!-- ===== Photo Gallery ===== -->
@@ -722,14 +629,13 @@
       <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:300px;" loading="lazy"></iframe>
 
     <!-- Mobile gallery -->
-      <div id="mobileGalleryGrid" class="mob-gallery-grid">
+      <div id="mobileGalleryGrid" style="display:none;">
         <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe></div>
         <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe></div>
         <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe></div>
         <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe></div>
         <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe></div>
       </div>
-    </div>
 
     <!-- Lightbox -->
       <img class="gallery-lb-img" id="galleryLbImg" src="" alt="">
@@ -1075,7 +981,6 @@ const memosCol=collection(db,'mk_app','data','memos'),memoFoldersCol=collection(
 const filesCol=collection(db,'mk_app','data','files'),fileFoldersCol=collection(db,'mk_app','data','file_folders');
 const bgImagesDoc=doc(db,'mk_app','bg_images');
 const todosCol=collection(db,'mk_app','data','todos');
-const todosCol=collection(db,'mk_app','data','todos');
 
 /* ===== Passwords ===== */
 let isUnlocked=sessionStorage.getItem('mk_unlocked')==='1';
@@ -1313,17 +1218,8 @@ function setPage(p){if(curPage&&curPage!==p)navHistory.push(curPage);
 }
 function goHub(){setPage('hub');}
 function goBack(){if(navHistory.length>0){var prev=navHistory.pop();setPage(prev);navHistory.pop();}else setPage('hub');}
-function memoSmartBack(){
-  var ed=document.getElementById('memoEditor');var inf=document.getElementById('memoInsideFolder');
-  if(ed&&ed.style.display!=='none'){cancelMemo();return;}
-  if(inf&&inf.style.display!=='none'){backToMemoFolders();return;}
-  goBack();
-}
-function fileSmartBack(){
-  var inf=document.getElementById('fileInsideFolder');
-  if(inf&&inf.style.display!=='none'){backToFileFolders();return;}
-  goBack();
-}
+function memoSmartBack(){var ed=document.getElementById('memoEditor');var inf=document.getElementById('memoInsideFolder');if(ed&&ed.style.display!=='none'){cancelMemo();return;}if(inf&&inf.style.display!=='none'){backToMemoFolders();return;}goBack();}
+function fileSmartBack(){var inf=document.getElementById('fileInsideFolder');if(inf&&inf.style.display!=='none'){backToFileFolders();return;}goBack();}
 function openApp(a){
   if(a==='settings'&&!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');showTextPin(()=>doOpenApp(a));return;}
   doOpenApp(a);
@@ -1652,13 +1548,7 @@ function favWhyBack(){
   }
 }
 // 상단 뒤로가기(←)는 항상 Hub
-function musicSmartBack(){
-  var nv=document.getElementById('musicNotesView');var fv=document.getElementById('musicFavWhyView');var pv=document.getElementById('musicPlaylistView');
-  if(nv&&nv.style.display!=='none'){closeMusicSubView();return;}
-  if(fv&&fv.style.display!=='none'){favWhyBack();return;}
-  if(pv&&pv.style.display!=='none'){closeMusicSubView();return;}
-  goBack();
-}
+function musicSmartBack(){var nv=document.getElementById('musicNotesView');var fv=document.getElementById('musicFavWhyView');var pv=document.getElementById('musicPlaylistView');if(nv&&nv.style.display!=='none'){closeMusicSubView();return;}if(fv&&fv.style.display!=='none'){favWhyBack();return;}if(pv&&pv.style.display!=='none'){closeMusicSubView();return;}goBack();}
 window.openMusicApp=openMusicApp;window.closeMusicApp=closeMusicApp;window.closeMusicSubView=closeMusicSubView;window.musicSmartBack=musicSmartBack;window.favWhyBack=favWhyBack;
 
 // ---- Music Notes ----
@@ -2113,160 +2003,21 @@ window.addEventListener('message',e=>{
 
 /* ===== To-Do ===== */
 var _todos=[];var _todoMonth=new Date();
-async function loadTodos(){
-  try{const s=await getDocs(todosCol);_todos=[];s.forEach(d=>_todos.push({id:d.id,...d.data()}));}catch(e){_todos=[];}
-}
-async function addTodo(){
-  if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
-  var text=document.getElementById('todoNewText').value.trim();if(!text)return;
-  var date=document.getElementById('todoNewDate').value||new Date().toISOString().slice(0,10);
-  await addDoc(todosCol,{text:text,date:date,done:false,c:Date.now()});
-  document.getElementById('todoNewText').value='';
-  await loadTodos();renderTodoCal();renderTodoHub();
-}
-async function toggleTodo(id){
-  var t=_todos.find(x=>x.id===id);if(!t)return;
-  await updateDoc(doc(db,'mk_app','data','todos',id),{done:!t.done});
-  t.done=!t.done;renderTodoCal();renderTodoHub();
-}
-async function delTodo(id){
-  if(!confirm('삭제?'))return;
-  await deleteDoc(doc(db,'mk_app','data','todos',id));
-  _todos=_todos.filter(x=>x.id!==id);renderTodoCal();renderTodoHub();
-}
-window.addTodo=addTodo;window.toggleTodo=toggleTodo;window.delTodo=delTodo;
-
-function renderTodoHub(){
-  var now=new Date();var dow=now.getDay();
-  var mon=new Date(now);mon.setDate(now.getDate()-(dow===0?6:dow-1));
-  var days=['월','화','수','목','금','토','일'];
-  var wkStart=mon.toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
-  var sun=new Date(mon);sun.setDate(mon.getDate()+6);
-  var wkEnd=sun.toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
-  var el=document.getElementById('todoWeekLabel');if(el)el.textContent=wkStart+' ~ '+wkEnd;
-  var grid=document.getElementById('todoHubWeek');if(!grid)return;
-  var html='';
-  for(var i=0;i<7;i++){
-    var d=new Date(mon);d.setDate(mon.getDate()+i);
-    var ds=d.toISOString().slice(0,10);
-    var isToday=ds===now.toISOString().slice(0,10);
-    var dt=_todos.filter(function(t){return t.date===ds;}).sort(function(a,b){return a.done-b.done;});
-    html+='<div class="todo-day'+(isToday?' today':'')+'">';
-    html+='<div class="todo-day-head">'+days[i]+'</div>';
-    html+='<div class="todo-day-num">'+d.getDate()+'</div>';
-    for(var j=0;j<Math.min(dt.length,3);j++){
-      html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+dt[j].text+'</div>';
-    }
-    if(dt.length>3)html+='<div class="todo-more">+'+(dt.length-3)+'</div>';
-    html+='</div>';
-  }
-  grid.innerHTML=html;
-}
-
-function todoNavMonth(d){_todoMonth.setMonth(_todoMonth.getMonth()+d);renderTodoCal();}
-window.todoNavMonth=todoNavMonth;
-
-function renderTodoCal(){
-  var now=new Date();var todayStr=now.toISOString().slice(0,10);
-  var y=_todoMonth.getFullYear(),m=_todoMonth.getMonth();
-  var ml=document.getElementById('todoMonthLabel');if(ml)ml.textContent=y+'년 '+(m+1)+'월';
-  var nd=document.getElementById('todoNewDate');if(nd)nd.value=todayStr;
-  var first=new Date(y,m,1);var startDow=first.getDay();startDow=startDow===0?6:startDow-1;
-  var totalDays=new Date(y,m+1,0).getDate();
-  var grid=document.getElementById('todoCalGrid');if(!grid)return;
-  var html='';
-  var prevLast=new Date(y,m,0);
-  for(var i=startDow-1;i>=0;i--){html+='<div class="todo-cal-cell other-month"><div class="todo-cal-num">'+(prevLast.getDate()-i)+'</div></div>';}
-  for(var d=1;d<=totalDays;d++){
-    var ds=y+'-'+(m+1<10?'0':'')+(m+1)+'-'+(d<10?'0':'')+d;
-    var isToday=ds===todayStr;
-    var dt=_todos.filter(function(t){return t.date===ds;});
-    html+='<div class="todo-cal-cell'+(isToday?' today':'')+'">';
-    html+='<div class="todo-cal-num">'+d+'</div>';
-    dt.forEach(function(t){
-      html+='<div class="todo-cal-item'+(t.done?' done':'')+'">';
-      html+='<input type="checkbox" '+(t.done?'checked':'')+' onchange="toggleTodo(\''+t.id+'\')">';
-      html+='<span>'+t.text+'</span>';
-      html+='<span class="todo-del" onclick="event.stopPropagation();delTodo(\''+t.id+'\')">✕</span>';
-      html+='</div>';
-    });
-    html+='</div>';
-  }
-  var endDow=(startDow+totalDays)%7;
-  if(endDow>0){for(var i=1;i<=7-endDow;i++){html+='<div class="todo-cal-cell other-month"><div class="todo-cal-num">'+i+'</div></div>';}}
-  grid.innerHTML=html;
-}
-
-
-/* ===== To-Do ===== */
-var _todos=[];var _todoMonth=new Date();
 async function loadTodos(){try{const s=await getDocs(todosCol);_todos=[];s.forEach(d=>_todos.push({id:d.id,...d.data()}));}catch(e){_todos=[];}}
 async function addTodo(){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}var t=document.getElementById('todoNewText').value.trim();if(!t)return;var d=document.getElementById('todoNewDate').value||new Date().toISOString().slice(0,10);await addDoc(todosCol,{text:t,date:d,done:false,c:Date.now()});document.getElementById('todoNewText').value='';await loadTodos();renderTodoCal();renderTodoHub();}
 async function toggleTodo(id){var t=_todos.find(x=>x.id===id);if(!t)return;await updateDoc(doc(db,'mk_app','data','todos',id),{done:!t.done});t.done=!t.done;renderTodoCal();renderTodoHub();}
 async function delTodo(id){if(!confirm('삭제?'))return;await deleteDoc(doc(db,'mk_app','data','todos',id));_todos=_todos.filter(x=>x.id!==id);renderTodoCal();renderTodoHub();}
 window.addTodo=addTodo;window.toggleTodo=toggleTodo;window.delTodo=delTodo;
-
-function renderTodoHub(){
-  var now=new Date();var dow=now.getDay();var mon=new Date(now);mon.setDate(now.getDate()-(dow===0?6:dow-1));
-  var sun=new Date(mon);sun.setDate(mon.getDate()+6);
-  var el=document.getElementById('todoWeekLabel');if(el)el.textContent=mon.toLocaleDateString('ko-KR',{month:'short',day:'numeric'})+' ~ '+sun.toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
-  var grid=document.getElementById('todoHubWeek');if(!grid)return;
-  var days=['월','화','수','목','금','토','일'];var html='';
-  for(var i=0;i<7;i++){
-    var d=new Date(mon);d.setDate(mon.getDate()+i);var ds=d.toISOString().slice(0,10);var isToday=ds===now.toISOString().slice(0,10);
-    var dt=_todos.filter(function(t){return t.date===ds;}).sort(function(a,b){return a.done-b.done;});
-    html+='<div class="todo-day'+(isToday?' today':'')+'"><div class="todo-day-head">'+days[i]+'</div><div class="todo-day-num">'+d.getDate()+'</div>';
-    for(var j=0;j<Math.min(dt.length,3);j++)html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+dt[j].text+'</div>';
-    if(dt.length>3)html+='<div class="todo-more">+'+(dt.length-3)+'</div>';html+='</div>';
-  }
-  grid.innerHTML=html;
-}
+function renderTodoHub(){var now=new Date();var dow=now.getDay();var mon=new Date(now);mon.setDate(now.getDate()-(dow===0?6:dow-1));var sun=new Date(mon);sun.setDate(mon.getDate()+6);var el=document.getElementById('todoWeekLabel');if(el)el.textContent=mon.toLocaleDateString('ko-KR',{month:'short',day:'numeric'})+' ~ '+sun.toLocaleDateString('ko-KR',{month:'short',day:'numeric'});var grid=document.getElementById('todoHubWeek');if(!grid)return;var days=['월','화','수','목','금','토','일'];var html='';for(var i=0;i<7;i++){var d=new Date(mon);d.setDate(mon.getDate()+i);var ds=d.toISOString().slice(0,10);var isToday=ds===now.toISOString().slice(0,10);var dt=_todos.filter(function(t){return t.date===ds;}).sort(function(a,b){return a.done-b.done;});html+='<div class="todo-day'+(isToday?' today':'')+'"><div class="todo-day-head">'+days[i]+'</div><div class="todo-day-num">'+d.getDate()+'</div>';for(var j=0;j<Math.min(dt.length,3);j++)html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+dt[j].text+'</div>';if(dt.length>3)html+='<div class="todo-more">+'+(dt.length-3)+'</div>';html+='</div>';}grid.innerHTML=html;}
 function todoNavMonth(d){_todoMonth.setMonth(_todoMonth.getMonth()+d);renderTodoCal();}
 window.todoNavMonth=todoNavMonth;
-function renderTodoCal(){
-  var now=new Date();var todayStr=now.toISOString().slice(0,10);var y=_todoMonth.getFullYear(),m=_todoMonth.getMonth();
-  document.getElementById('todoMonthLabel').textContent=y+'년 '+(m+1)+'월';document.getElementById('todoNewDate').value=todayStr;
-  var first=new Date(y,m,1);var sd=first.getDay();sd=sd===0?6:sd-1;var last=new Date(y,m+1,0).getDate();
-  var grid=document.getElementById('todoCalGrid');if(!grid)return;var html='';
-  var pl=new Date(y,m,0);for(var i=sd-1;i>=0;i--)html+='<div class="todo-cal-cell other"><div class="todo-cal-num">'+(pl.getDate()-i)+'</div></div>';
-  for(var d=1;d<=last;d++){
-    var ds=y+'-'+(m+1<10?'0':'')+(m+1)+'-'+(d<10?'0':'')+d;var it=ds===todayStr;
-    var dt=_todos.filter(function(t){return t.date===ds;});
-    html+='<div class="todo-cal-cell'+(it?' today':'')+'"><div class="todo-cal-num">'+d+'</div>';
-    dt.forEach(function(t){html+='<div class="todo-item'+(t.done?' done':'')+'"><input type="checkbox" '+(t.done?'checked':'')+' onchange="toggleTodo(''+t.id+'')"><span>'+t.text+'</span><span class="del" onclick="event.stopPropagation();delTodo(''+t.id+'')">✕</span></div>';});
-    html+='</div>';
-  }
-  var ed=(sd+last)%7;if(ed>0){for(var i=1;i<=7-ed;i++)html+='<div class="todo-cal-cell other"><div class="todo-cal-num">'+i+'</div></div>';}
-  grid.innerHTML=html;
-}
-
-/* ===== Picture Swipe Gallery (mobile) ===== */
-var _pics=['1picture.html','2picture.html','3picture.html','4picture.html','5picture.html'];
-var _picIdx=0,_touchX0=0,_touchDX=0,_swiping=false;
-function _loadSlides(){
-  var s=document.getElementById('picSlider');
-  document.getElementById('picSlide0').src=_picIdx>0?_pics[_picIdx-1]:'';
-  document.getElementById('picSlide1').src=_pics[_picIdx];
-  document.getElementById('picSlide2').src=_picIdx<_pics.length-1?_pics[_picIdx+1]:'';
-  s.style.transition='none';s.style.transform='translateX(-100%)';
-  document.getElementById('picDots').innerHTML=_pics.map(function(_,i){return '<div style="width:'+(i===_picIdx?'18px':'6px')+';height:6px;border-radius:3px;background:'+(i===_picIdx?'#ffb4a2':'rgba(255,180,162,.3)')+';transition:all .3s;"></div>';}).join('');
-  document.getElementById('picExpandTitle').textContent=(_picIdx+1<10?'0':'')+(_picIdx+1)+' / 05';
-}
-function openPicExpand(src){
-  _picIdx=_pics.indexOf(src);if(_picIdx<0)_picIdx=0;
-  document.getElementById('picExpandModal').style.display='block';_loadSlides();
-  var s=document.getElementById('picSlider');
-  s.ontouchstart=function(e){if(e.touches.length===1){_touchX0=e.touches[0].clientX;_touchDX=0;_swiping=true;s.style.transition='none';}};
-  s.ontouchmove=function(e){if(!_swiping)return;_touchDX=e.touches[0].clientX-_touchX0;if((_picIdx===0&&_touchDX>0)||(_picIdx===_pics.length-1&&_touchDX<0))_touchDX*=0.3;s.style.transform='translateX(calc(-100% + '+_touchDX+'px))';};
-  s.ontouchend=function(){if(!_swiping)return;_swiping=false;var vw=window.innerWidth;s.style.transition='transform .3s ease';if(_touchDX<-vw*0.2&&_picIdx<_pics.length-1){s.style.transform='translateX(-200%)';setTimeout(function(){_picIdx++;_loadSlides();},320);}else if(_touchDX>vw*0.2&&_picIdx>0){s.style.transform='translateX(0%)';setTimeout(function(){_picIdx--;_loadSlides();},320);}else{s.style.transform='translateX(-100%)';}};
-}
-function closePicExpand(){
-  document.getElementById('picExpandModal').style.display='none';
-  ['picSlide0','picSlide1','picSlide2'].forEach(function(id){document.getElementById(id).src='';});
-  document.getElementById('picSlider').ontouchstart=null;
-}
+function renderTodoCal(){var now=new Date();var todayStr=now.toISOString().slice(0,10);var y=_todoMonth.getFullYear(),m=_todoMonth.getMonth();document.getElementById('todoMonthLabel').textContent=y+'년 '+(m+1)+'월';document.getElementById('todoNewDate').value=todayStr;var first=new Date(y,m,1);var sd=first.getDay();sd=sd===0?6:sd-1;var last=new Date(y,m+1,0).getDate();var grid=document.getElementById('todoCalGrid');if(!grid)return;var html='';var pl=new Date(y,m,0);for(var i=sd-1;i>=0;i--)html+='<div class="todo-cal-cell other" style="font-family:Space Grotesk;font-size:14px;font-weight:700;color:#e5e2e1;padding:8px;">'+(pl.getDate()-i)+'</div>';for(var d=1;d<=last;d++){var ds=y+'-'+(m+1<10?'0':'')+(m+1)+'-'+(d<10?'0':'')+d;var it=ds===todayStr;var dt=_todos.filter(function(t){return t.date===ds;});html+='<div class="todo-cal-cell'+(it?' today':'')+'"><div class="todo-cal-num">'+d+'</div>';dt.forEach(function(t){html+='<div class="todo-item'+(t.done?' done':'')+'"><input type="checkbox" '+(t.done?'checked':'')+' onchange="toggleTodo(\''+t.id+'\')"><span>'+t.text+'</span><span style="cursor:pointer;color:#524340;font-size:10px;margin-left:auto;" onclick="event.stopPropagation();delTodo(\''+t.id+'\')">✕</span></div>';});html+='</div>';}var ed=(sd+last)%7;if(ed>0){for(var i=1;i<=7-ed;i++)html+='<div class="todo-cal-cell other" style="font-family:Space Grotesk;font-size:14px;font-weight:700;color:#e5e2e1;padding:8px;">'+i+'</div>';}grid.innerHTML=html;}
+/* ===== Swipe Gallery ===== */
+var _pics=['1picture.html','2picture.html','3picture.html','4picture.html','5picture.html'];var _picIdx=0,_touchX0=0,_touchDX=0,_swiping=false;
+function _loadSlides(){var s=document.getElementById('picSlider');document.getElementById('picSlide0').src=_picIdx>0?_pics[_picIdx-1]:'';document.getElementById('picSlide1').src=_pics[_picIdx];document.getElementById('picSlide2').src=_picIdx<_pics.length-1?_pics[_picIdx+1]:'';s.style.transition='none';s.style.transform='translateX(-100%)';document.getElementById('picDots').innerHTML=_pics.map(function(_,i){return '<div style="width:'+(i===_picIdx?'18px':'6px')+';height:6px;border-radius:3px;background:'+(i===_picIdx?'#ffb4a2':'rgba(255,180,162,.3)')+';transition:all .3s;"></div>';}).join('');document.getElementById('picExpandTitle').textContent=(_picIdx+1<10?'0':'')+(_picIdx+1)+' / 05';}
+function openPicExpand(src){_picIdx=_pics.indexOf(src);if(_picIdx<0)_picIdx=0;document.getElementById('picExpandModal').style.display='block';_loadSlides();var s=document.getElementById('picSlider');s.ontouchstart=function(e){if(e.touches.length===1){_touchX0=e.touches[0].clientX;_touchDX=0;_swiping=true;s.style.transition='none';}};s.ontouchmove=function(e){if(!_swiping)return;_touchDX=e.touches[0].clientX-_touchX0;if((_picIdx===0&&_touchDX>0)||(_picIdx===_pics.length-1&&_touchDX<0))_touchDX*=0.3;s.style.transform='translateX(calc(-100% + '+_touchDX+'px))';};s.ontouchend=function(){if(!_swiping)return;_swiping=false;var vw=window.innerWidth;s.style.transition='transform .3s ease';if(_touchDX<-vw*0.2&&_picIdx<_pics.length-1){s.style.transform='translateX(-200%)';setTimeout(function(){_picIdx++;_loadSlides();},320);}else if(_touchDX>vw*0.2&&_picIdx>0){s.style.transform='translateX(0%)';setTimeout(function(){_picIdx--;_loadSlides();},320);}else{s.style.transform='translateX(-100%)';};};}
+function closePicExpand(){document.getElementById('picExpandModal').style.display='none';['picSlide0','picSlide1','picSlide2'].forEach(function(id){document.getElementById(id).src='';});document.getElementById('picSlider').ontouchstart=null;}
 window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
-
 /* ===== Init ===== */
 (function(){
   const nav=document.querySelector('nav.fixed.top-0');
@@ -2274,7 +2025,6 @@ window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
   setH();window.addEventListener('resize',setH);
 })();
 loadBgImages().then(()=>renderBgGrid());
-loadTodos().then(function(){renderTodoHub();});
 loadTodos().then(function(){renderTodoHub();});
 // Hub storage bar
 async function updateHubStorage(){
@@ -2486,33 +2236,6 @@ renderGallery();
   onScroll();
 })();
 </script>
-
-<!-- ============ TODO PAGE ============ -->
-<div class="page min-h-screen pt-24 pb-40 px-6" id="page-todo">
-  <div class="max-w-5xl mx-auto">
-    <div class="mb-10">
-      <button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button>
-      <div class="app-page-label">04 — Planner</div>
-      <h1 class="app-page-title">To-Do</h1>
-    </div>
-    <div class="todo-input-row">
-      <input type="text" class="mk-input" id="todoNewText" placeholder="새 할 일..." onkeydown="if(event.key==='Enter')addTodo()">
-      <input type="date" class="mk-input" id="todoNewDate" style="max-width:160px;">
-      <button class="app-action-btn" onclick="addTodo()"><span class="material-symbols-outlined text-base">add</span></button>
-    </div>
-    <div class="todo-month-nav">
-      <button onclick="todoNavMonth(-1)">‹</button>
-      <span class="todo-month-label" id="todoMonthLabel"></span>
-      <button onclick="todoNavMonth(1)">›</button>
-    </div>
-    <div class="todo-cal-grid" style="margin-bottom:0;">
-      <div class="todo-cal-head">월</div><div class="todo-cal-head">화</div><div class="todo-cal-head">수</div>
-      <div class="todo-cal-head">목</div><div class="todo-cal-head">금</div><div class="todo-cal-head">토</div><div class="todo-cal-head">일</div>
-    </div>
-    <div class="todo-cal-grid" id="todoCalGrid"></div>
-  </div>
-</div>
-
 <!-- Music iframe — body 직속 전체화면 overlay -->
 <div id="musicAppView" style="display:none;">
   <button class="music-app-back" onclick="closeMusicApp()">← 목록</button>
@@ -2525,11 +2248,10 @@ renderGallery();
 
 
 
-<!-- Picture Swipe Modal (mobile) -->
 <div id="picExpandModal" style="display:none;position:fixed;inset:0;z-index:10000;background:#0a0a0a;overflow:hidden;">
   <div style="position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;padding:12px 16px;background:linear-gradient(180deg,rgba(10,10,10,.9) 60%,transparent);">
-    <button onclick="closePicExpand()" style="background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;">← Back</button>
-    <span id="picExpandTitle" style="flex:1;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,180,162,.5);padding-right:80px;"></span>
+    <button onclick="closePicExpand()" style="background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;">← Back</button>
+    <span id="picExpandTitle" style="flex:1;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(255,180,162,.5);padding-right:80px;"></span>
   </div>
   <div id="picSlider" style="position:absolute;inset:0;display:flex;transition:transform .35s ease;">
     <iframe id="picSlide0" style="flex:none;width:100%;height:100%;border:none;background:#0a0a0a;" allow="autoplay"></iframe>
@@ -2537,6 +2259,15 @@ renderGallery();
     <iframe id="picSlide2" style="flex:none;width:100%;height:100%;border:none;background:#0a0a0a;" allow="autoplay"></iframe>
   </div>
   <div id="picDots" style="position:absolute;bottom:20px;left:0;right:0;z-index:2;display:flex;justify-content:center;gap:6px;"></div>
+</div>
+<div class="page min-h-screen pt-24 pb-40 px-6" id="page-todo">
+  <div class="max-w-5xl mx-auto">
+    <div class="mb-10"><button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button><div class="app-page-label">04 — Planner</div><h1 class="app-page-title">To-Do</h1></div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;"><input type="text" class="mk-input" id="todoNewText" placeholder="새 할 일..." onkeydown="if(event.key==='Enter')addTodo()" style="flex:1;"><input type="date" class="mk-input" id="todoNewDate" style="max-width:160px;"><button class="app-action-btn" onclick="addTodo()"><span class="material-symbols-outlined text-base">add</span></button></div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:16px;"><button onclick="todoNavMonth(-1)" style="background:none;border:1px solid #353535;border-radius:999px;width:36px;height:36px;color:#ffb4a2;font-size:16px;cursor:pointer;">‹</button><span id="todoMonthLabel" style="font-family:'Space Grotesk';font-size:16px;font-weight:700;color:#e5e2e1;"></span><button onclick="todoNavMonth(1)" style="background:none;border:1px solid #353535;border-radius:999px;width:36px;height:36px;color:#ffb4a2;font-size:16px;cursor:pointer;">›</button></div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;"><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">월</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">화</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">수</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">목</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">금</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">토</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">일</div></div>
+    <div id="todoCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;"></div>
+  </div>
 </div>
 </body>
 </html>
