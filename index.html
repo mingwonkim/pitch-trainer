@@ -400,6 +400,14 @@
 .todo-mini{font-family:'Noto Sans KR','Inter',sans-serif;font-size:13px;color:#c4b0ab;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .todo-mini.done{text-decoration:line-through;opacity:.35;}
 .todo-more{font-family:'Space Grotesk',sans-serif;font-size:10px;color:#FF3B00;margin-top:3px;}
+/* 더보기 버튼 */
+.todo-more-btn{display:flex;align-items:center;gap:2px;background:none;border:none;cursor:pointer;color:#FF3B00;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;padding:2px 0;margin-top:3px;line-height:1;}
+.todo-more-btn:hover{color:#ffb4a2;}
+.todo-more-btn .arrow{display:inline-block;transition:transform .2s;font-size:12px;}
+.todo-more-btn.expanded .arrow{transform:rotate(180deg);}
+/* 숨겨진 항목들 */
+.todo-hidden-items{display:none;margin-top:2px;}
+.todo-hidden-items.show{display:block;}
 .todo-cal-cell{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:8px;padding:10px 8px;min-height:110px;transition:.2s;cursor:pointer;box-sizing:border-box;}
 .todo-cal-cell:hover{border-color:rgba(255,180,162,.2);background:rgba(255,255,255,.04);}
 .todo-cal-cell.today{border-color:#FF3B00;background:rgba(255,59,0,.04);}
@@ -434,6 +442,13 @@
   .mob-gal-item:nth-child(3) iframe{top:14px;}
   .mob-gal-item:nth-child(4) iframe{top:6px;}
   .mob-gal-item:nth-child(5) iframe{top:19px;}
+  #todoCalHead{gap:2px!important;margin-bottom:2px!important;}
+  #todoCalGrid{gap:2px!important;}
+  .todo-cal-cell{min-height:80px!important;padding:6px 4px!important;}
+  .todo-cal-num{font-size:13px!important;}
+  .todo-item span{font-size:11px!important;}
+  .todo-inline-input{font-size:11px!important;}
+  #page-todo .mb-10{margin-bottom:20px!important;}
 }
 </style>
 </head>
@@ -2017,9 +2032,49 @@ async function loadTodos(){try{const s=await getDocs(todosCol);_todos=[];s.forEa
 async function addTodo(){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}var t=document.getElementById('todoNewText').value.trim();if(!t)return;var d=window._todoSelectedDate||new Date().toISOString().slice(0,10);await addDoc(todosCol,{text:t,date:d,done:false,c:Date.now()});document.getElementById('todoNewText').value='';await loadTodos();renderTodoCal();renderTodoHub();}
 async function addTodoInline(dateStr,inputEl){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');inputEl.value='';return;}var t=inputEl.value.trim();if(!t)return;inputEl.value='';inputEl.placeholder='할 일 추가...';await addDoc(todosCol,{text:t,date:dateStr,done:false,c:Date.now()});await loadTodos();renderTodoCal();renderTodoHub();}
 async function toggleTodo(id){var t=_todos.find(x=>x.id===id);if(!t)return;await updateDoc(doc(db,'mk_app','data','todos',id),{done:!t.done});t.done=!t.done;renderTodoCal();renderTodoHub();}
-async function delTodo(id){if(!confirm('삭제?'))return;await deleteDoc(doc(db,'mk_app','data','todos',id));_todos=_todos.filter(x=>x.id!==id);renderTodoCal();renderTodoHub();}
+async function delTodo(id){if(!confirm('삭제하시겠습니까?'))return;await deleteDoc(doc(db,'mk_app','data','todos',id));_todos=_todos.filter(x=>x.id!==id);renderTodoCal();renderTodoHub();}
 window.addTodo=addTodo;window.toggleTodo=toggleTodo;window.delTodo=delTodo;
-function renderTodoHub(){var now=new Date();var dow=now.getDay();var mon=new Date(now);mon.setDate(now.getDate()-(dow===0?6:dow-1));var sun=new Date(mon);sun.setDate(mon.getDate()+6);var el=document.getElementById('todoWeekLabel');if(el)el.textContent=mon.toLocaleDateString('ko-KR',{month:'short',day:'numeric'})+' ~ '+sun.toLocaleDateString('ko-KR',{month:'short',day:'numeric'});var grid=document.getElementById('todoHubWeek');if(!grid)return;var days=['월','화','수','목','금','토','일'];var html='';for(var i=0;i<7;i++){var d=new Date(mon);d.setDate(mon.getDate()+i);var ds=d.toISOString().slice(0,10);var isToday=ds===now.toISOString().slice(0,10);var dt=_todos.filter(function(t){return t.date===ds;}).sort(function(a,b){return a.done-b.done;});html+='<div class="todo-day'+(isToday?' today':'')+'"><div class="todo-day-head">'+days[i]+'</div><div class="todo-day-num">'+d.getDate()+'</div>';for(var j=0;j<Math.min(dt.length,3);j++)html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+dt[j].text+'</div>';if(dt.length>3)html+='<div class="todo-more">+'+(dt.length-3)+'</div>';html+='</div>';}grid.innerHTML=html;}
+function toggleTodoExpand(ds,e){e.stopPropagation();var btn=document.getElementById('tmb-'+ds);var hidden=document.getElementById('thi-'+ds);if(!btn||!hidden)return;var expanded=btn.classList.contains('expanded');btn.classList.toggle('expanded',!expanded);hidden.classList.toggle('show',!expanded);btn.querySelector('.lbl').textContent=expanded?'+'+(btn.dataset.cnt):'접기';}
+window.toggleTodoExpand=toggleTodoExpand;
+function renderTodoHub(){
+  var now=new Date();var dow=now.getDay();
+  var mon=new Date(now);mon.setDate(now.getDate()-(dow===0?6:dow-1));
+  var sun=new Date(mon);sun.setDate(mon.getDate()+6);
+  var el=document.getElementById('todoWeekLabel');
+  if(el)el.textContent=mon.toLocaleDateString('ko-KR',{month:'short',day:'numeric'})+' ~ '+sun.toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
+  var grid=document.getElementById('todoHubWeek');if(!grid)return;
+  var days=['월','화','수','목','금','토','일'];
+  var html='';
+  for(var i=0;i<7;i++){
+    var d=new Date(mon);d.setDate(mon.getDate()+i);
+    var ds=d.toISOString().slice(0,10);
+    var isToday=ds===now.toISOString().slice(0,10);
+    var dt=_todos.filter(function(t){return t.date===ds;}).sort(function(a,b){return a.done-b.done;});
+    html+='<div class="todo-day'+(isToday?' today':'')+'">';
+    html+='<div class="todo-day-head">'+days[i]+'</div>';
+    html+='<div class="todo-day-num">'+d.getDate()+'</div>';
+    /* 처음 3개 */
+    for(var j=0;j<Math.min(dt.length,3);j++){
+      html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+dt[j].text+'</div>';
+    }
+    /* 3개 초과분 */
+    if(dt.length>3){
+      var cnt=dt.length-3;
+      /* 숨겨진 항목 */
+      html+='<div class="todo-hidden-items" id="thi-'+ds+'">';
+      for(var j=3;j<dt.length;j++){
+        html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+dt[j].text+'</div>';
+      }
+      html+='</div>';
+      /* 더보기 버튼 */
+      html+='<button class="todo-more-btn" id="tmb-'+ds+'" data-cnt="'+cnt+'" onclick="toggleTodoExpand(\''+ds+'\',event)">';
+      html+='<span class="arrow">▾</span><span class="lbl">+'+cnt+'</span>';
+      html+='</button>';
+    }
+    html+='</div>';
+  }
+  grid.innerHTML=html;
+}
 /* 한국 공휴일 */
 var _krHolidays={'1-1':1,'3-1':1,'5-5':1,'6-6':1,'8-15':1,'10-3':1,'10-9':1,'12-25':1,'2025-1-27':1,'2025-1-28':1,'2025-1-29':1,'2025-5-6':1,'2025-10-5':1,'2025-10-6':1,'2025-10-7':1,'2026-2-16':1,'2026-2-17':1,'2026-2-18':1,'2026-5-25':1,'2026-9-24':1,'2026-9-25':1,'2026-9-26':1};
 function isKrHol(y,m,d){return _krHolidays[(m+1)+'-'+d]||_krHolidays[y+'-'+(m+1)+'-'+d]||false;}
@@ -2303,12 +2358,12 @@ renderGallery();
   </div>
   <div id="picDots" style="position:absolute;bottom:20px;left:0;right:0;z-index:2;display:flex;justify-content:center;gap:6px;"></div>
 </div>
-<div class="page min-h-screen pt-24 pb-40 px-6" id="page-todo">
-  <div class="max-w-5xl mx-auto">
+<div class="page min-h-screen pt-24 pb-40 px-2 md:px-6" id="page-todo">
+  <div class="w-full max-w-5xl mx-auto">
     <div class="mb-10"><button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button><div class="app-page-label">04 — Planner</div><h1 class="app-page-title">To-Do</h1></div>
     <div style="display:flex;gap:8px;margin-bottom:16px;"><input type="text" class="mk-input" id="todoNewText" placeholder="새 할 일..." onkeydown="if(event.key==='Enter')addTodo()" style="flex:1;"><button class="app-action-btn" onclick="addTodo()"><span class="material-symbols-outlined text-base">add</span></button></div>
     <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:16px;"><button onclick="todoNavMonth(-1)" style="background:none;border:1px solid #353535;border-radius:999px;width:36px;height:36px;color:#ffb4a2;font-size:16px;cursor:pointer;">‹</button><span id="todoMonthLabel" style="font-family:'Space Grotesk';font-size:16px;font-weight:700;color:#e5e2e1;"></span><button onclick="todoNavMonth(1)" style="background:none;border:1px solid #353535;border-radius:999px;width:36px;height:36px;color:#ffb4a2;font-size:16px;cursor:pointer;">›</button></div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px;"><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">월</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">화</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">수</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">목</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">금</div><div class="cal-head-sat" style="font-size:10px;font-weight:700;text-align:center;padding:8px 0;">토</div><div class="cal-head-sun" style="font-size:10px;font-weight:700;text-align:center;padding:8px 0;">일</div></div>
+    <div id="todoCalHead" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px;"><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">월</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">화</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">수</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">목</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">금</div><div class="cal-head-sat" style="font-size:10px;font-weight:700;text-align:center;padding:8px 0;">토</div><div class="cal-head-sun" style="font-size:10px;font-weight:700;text-align:center;padding:8px 0;">일</div></div>
     <div id="todoCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;"></div>
   </div>
 </div>
