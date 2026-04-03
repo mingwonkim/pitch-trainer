@@ -279,7 +279,7 @@
 .fav-list-reason-preview{font-family:'Inter',sans-serif;font-size:11px;color:#524340;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;}
 .fav-list-del{font-size:12px;color:#353535;cursor:pointer;transition:color .2s;flex-shrink:0;padding:4px;}.fav-list-del:hover{color:#FF3B00;}
 /* Fav song detail YouTube embed */
-.fav-yt-wrap{position:relative;width:100%;aspect-ratio:16/9;height:0;padding-bottom:56.25%;background:#000;border-radius:14px;overflow:hidden;}
+.fav-yt-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;}
 .fav-yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
 .fav-song-reason{padding:16px 20px;background:#1c1b1b;border:1px solid #252525;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;color:#a08d88;line-height:1.75;min-height:80px;max-height:120px;overflow-y:auto;}
 .fav-reason-label{display:inline-block;font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FF3B00;margin-right:8px;vertical-align:middle;}
@@ -1753,7 +1753,7 @@ function closeFavDetail(){
   document.getElementById('favWhyDetailView').style.display='none';
   document.getElementById('favWhyListView').style.display='';
 }
-async function saveYTKey(){if(!isUnlocked){toast("비밀번호 해제 후 이용 가능합니다");return;}
+async function saveYTKey(){if(!isUnlocked){showTextPin(()=>saveYTKey());return;}
   const val=document.getElementById('ytApiKeyInput').value.trim();
   if(!val||val.startsWith('•'))return;
   try{
@@ -1931,12 +1931,11 @@ function pickIcon(el,ic){
 function closeIconPicker(){document.getElementById('iconOverlay').style.display='none';ipCallback=null;}
 function confirmIconPicker(){const name=document.getElementById('ipName').value.trim();if(!name){toast('Enter a name');return;}if(ipCallback)ipCallback(name,ipSelectedIcon);closeIconPicker();}
 window.pickIcon=pickIcon;window.closeIconPicker=closeIconPicker;window.confirmIconPicker=confirmIconPicker;
-async function newMemoFolder(){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}openIconPicker('New Memo Folder',async(name,icon)=>{try{await addDoc(memoFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderMemoFolders();});}
-async function delMemoFolder(id){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}if(!confirm('Delete folder and all notes?'))return;try{const s=await getDocs(memosCol);const ps=[];s.forEach(d=>{if(d.data().folder===id)ps.push(deleteDoc(doc(db,'mk_app','data','memos',d.id)));});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','folders',id));}catch(e){}renderMemoFolders();}
+async function newMemoFolder(){if(!isUnlocked){showTextPin(()=>newMemoFolder());return;}openIconPicker('New Memo Folder',async(name,icon)=>{try{await addDoc(memoFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderMemoFolders();});}
+async function delMemoFolder(id){if(!isUnlocked){showTextPin(()=>delMemoFolder(id));return;}if(!confirm('Delete folder and all notes?'))return;try{const s=await getDocs(memosCol);const ps=[];s.forEach(d=>{if(d.data().folder===id)ps.push(deleteDoc(doc(db,'mk_app','data','memos',d.id)));});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','folders',id));}catch(e){}renderMemoFolders();}
 function openMemoFolder(id){
   const f=cachedMemoFolders.find(x=>x.id===id);
-  if(f?.locked){
-    toast('비밀번호 해제 후 이용 가능합니다');
+  if(f?.locked&&!isUnlocked){
     showTextPin(()=>_doOpenMemoFolder(id));
     return;
   }
@@ -1954,7 +1953,7 @@ function _doOpenMemoFolder(id){
 }
 function backToMemoFolders(){curMemoFolder=null;document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';document.getElementById('memoFolderView').style.display='';renderMemoFolders();}
 // 폴더 잠금 토글
-async function toggleFolderLock(type, id, isLocked){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
+async function toggleFolderLock(type, id, isLocked){if(!isUnlocked){showTextPin(()=>toggleFolderLock(type,id,isLocked));return;}
   const doToggle = async () => {
     const docPath = type==='memo'
       ? doc(db,'mk_app','data','folders',id)
@@ -1980,7 +1979,7 @@ let editId=null;
 async function loadMemos(){try{const s=await getDocs(query(memosCol,orderBy('u','desc')));cachedMemos=[];s.forEach(d=>{cachedMemos.push({id:d.id,...d.data()});});}catch(e){cachedMemos=[];}}
 async function renderMemos(){const el=document.getElementById('memoList');el.innerHTML='<div class="text-center py-10 text-outline text-sm">Loading...</div>';await loadMemos();const q=(document.getElementById('memoSearch').value||'').toLowerCase();let ms=cachedMemos.filter(m=>(m.folder||'none')===curMemoFolder);if(q)ms=ms.filter(m=>(m.t||'').toLowerCase().includes(q)||(m.type!=='draw'&&(m.b||'').toLowerCase().includes(q)));if(!ms.length){el.innerHTML=`<div class="text-center py-16 text-outline"><span class="material-symbols-outlined text-3xl mb-2 block">note_add</span><p class="text-sm">${q?'No results':'Create a new note'}</p></div>`;return;}el.innerHTML=ms.map(m=>{const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});const isDraw=m.type==='draw';const thumb=isDraw&&m.b?`<img class="memo-draw-thumb" src="${m.b}" alt="drawing">` :'';const icon=isDraw?'<span class="material-symbols-outlined" style="font-size:13px;color:#ffb4a2;margin-right:4px;vertical-align:middle;">brush</span>':'';const preview=isDraw?'그림 파일':((m.b||'').substring(0,80).replace(/\n/g,' ')||'—');return`<div class="mk-card" onclick="editMemo('${m.id}')">${thumb}<div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-label font-bold text-sm mb-1 text-on-surface">${icon}${m.t||'Untitled'}</div><div class="text-xs text-on-surface-variant truncate">${preview}</div><div class="text-[11px] text-outline mt-2 font-label">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMemo('${m.id}')">Delete</span></div></div>`;}).join('');}
 function newMemo(type){
-  if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
+  if(!isUnlocked){showTextPin(()=>newMemo(type));return;}
   editId=null;
   if(type==='draw'){
     document.getElementById('memoDrawTitle').value='';
@@ -2019,7 +2018,7 @@ function showMemoDrawEditor(dataUrl){
   setTimeout(function(){initDrawCanvas(dataUrl);},60);
 }
 async function saveMemo(){
-  if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
+  if(!isUnlocked){showTextPin(()=>saveMemo());return;}
   const t=document.getElementById('memoTitleInput').value.trim(),b=document.getElementById('memoBodyInput').value;
   try{
     if(editId)await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b,type:'text',u:Date.now()});
@@ -2028,15 +2027,29 @@ async function saveMemo(){
   toast('Saved');cancelMemo();
 }
 async function saveMemoDraw(){
-  if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
+  if(!isUnlocked){showTextPin(()=>saveMemoDraw());return;}
   const t=document.getElementById('memoDrawTitle').value.trim();
   const canvas=document.getElementById('memoDrawCanvas');
-  const b=canvas.toDataURL('image/png');
+  toast('저장 중...');
   try{
-    if(editId)await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b,type:'draw',u:Date.now()});
-    else await addDoc(memosCol,{t,b,type:'draw',c:Date.now(),u:Date.now(),folder:curMemoFolder});
+    /* canvas → WebP Blob (용량 작고 빠름, 미지원 시 PNG 폴백) */
+    const blob=await new Promise(res=>{
+      const ok=canvas.toBlob(res,'image/webp',0.88);
+      if(!ok)canvas.toBlob(res,'image/png');
+    });
+    /* 기존 파일 경로: 재저장 시 덮어쓰기 위해 고정 경로 사용 */
+    const existing=editId?cachedMemos.find(x=>x.id===editId):null;
+    const path=existing?.path||('mk_drawings/'+('d'+Date.now()+'_'+Math.random().toString(36).substr(2,5))+'.webp');
+    const fr=sRef(stg,path);
+    await uploadBytes(fr,blob,{contentType:blob.type});
+    const url=await getDownloadURL(fr);
+    if(editId){
+      await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b:url,path,type:'draw',u:Date.now()});
+    }else{
+      await addDoc(memosCol,{t,b:url,path,type:'draw',c:Date.now(),u:Date.now(),folder:curMemoFolder});
+    }
   }catch(e){toast('Save failed');return;}
-  toast('Saved');cancelMemo();
+  toast('Saved ✓');cancelMemo();
 }
 function cancelMemo(){
   editId=null;
@@ -2045,7 +2058,7 @@ function cancelMemo(){
   document.getElementById('memoInsideFolder').style.display='';
   renderMemos();
 }
-async function delMemo(id){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}if(!confirm('Delete this note?'))return;try{await deleteDoc(doc(db,'mk_app','data','memos',id));}catch(e){}renderMemos();}
+async function delMemo(id){if(!isUnlocked){showTextPin(()=>delMemo(id));return;}if(!confirm('Delete this note?'))return;try{const m=cachedMemos.find(x=>x.id===id);if(m?.path)await deleteObject(sRef(stg,m.path)).catch(()=>{});await deleteDoc(doc(db,'mk_app','data','memos',id));}catch(e){}renderMemos();}
 window.newMemo=newMemo;window.editMemo=editMemo;window.saveMemo=saveMemo;window.saveMemoDraw=saveMemoDraw;window.cancelMemo=cancelMemo;window.delMemo=delMemo;window.renderMemos=renderMemos;
 
 /* ── 그림판 엔진 ── */
@@ -2162,12 +2175,11 @@ async function renderFileFolders(){
     <span class="fc-add-label">New Folder</span>
   </div>`;
 }
-async function newFileFolder(){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}openIconPicker('New Vault Folder',async(name,icon)=>{try{await addDoc(fileFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderFileFolders();});}
-async function delFileFolder(id){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}if(!confirm('Delete folder and all files?'))return;try{const s=await getDocs(filesCol);const ps=[];s.forEach(d=>{if(d.data().folder===id){if(d.data().path)ps.push(deleteObject(sRef(stg,d.data().path)).catch(()=>{}));ps.push(deleteDoc(doc(db,'mk_app','data','files',d.id)));}});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','file_folders',id));}catch(e){}renderFileFolders();}
+async function newFileFolder(){if(!isUnlocked){showTextPin(()=>newFileFolder());return;}openIconPicker('New Vault Folder',async(name,icon)=>{try{await addDoc(fileFoldersCol,{name,icon,order:Date.now()});}catch(e){}renderFileFolders();});}
+async function delFileFolder(id){if(!isUnlocked){showTextPin(()=>delFileFolder(id));return;}if(!confirm('Delete folder and all files?'))return;try{const s=await getDocs(filesCol);const ps=[];s.forEach(d=>{if(d.data().folder===id){if(d.data().path)ps.push(deleteObject(sRef(stg,d.data().path)).catch(()=>{}));ps.push(deleteDoc(doc(db,'mk_app','data','files',d.id)));}});await Promise.all(ps);await deleteDoc(doc(db,'mk_app','data','file_folders',id));}catch(e){}renderFileFolders();}
 function openFileFolder(id){
   const f=cachedFileFolders.find(x=>x.id===id);
-  if(f?.locked){
-    toast('비밀번호 해제 후 이용 가능합니다');
+  if(f?.locked&&!isUnlocked){
     showTextPin(()=>_doOpenFileFolder(id));
     return;
   }
@@ -2192,7 +2204,7 @@ const dz=document.getElementById('dropZone');
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
 dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');handleFiles(e.dataTransfer.files);});
-async function handleFiles(fl){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}for(const f of Array.from(fl)){if(f.size>50*1024*1024){toast(f.name+': Max 50MB');continue;}try{const fid='f'+Date.now()+'_'+Math.random().toString(36).substr(2,4);const fr=sRef(stg,'mk_files/'+fid+'_'+f.name);document.getElementById('folderFileUsage').textContent='Uploading: '+f.name;await uploadBytes(fr,f);const url=await getDownloadURL(fr);await addDoc(filesCol,{n:f.name,size:f.size,type:f.type,url,path:fr.fullPath,c:Date.now(),folder:curFileFolder});toast('Uploaded: '+f.name);}catch(e){toast('Upload failed');}}renderFiles();}
+async function handleFiles(fl){if(!isUnlocked){showTextPin(()=>handleFiles(fl));return;}for(const f of Array.from(fl)){if(f.size>50*1024*1024){toast(f.name+': Max 50MB');continue;}try{const fid='f'+Date.now()+'_'+Math.random().toString(36).substr(2,4);const fr=sRef(stg,'mk_files/'+fid+'_'+f.name);document.getElementById('folderFileUsage').textContent='Uploading: '+f.name;await uploadBytes(fr,f);const url=await getDownloadURL(fr);await addDoc(filesCol,{n:f.name,size:f.size,type:f.type,url,path:fr.fullPath,c:Date.now(),folder:curFileFolder});toast('Uploaded: '+f.name);}catch(e){toast('Upload failed');}}renderFiles();}
 window.handleFiles=handleFiles;
 async function renderFiles(){
   const el=document.getElementById('fileList');
@@ -2244,8 +2256,8 @@ window.addEventListener('message',e=>{
 /* ===== To-Do ===== */
 var _todos=[];var _todoMonth=new Date();
 async function loadTodos(){try{const s=await getDocs(todosCol);_todos=[];s.forEach(d=>_todos.push({id:d.id,...d.data()}));}catch(e){_todos=[];}}
-async function addTodo(){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}var t=document.getElementById('todoNewText').value.trim();if(!t)return;var d=window._todoSelectedDate||new Date().toISOString().slice(0,10);await addDoc(todosCol,{text:t,date:d,done:false,c:Date.now()});document.getElementById('todoNewText').value='';await loadTodos();renderTodoCal();renderTodoHub();}
-async function addTodoInline(dateStr,inputEl){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');inputEl.value='';return;}var t=inputEl.value.trim();if(!t)return;inputEl.value='';inputEl.placeholder='할 일 추가...';await addDoc(todosCol,{text:t,date:dateStr,done:false,c:Date.now()});await loadTodos();renderTodoCal();renderTodoHub();}
+async function addTodo(){if(!isUnlocked){showTextPin(()=>addTodo());return;}var t=document.getElementById('todoNewText').value.trim();if(!t)return;var d=window._todoSelectedDate||new Date().toISOString().slice(0,10);await addDoc(todosCol,{text:t,date:d,done:false,c:Date.now()});document.getElementById('todoNewText').value='';await loadTodos();renderTodoCal();renderTodoHub();}
+async function addTodoInline(dateStr,inputEl){if(!isUnlocked){showTextPin(()=>addTodoInline(dateStr,inputEl));return;}var t=inputEl.value.trim();if(!t)return;inputEl.value='';inputEl.placeholder='할 일 추가...';await addDoc(todosCol,{text:t,date:dateStr,done:false,c:Date.now()});await loadTodos();renderTodoCal();renderTodoHub();}
 async function toggleTodo(id){var t=_todos.find(x=>x.id===id);if(!t)return;await updateDoc(doc(db,'mk_app','data','todos',id),{done:!t.done});t.done=!t.done;renderTodoCal();renderTodoHub();}
 async function delTodo(id){if(!confirm('삭제하시겠습니까?'))return;await deleteDoc(doc(db,'mk_app','data','todos',id));_todos=_todos.filter(x=>x.id!==id);renderTodoCal();renderTodoHub();}
 window.addTodo=addTodo;window.toggleTodo=toggleTodo;window.delTodo=delTodo;
