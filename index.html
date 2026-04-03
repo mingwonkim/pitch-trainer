@@ -110,6 +110,12 @@
 .folder-card.add-card:hover .fc-add-label{color:rgba(255,180,162,.4);}
 
 /* Memo/file item cards */
+/* Draw tool 색상 팔레트 */
+.draw-color{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.15s;flex-shrink:0;}
+.draw-color:hover{transform:scale(1.18);}
+.draw-color.active{border-color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.4);}
+/* 그림 노트 카드 썸네일 */
+.memo-draw-thumb{width:100%;height:80px;object-fit:cover;border-radius:6px;margin-bottom:6px;background:#1a1818;display:block;border:1px solid #252525;}
 .mk-card{background:rgba(255,255,255,.025);border:1px solid #252525;border-radius:14px;padding:20px 22px;transition:all .25s;cursor:pointer;}
 .mk-card:hover{border-color:rgba(255,180,162,.25);transform:translateX(4px);background:rgba(255,180,162,.03);}
 /* Drop zone */
@@ -689,16 +695,76 @@
     <div id="memoInsideFolder" style="display:none;">
       <div class="flex items-center gap-2 mb-6 text-sm text-outline font-label" id="memoBreadcrumb"></div>
       <div class="flex gap-3 mb-8 flex-wrap items-center">
-        <button class="app-action-btn" onclick="newMemo()"><span class="material-symbols-outlined text-base">edit_note</span> New Note</button>
+        <button class="app-action-btn" onclick="newMemo('text')"><span class="material-symbols-outlined text-base">edit_note</span> New Note</button>
+        <button class="app-action-btn" onclick="newMemo('draw')" style="background:rgba(255,180,162,.08);border-color:rgba(255,180,162,.2);"><span class="material-symbols-outlined text-base">brush</span> New Drawing</button>
         <div class="app-search-wrap"><span class="material-symbols-outlined text-[16px] text-outline/50">search</span><input class="app-search" id="memoSearch" placeholder="Search…" oninput="renderMemos()"></div>
       </div>
       <div class="space-y-3" id="memoList"></div>
     </div>
+
+    <!-- 텍스트 에디터 -->
     <div id="memoEditor" style="display:none;" class="flex flex-col gap-4 flex-1">
       <input type="text" class="mk-input text-lg font-bold" id="memoTitleInput" placeholder="Title">
       <textarea class="mk-textarea flex-1" id="memoBodyInput" placeholder="Write something…"></textarea>
       <div class="flex gap-3">
         <button class="app-action-btn" onclick="saveMemo()"><span class="material-symbols-outlined text-base">save</span> Save</button>
+        <button class="app-ghost-btn" onclick="cancelMemo()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- 그림판 에디터 -->
+    <div id="memoDrawEditor" style="display:none;" class="flex flex-col gap-3 flex-1">
+      <input type="text" class="mk-input text-lg font-bold" id="memoDrawTitle" placeholder="Title">
+      <!-- 툴바 -->
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:12px;">
+        <!-- 도구 선택 -->
+        <div style="display:flex;gap:4px;border-right:1px solid #2a2a2a;padding-right:10px;margin-right:2px;">
+          <button id="drawToolPen" onclick="setDrawTool('pen')" title="펜" style="width:34px;height:34px;border-radius:8px;border:1px solid #FF3B00;background:rgba(255,59,0,.15);color:#FF3B00;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            <span class="material-symbols-outlined" style="font-size:18px;">edit</span>
+          </button>
+          <button id="drawToolEraser" onclick="setDrawTool('eraser')" title="지우개" style="width:34px;height:34px;border-radius:8px;border:1px solid #353535;background:transparent;color:#a08d88;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            <span class="material-symbols-outlined" style="font-size:18px;">ink_eraser</span>
+          </button>
+        </div>
+        <!-- 색상 팔레트 -->
+        <div style="display:flex;gap:5px;align-items:center;border-right:1px solid #2a2a2a;padding-right:10px;margin-right:2px;">
+          <div class="draw-color" data-color="#ffffff" style="background:#ffffff;" onclick="setDrawColor('#ffffff')" title="흰색"></div>
+          <div class="draw-color" data-color="#FF3B00" style="background:#FF3B00;" onclick="setDrawColor('#FF3B00')" title="레드"></div>
+          <div class="draw-color" data-color="#ffb4a2" style="background:#ffb4a2;" onclick="setDrawColor('#ffb4a2')" title="살몬"></div>
+          <div class="draw-color" data-color="#60a5fa" style="background:#60a5fa;" onclick="setDrawColor('#60a5fa')" title="블루"></div>
+          <div class="draw-color" data-color="#4ade80" style="background:#4ade80;" onclick="setDrawColor('#4ade80')" title="그린"></div>
+          <div class="draw-color" data-color="#facc15" style="background:#facc15;" onclick="setDrawColor('#facc15')" title="옐로우"></div>
+          <div class="draw-color" data-color="#a78bfa" style="background:#a78bfa;" onclick="setDrawColor('#a78bfa')" title="퍼플"></div>
+          <div class="draw-color" data-color="#000000" style="background:#000000;border-color:#555;" onclick="setDrawColor('#000000')" title="검정"></div>
+          <!-- 커스텀 색상 -->
+          <input type="color" id="drawColorPicker" value="#ffffff" onchange="setDrawColor(this.value)" title="색상 선택" style="width:28px;height:28px;border:1px solid #353535;border-radius:6px;background:transparent;cursor:pointer;padding:2px;">
+        </div>
+        <!-- 굵기 -->
+        <div style="display:flex;gap:4px;align-items:center;border-right:1px solid #2a2a2a;padding-right:10px;margin-right:2px;">
+          <button onclick="setDrawSize(2)"  title="얇게" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:2px;height:2px;border-radius:50%;background:#fff;"></div></button>
+          <button onclick="setDrawSize(5)"  title="보통" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:5px;height:5px;border-radius:50%;background:#fff;"></div></button>
+          <button onclick="setDrawSize(12)" title="굵게" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:10px;height:10px;border-radius:50%;background:#fff;"></div></button>
+          <button onclick="setDrawSize(24)" title="매우굵게" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:16px;height:16px;border-radius:50%;background:#fff;"></div></button>
+        </div>
+        <!-- 실행취소/전체지우기 -->
+        <button onclick="drawUndo()" title="실행취소" style="width:34px;height:34px;border-radius:8px;border:1px solid #353535;background:transparent;color:#a08d88;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <span class="material-symbols-outlined" style="font-size:18px;">undo</span>
+        </button>
+        <button onclick="drawClear()" title="전체지우기" style="width:34px;height:34px;border-radius:8px;border:1px solid #353535;background:transparent;color:#a08d88;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <span class="material-symbols-outlined" style="font-size:18px;">delete_sweep</span>
+        </button>
+        <!-- 현재 색상/크기 표시 -->
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+          <div id="drawCursorPreview" style="border-radius:50%;background:#ffffff;width:10px;height:10px;border:1px solid #353535;transition:.15s;flex-shrink:0;"></div>
+          <span style="font-size:11px;color:#524340;font-family:'Space Grotesk',sans-serif;">펜</span>
+        </div>
+      </div>
+      <!-- 캔버스 -->
+      <div style="position:relative;border-radius:12px;overflow:hidden;border:1px solid #252525;flex:1;min-height:480px;background:#1a1818;touch-action:none;">
+        <canvas id="memoDrawCanvas" style="display:block;width:100%;height:100%;cursor:crosshair;touch-action:none;"></canvas>
+      </div>
+      <div class="flex gap-3">
+        <button class="app-action-btn" onclick="saveMemoDraw()"><span class="material-symbols-outlined text-base">save</span> Save</button>
         <button class="app-ghost-btn" onclick="cancelMemo()">Cancel</button>
       </div>
     </div>
@@ -1243,7 +1309,7 @@ function setPage(p){if(curPage&&curPage!==p)navHistory.push(curPage);
 }
 function goHub(){setPage('hub');}
 function goBack(){if(navHistory.length>0){var prev=navHistory.pop();setPage(prev);navHistory.pop();}else setPage('hub');}
-function memoSmartBack(){var ed=document.getElementById('memoEditor');var inf=document.getElementById('memoInsideFolder');if(ed&&ed.style.display!=='none'){cancelMemo();return;}if(inf&&inf.style.display!=='none'){backToMemoFolders();return;}goBack();}
+function memoSmartBack(){var ed=document.getElementById('memoEditor');var de=document.getElementById('memoDrawEditor');var inf=document.getElementById('memoInsideFolder');if(ed&&ed.style.display!=='none'){cancelMemo();return;}if(de&&de.style.display!=='none'){cancelMemo();return;}if(inf&&inf.style.display!=='none'){backToMemoFolders();return;}goBack();}
 function fileSmartBack(){var inf=document.getElementById('fileInsideFolder');if(inf&&inf.style.display!=='none'){backToFileFolders();return;}goBack();}
 function openApp(a){
   if(a==='settings'&&!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');showTextPin(()=>doOpenApp(a));return;}
@@ -1912,14 +1978,163 @@ window.newMemoFolder=newMemoFolder;window.delMemoFolder=delMemoFolder;window.ope
 /* ===== Memos ===== */
 let editId=null;
 async function loadMemos(){try{const s=await getDocs(query(memosCol,orderBy('u','desc')));cachedMemos=[];s.forEach(d=>{cachedMemos.push({id:d.id,...d.data()});});}catch(e){cachedMemos=[];}}
-async function renderMemos(){const el=document.getElementById('memoList');el.innerHTML='<div class="text-center py-10 text-outline text-sm">Loading...</div>';await loadMemos();const q=(document.getElementById('memoSearch').value||'').toLowerCase();let ms=cachedMemos.filter(m=>(m.folder||'none')===curMemoFolder);if(q)ms=ms.filter(m=>(m.t||'').toLowerCase().includes(q)||(m.b||'').toLowerCase().includes(q));if(!ms.length){el.innerHTML=`<div class="text-center py-16 text-outline"><span class="material-symbols-outlined text-3xl mb-2 block">note_add</span><p class="text-sm">${q?'No results':'Create a new note'}</p></div>`;return;}el.innerHTML=ms.map(m=>{const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});return`<div class="mk-card" onclick="editMemo('${m.id}')"><div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-label font-bold text-sm mb-1 text-on-surface">${m.t||'Untitled'}</div><div class="text-xs text-on-surface-variant truncate">${(m.b||'').substring(0,80).replace(/\n/g,' ')||'—'}</div><div class="text-[11px] text-outline mt-2 font-label">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMemo('${m.id}')">Delete</span></div></div>`;}).join('');}
-function newMemo(){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}editId=null;document.getElementById('memoTitleInput').value='';document.getElementById('memoBodyInput').value='';showMemoEditor();}
-function editMemo(id){const m=cachedMemos.find(x=>x.id===id);if(!m)return;editId=id;document.getElementById('memoTitleInput').value=m.t||'';document.getElementById('memoBodyInput').value=m.b||'';showMemoEditor();}
-function showMemoEditor(){document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoFolderView').style.display='none';document.getElementById('memoEditor').style.display='flex';}
-async function saveMemo(){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}const t=document.getElementById('memoTitleInput').value.trim(),b=document.getElementById('memoBodyInput').value;try{if(editId)await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b,u:Date.now()});else await addDoc(memosCol,{t,b,c:Date.now(),u:Date.now(),folder:curMemoFolder});}catch(e){toast('Save failed');return;}toast('Saved');cancelMemo();}
-function cancelMemo(){editId=null;document.getElementById('memoEditor').style.display='none';document.getElementById('memoInsideFolder').style.display='';renderMemos();}
+async function renderMemos(){const el=document.getElementById('memoList');el.innerHTML='<div class="text-center py-10 text-outline text-sm">Loading...</div>';await loadMemos();const q=(document.getElementById('memoSearch').value||'').toLowerCase();let ms=cachedMemos.filter(m=>(m.folder||'none')===curMemoFolder);if(q)ms=ms.filter(m=>(m.t||'').toLowerCase().includes(q)||(m.type!=='draw'&&(m.b||'').toLowerCase().includes(q)));if(!ms.length){el.innerHTML=`<div class="text-center py-16 text-outline"><span class="material-symbols-outlined text-3xl mb-2 block">note_add</span><p class="text-sm">${q?'No results':'Create a new note'}</p></div>`;return;}el.innerHTML=ms.map(m=>{const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});const isDraw=m.type==='draw';const thumb=isDraw&&m.b?`<img class="memo-draw-thumb" src="${m.b}" alt="drawing">` :'';const icon=isDraw?'<span class="material-symbols-outlined" style="font-size:13px;color:#ffb4a2;margin-right:4px;vertical-align:middle;">brush</span>':'';const preview=isDraw?'그림 파일':((m.b||'').substring(0,80).replace(/\n/g,' ')||'—');return`<div class="mk-card" onclick="editMemo('${m.id}')">${thumb}<div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-label font-bold text-sm mb-1 text-on-surface">${icon}${m.t||'Untitled'}</div><div class="text-xs text-on-surface-variant truncate">${preview}</div><div class="text-[11px] text-outline mt-2 font-label">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMemo('${m.id}')">Delete</span></div></div>`;}).join('');}
+function newMemo(type){
+  if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
+  editId=null;
+  if(type==='draw'){
+    document.getElementById('memoDrawTitle').value='';
+    showMemoDrawEditor(null);
+  }else{
+    document.getElementById('memoTitleInput').value='';
+    document.getElementById('memoBodyInput').value='';
+    showMemoEditor();
+  }
+}
+function editMemo(id){
+  const m=cachedMemos.find(x=>x.id===id);
+  if(!m)return;
+  editId=id;
+  if(m.type==='draw'){
+    document.getElementById('memoDrawTitle').value=m.t||'';
+    showMemoDrawEditor(m.b||null);
+  }else{
+    document.getElementById('memoTitleInput').value=m.t||'';
+    document.getElementById('memoBodyInput').value=m.b||'';
+    showMemoEditor();
+  }
+}
+function showMemoEditor(){
+  document.getElementById('memoInsideFolder').style.display='none';
+  document.getElementById('memoFolderView').style.display='none';
+  document.getElementById('memoEditor').style.display='flex';
+  document.getElementById('memoDrawEditor').style.display='none';
+}
+function showMemoDrawEditor(dataUrl){
+  document.getElementById('memoInsideFolder').style.display='none';
+  document.getElementById('memoFolderView').style.display='none';
+  document.getElementById('memoEditor').style.display='none';
+  document.getElementById('memoDrawEditor').style.display='flex';
+  // 캔버스 초기화
+  setTimeout(function(){initDrawCanvas(dataUrl);},60);
+}
+async function saveMemo(){
+  if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
+  const t=document.getElementById('memoTitleInput').value.trim(),b=document.getElementById('memoBodyInput').value;
+  try{
+    if(editId)await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b,type:'text',u:Date.now()});
+    else await addDoc(memosCol,{t,b,type:'text',c:Date.now(),u:Date.now(),folder:curMemoFolder});
+  }catch(e){toast('Save failed');return;}
+  toast('Saved');cancelMemo();
+}
+async function saveMemoDraw(){
+  if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}
+  const t=document.getElementById('memoDrawTitle').value.trim();
+  const canvas=document.getElementById('memoDrawCanvas');
+  const b=canvas.toDataURL('image/png');
+  try{
+    if(editId)await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b,type:'draw',u:Date.now()});
+    else await addDoc(memosCol,{t,b,type:'draw',c:Date.now(),u:Date.now(),folder:curMemoFolder});
+  }catch(e){toast('Save failed');return;}
+  toast('Saved');cancelMemo();
+}
+function cancelMemo(){
+  editId=null;
+  document.getElementById('memoEditor').style.display='none';
+  document.getElementById('memoDrawEditor').style.display='none';
+  document.getElementById('memoInsideFolder').style.display='';
+  renderMemos();
+}
 async function delMemo(id){if(!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');return;}if(!confirm('Delete this note?'))return;try{await deleteDoc(doc(db,'mk_app','data','memos',id));}catch(e){}renderMemos();}
-window.newMemo=newMemo;window.editMemo=editMemo;window.saveMemo=saveMemo;window.cancelMemo=cancelMemo;window.delMemo=delMemo;window.renderMemos=renderMemos;
+window.newMemo=newMemo;window.editMemo=editMemo;window.saveMemo=saveMemo;window.saveMemoDraw=saveMemoDraw;window.cancelMemo=cancelMemo;window.delMemo=delMemo;window.renderMemos=renderMemos;
+
+/* ── 그림판 엔진 ── */
+var _dc={tool:'pen',color:'#ffffff',size:5,drawing:false,history:[],ctx:null,canvas:null,lastX:0,lastY:0};
+function initDrawCanvas(dataUrl){
+  const canvas=document.getElementById('memoDrawCanvas');
+  const wrap=canvas.parentElement;
+  canvas.width=wrap.clientWidth||900;
+  canvas.height=Math.max(wrap.clientHeight,480);
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#1a1818';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  _dc.canvas=canvas;_dc.ctx=ctx;_dc.history=[];
+  if(dataUrl){
+    const img=new Image();
+    img.onload=function(){ctx.drawImage(img,0,0,canvas.width,canvas.height);_saveDrawHistory();};
+    img.src=dataUrl;
+  }else{_saveDrawHistory();}
+  // 이벤트
+  canvas.onmousedown=_drawStart;canvas.onmousemove=_drawMove;canvas.onmouseup=_drawEnd;canvas.onmouseleave=_drawEnd;
+  canvas.ontouchstart=function(e){e.preventDefault();_drawStart(_touchToMouse(e));};
+  canvas.ontouchmove=function(e){e.preventDefault();_drawMove(_touchToMouse(e));};
+  canvas.ontouchend=function(e){e.preventDefault();_drawEnd();};
+}
+function _touchToMouse(e){const t=e.touches[0];const r=_dc.canvas.getBoundingClientRect();const scaleX=_dc.canvas.width/r.width;const scaleY=_dc.canvas.height/r.height;return{offsetX:(t.clientX-r.left)*scaleX,offsetY:(t.clientY-r.top)*scaleY};}
+function _drawStart(e){
+  _dc.drawing=true;
+  const ctx=_dc.ctx;
+  const r=_dc.canvas.getBoundingClientRect();
+  const scaleX=_dc.canvas.width/r.width;const scaleY=_dc.canvas.height/r.height;
+  _dc.lastX=(e.offsetX||0)*scaleX;_dc.lastY=(e.offsetY||0)*scaleY;
+  ctx.beginPath();ctx.moveTo(_dc.lastX,_dc.lastY);
+}
+function _drawMove(e){
+  if(!_dc.drawing)return;
+  const ctx=_dc.ctx;
+  const r=_dc.canvas.getBoundingClientRect();
+  const scaleX=_dc.canvas.width/r.width;const scaleY=_dc.canvas.height/r.height;
+  const x=(e.offsetX||0)*scaleX;const y=(e.offsetY||0)*scaleY;
+  ctx.lineWidth=_dc.tool==='eraser'?_dc.size*3:_dc.size;
+  ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.strokeStyle=_dc.tool==='eraser'?'#1a1818':_dc.color;
+  ctx.globalCompositeOperation=_dc.tool==='eraser'?'source-over':'source-over';
+  ctx.beginPath();ctx.moveTo(_dc.lastX,_dc.lastY);ctx.lineTo(x,y);ctx.stroke();
+  _dc.lastX=x;_dc.lastY=y;
+}
+function _drawEnd(){if(_dc.drawing){_dc.drawing=false;_saveDrawHistory();}}
+function _saveDrawHistory(){if(!_dc.canvas)return;_dc.history.push(_dc.canvas.toDataURL());if(_dc.history.length>40)_dc.history.shift();}
+function drawUndo(){
+  if(_dc.history.length<=1)return;
+  _dc.history.pop();
+  const dataUrl=_dc.history[_dc.history.length-1];
+  const img=new Image();
+  img.onload=function(){_dc.ctx.clearRect(0,0,_dc.canvas.width,_dc.canvas.height);_dc.ctx.drawImage(img,0,0);};
+  img.src=dataUrl;
+}
+function drawClear(){
+  if(!confirm('캔버스를 전부 지울까요?'))return;
+  _dc.ctx.fillStyle='#1a1818';
+  _dc.ctx.fillRect(0,0,_dc.canvas.width,_dc.canvas.height);
+  _saveDrawHistory();
+}
+function setDrawTool(tool){
+  _dc.tool=tool;
+  document.getElementById('drawToolPen').style.borderColor=tool==='pen'?'#FF3B00':'#353535';
+  document.getElementById('drawToolPen').style.background=tool==='pen'?'rgba(255,59,0,.15)':'transparent';
+  document.getElementById('drawToolPen').style.color=tool==='pen'?'#FF3B00':'#a08d88';
+  document.getElementById('drawToolEraser').style.borderColor=tool==='eraser'?'#ffb4a2':'#353535';
+  document.getElementById('drawToolEraser').style.background=tool==='eraser'?'rgba(255,180,162,.1)':'transparent';
+  document.getElementById('drawToolEraser').style.color=tool==='eraser'?'#ffb4a2':'#a08d88';
+  const lbl=document.querySelector('#memoDrawEditor [id="drawCursorPreview"] + span');
+  if(lbl)lbl.textContent=tool==='eraser'?'지우개':'펜';
+}
+function setDrawColor(color){
+  _dc.color=color;_dc.tool='pen';setDrawTool('pen');
+  const prev=document.getElementById('drawCursorPreview');
+  if(prev){prev.style.background=color;prev.style.width=_dc.size+'px';prev.style.height=_dc.size+'px';}
+  document.querySelectorAll('.draw-color').forEach(function(el){
+    el.classList.toggle('active',el.getAttribute('data-color')===color);
+  });
+  const picker=document.getElementById('drawColorPicker');
+  if(picker)picker.value=color;
+}
+function setDrawSize(size){
+  _dc.size=size;
+  const prev=document.getElementById('drawCursorPreview');
+  if(prev){const s=Math.max(4,Math.min(size*1.8,28));prev.style.width=s+'px';prev.style.height=s+'px';}
+}
+window.drawUndo=drawUndo;window.drawClear=drawClear;window.setDrawTool=setDrawTool;window.setDrawColor=setDrawColor;window.setDrawSize=setDrawSize;
 
 /* ===== FILE FOLDERS ===== */
 let curFileFolder=null,cachedFileFolders=[],cachedFiles=[];
