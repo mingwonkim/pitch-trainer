@@ -527,28 +527,131 @@
 /* 달력 요일 헤더 색상 */
 .cal-head-sat{color:#6ab0ff!important;}
 .cal-head-sun{color:#ff6b6b!important;}
-/* Mobile */
+/* ════════════════════════════════════════
+   MOBILE — mkhub2 전용 (max-width: 767px)
+   데스크탑(≥768px)에는 절대 영향 없음
+   ════════════════════════════════════════ */
 @media(max-width:767px){
-  #page-hub{padding:60px 16px 120px!important;overflow-x:hidden!important;max-width:100vw!important;box-sizing:border-box!important;}
+
+  /* ── 전체 가로 스크롤 방지 ── */
+  body{overflow-x:hidden!important;max-width:100vw!important;}
+
+  /* ── Hub 페이지 패딩 ── */
+  #page-hub{
+    padding:76px 16px 110px!important;
+    overflow-x:hidden!important;
+    max-width:100vw!important;
+    box-sizing:border-box!important;
+  }
+
+  /* ── 섹션 간격 축소 (space-y-24 = 96px → 44px) ── */
+  .space-y-24>:not([hidden])~:not([hidden]){margin-top:44px!important;}
+
+  /* ── 히어로: 제목 + 버블 세로 배치 ── */
+  #page-hub .grid.grid-cols-1.md\:grid-cols-12{
+    display:flex!important;flex-direction:column!important;gap:20px!important;
+  }
+  #page-hub .md\:col-span-8,
+  #page-hub .md\:col-span-4{width:100%!important;padding-bottom:0!important;}
+
+  /* ── 말풍선 모바일 축소 ── */
+  .hub-bubble-wrap{max-width:100%!important;padding-bottom:46px!important;}
+  .hub-bubble{
+    border-radius:52px!important;
+    padding:22px 26px 16px!important;
+    min-height:90px!important;
+  }
+  .hub-bubble::before{width:20px!important;height:20px!important;bottom:-22px!important;left:50px!important;}
+  .hub-bubble::after{width:12px!important;height:12px!important;bottom:-37px!important;left:38px!important;}
+  .hub-bubble-memo{font-size:17px!important;min-height:44px!important;}
+
+  /* ── 앱 카드 세로 스택 ── */
   #hubCardGrid{display:flex!important;flex-direction:column!important;gap:12px!important;}
-  #page-hub .hub-card,#hubCardGrid>section{height:auto!important;min-height:0!important;padding:20px 16px!important;transform:none!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;}
-  .gallery-section{margin:0 -16px!important;overflow:hidden!important;}
+  #page-hub .hub-card,#hubCardGrid>section{
+    height:auto!important;min-height:0!important;
+    padding:20px 18px!important;
+    transform:none!important;
+    width:100%!important;max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+  /* 카드 내부 하단 여백 축소 */
+  #hubCardGrid>section .mb-12{margin-bottom:16px!important;}
+  #hubCardGrid>section .mb-10{margin-bottom:14px!important;}
+  #hubCardGrid>section .mb-8{margin-bottom:12px!important;}
+
+  /* ── 갤러리 섹션 ── */
+  .gallery-section{
+    margin:0!important;
+    overflow-x:hidden!important;
+    overflow-y:visible!important;
+  }
+  /* 데스크탑 아이프레임 숨김 */
   .gallery-section>iframe{display:none!important;}
-  .gallery-marquee-item{font-size:26px!important;}
-  #mobileGalleryGrid{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:2px!important;margin-top:24px!important;}
-  .mob-gal-item{aspect-ratio:1/1;background:#0e0e0e;cursor:pointer;position:relative;overflow:hidden;}
-  .mob-gal-item iframe{position:absolute;left:0;width:1440px;height:900px;border:none;transform-origin:top left;transform:scale(0.087);pointer-events:none;top:23px;}
-  .mob-gal-item:nth-child(2) iframe{top:-7px;}
-  .mob-gal-item:nth-child(3) iframe{top:14px;}
-  .mob-gal-item:nth-child(4) iframe{top:6px;}
-  .mob-gal-item:nth-child(5) iframe{top:19px;}
+  /* 데스크탑 섹션 구분선 숨김 (모바일 그리드 라벨로 대체) */
+  .gal-sep{display:none!important;}
+  /* 사이드 수직선 숨김 */
+  .gallery-section::before,.gallery-section::after{display:none!important;}
+  /* 마퀴 폰트 축소 */
+  .gallery-marquee-item{font-size:24px!important;}
+
+  /* ── 모바일 갤러리 그리드 — 2열, 더 큰 썸네일 ── */
+  #mobileGalleryGrid{
+    display:grid!important;
+    grid-template-columns:repeat(2,1fr)!important;
+    gap:3px!important;
+    margin-top:18px!important;
+  }
+  .mob-gal-item{
+    aspect-ratio:16/10;
+    background:#0a0808;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    border-radius:3px;
+  }
+  /* 5번째 아이템 2열 전체 너비 — aspect-ratio 16/10 유지, 스케일 0.27로 정확히 맞춤 */
+  .mob-gal-wide{grid-column:span 2!important;aspect-ratio:16/10!important;}
+  /* 아이프레임 스케일 — 2열 기준 */
+  .mob-gal-item iframe{
+    position:absolute;left:0;top:0;
+    width:1440px;height:900px;
+    border:none;
+    transform-origin:top left;
+    transform:scale(0.134)!important;
+    pointer-events:none;
+  }
+  /* 개별 top 오프셋 초기화 */
+  .mob-gal-item:nth-child(2) iframe,
+  .mob-gal-item:nth-child(3) iframe,
+  .mob-gal-item:nth-child(4) iframe{top:0!important;}
+  /* 5번째 (full-width) — 더 큰 스케일 */
+  .mob-gal-wide iframe{transform:scale(0.27)!important;top:0!important;}
+
+  /* 썸네일 라벨 오버레이 */
+  .mob-gal-label{
+    position:absolute;bottom:0;left:0;right:0;
+    background:linear-gradient(transparent 0%,rgba(0,0,0,0.72) 100%);
+    padding:18px 10px 7px;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:9px;font-weight:700;
+    letter-spacing:.20em;text-transform:uppercase;
+    color:rgba(255,180,162,.78);
+    pointer-events:none;
+  }
+
+  /* ── 위클리 투두 캘린더 ── */
   #todoCalHead{gap:2px!important;margin-bottom:2px!important;}
   #todoCalGrid{gap:2px!important;}
-  .todo-cal-cell{min-height:80px!important;padding:6px 4px!important;}
-  .todo-cal-num{font-size:13px!important;}
-  .todo-item span{font-size:11px!important;}
+  .todo-cal-cell{min-height:68px!important;padding:4px 3px!important;}
+  .todo-cal-num{font-size:11px!important;}
+  .todo-item span{font-size:10px!important;}
   .todo-inline-input{font-size:11px!important;}
   #page-todo .mb-10{margin-bottom:20px!important;}
+
+  /* ── 기타 페이지 패딩 ── */
+  #page-memo,#page-files,#page-music{
+    padding-left:16px!important;padding-right:16px!important;
+  }
 }
 </style>
 </head>
@@ -797,11 +900,11 @@
 
     <!-- Mobile gallery -->
       <div id="mobileGalleryGrid" style="display:none;">
-        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe></div>
-        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe></div>
-        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe></div>
-        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe></div>
-        <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe></div>
+        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">01 · Editorial</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">02 · Lowtheory</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">03 · Moodboard</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">04 · Archive</div></div>
+        <div class="mob-gal-item mob-gal-wide" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">05 · Grid</div></div>
       </div>
 
     <!-- Lightbox -->
