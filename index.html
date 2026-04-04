@@ -427,64 +427,67 @@
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Hub 말풍선 메모 — 동글동글 타원 ── */
-.hub-bubble-wrap{position:relative;max-width:480px;padding-bottom:46px;}
+/* ── Hub 말풍선 메모 — Figma 팔레트 기반 큰 타원 ── */
+.hub-bubble-wrap{position:relative;max-width:100%;padding-bottom:52px;}
 .hub-bubble-label{
-  font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;
-  letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(255,255,255,.30);margin-bottom:14px;
+  font-family:'Nunito',sans-serif;font-size:10px;font-weight:800;
+  letter-spacing:.20em;text-transform:uppercase;
+  color:rgba(255,255,255,.22);margin-bottom:16px;
 }
 .hub-bubble{
   position:relative;
-  background:rgba(255,255,255,0.97);
-  border-radius:56px;
-  padding:30px 38px 24px;
-  min-height:120px;
-  filter:drop-shadow(0 8px 32px rgba(0,0,0,0.44)) drop-shadow(0 2px 8px rgba(0,0,0,0.20));
+  background:#faf9f6;
+  border-radius:72px;
+  padding:36px 44px 30px;
+  min-height:160px;
+  filter:
+    drop-shadow(0 12px 40px rgba(0,0,0,0.52))
+    drop-shadow(0 3px 10px rgba(0,0,0,0.22));
 }
 /* 구름 꼬리 — 큰 원 */
 .hub-bubble::before{
   content:'';position:absolute;
-  bottom:-26px;left:52px;
-  width:24px;height:24px;
-  background:rgba(255,255,255,0.97);
+  bottom:-30px;left:60px;
+  width:28px;height:28px;
+  background:#faf9f6;
   border-radius:50%;
+  filter:drop-shadow(0 6px 12px rgba(0,0,0,0.25));
 }
 /* 구름 꼬리 — 작은 원 */
 .hub-bubble::after{
   content:'';position:absolute;
-  bottom:-43px;left:40px;
-  width:14px;height:14px;
-  background:rgba(255,255,255,0.97);
+  bottom:-50px;left:46px;
+  width:16px;height:16px;
+  background:#faf9f6;
   border-radius:50%;
 }
 .hub-bubble-memo{
   font-family:'Nunito',sans-serif;
-  font-size:15px;font-weight:500;line-height:1.85;
-  color:rgba(30,20,20,0.75);
-  outline:none;min-height:60px;
+  font-size:16px;font-weight:500;line-height:1.9;
+  color:rgba(28,18,18,0.72);
+  outline:none;min-height:72px;
   cursor:text;white-space:pre-wrap;word-break:break-word;
-  caret-color:#555;
+  caret-color:#333;
 }
 .hub-bubble-memo:empty::before{
   content:attr(data-ph);
-  color:rgba(0,0,0,0.20);pointer-events:none;display:block;
+  color:rgba(20,15,15,0.22);pointer-events:none;display:block;
 }
 .hub-bubble-footer{
-  display:flex;justify-content:flex-end;margin-top:12px;
-  border-top:1px solid rgba(0,0,0,0.05);padding-top:8px;
+  display:flex;justify-content:flex-end;margin-top:14px;
+  border-top:1px solid rgba(20,15,15,0.07);padding-top:9px;
 }
 .hub-bubble-save{
   font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;
-  letter-spacing:.10em;text-transform:uppercase;
+  letter-spacing:.12em;text-transform:uppercase;
   color:rgba(0,0,0,0.22);cursor:pointer;
   transition:color .2s;background:none;border:none;padding:0;
 }
 .hub-bubble-save:hover{color:rgba(0,0,0,0.50);}
 .hub-bubble-saved{
-  font-family:'Nunito',sans-serif;font-size:10px;font-weight:600;
-  letter-spacing:.10em;text-transform:uppercase;
-  color:rgba(0,0,0,0.28);opacity:0;transition:opacity .4s;
+  font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(0,0,0,0.30);opacity:0;transition:opacity .4s;
 }
 
 /* Todo day cells */
@@ -642,7 +645,6 @@
             </div>
           </div>
         </div>
-        <div class="flex items-center gap-4 mt-4"><span class="font-label text-[10px] tracking-[.15em] uppercase text-outline">Status: Online</span><span class="text-[#353535]">——</span><span class="font-label text-[10px] tracking-[.15em] uppercase text-outline">V.1.0.0</span></div>
       </div>
     </section>
 

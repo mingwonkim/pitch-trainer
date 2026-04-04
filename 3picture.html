@@ -6,7 +6,7 @@
   <title>Moodboard Template</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Inter:wght@300;400&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Inter:wght@300;400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --bg: #120c0c;
@@ -258,6 +258,88 @@
       );
     }
 
+    /* ── 폴라로이드 자연스러운 표면 질감 ── */
+    .polaroid::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(148deg,
+        rgba(255,255,255,0.14) 0%,
+        transparent 38%,
+        rgba(0,0,0,0.04) 70%,
+        rgba(0,0,0,0.07) 100%
+      );
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── 사진 영역 비네트 (필름 느낌) ── */
+    .polaroid .photo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 44%,
+        transparent 38%,
+        rgba(0,0,0,0.30) 100%
+      );
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: multiply;
+    }
+
+    /* ── 핸드라이팅 캡션 ── */
+    .caption {
+      position: absolute;
+      bottom: 9px;
+      left: 11px; right: 11px;
+      font-family: 'Caveat', cursive;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(40,28,24,0.58);
+      text-align: center;
+      line-height: 1.25;
+      z-index: 3;
+      outline: none;
+    }
+    .caption:empty::before {
+      content: attr(data-ph);
+      color: rgba(0,0,0,0.15);
+      pointer-events: none;
+    }
+
+    /* ── 폴라로이드 카드별 톤 변화 ── */
+    .item-abstract .polaroid { background: #f6f2e8; }
+    .item-woman    .polaroid { background: #faf8f4; }
+    .item-red1     .polaroid { background: #f8f7f3; }
+    .item-red2     .polaroid { background: #f9f5ec; }
+
+    /* ── 카드별 그림자 깊이 변화 ── */
+    .item-abstract .polaroid {
+      box-shadow: 0 14px 36px rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.20);
+    }
+    .item-red2 .polaroid {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.30), 0 2px 5px rgba(0,0,0,0.12);
+    }
+
+    /* ── 테이프 개별 변화 ── */
+    .item-woman .tape   { opacity: 0.82; width: 78px; }
+    .item-red2  .tape   { width: 94px; opacity: 0.92; }
+
+    /* ── 사진 placeholder 개선 (크로스해치 패턴) ── */
+    .photo-placeholder {
+      background:
+        repeating-linear-gradient(
+          -48deg,
+          transparent 0px, transparent 18px,
+          rgba(160,148,136,0.10) 18px, rgba(160,148,136,0.10) 19px
+        ),
+        linear-gradient(145deg, #edeae2, #e4e0d6) !important;
+    }
+
+    /* ── 테이프 z-index (grain 위에 표시) ── */
+    .tape { z-index: 5; }
+
     .clip-note {
       position: absolute;
       right: -4px;
@@ -459,6 +541,7 @@ CMYK: 0 1 5 0</div>
           <div class="upload-bar">
             <button class="upload-btn" onclick="mbPickImage('img-1')">사진 넣기</button>
           </div>
+          <div class="caption" contenteditable="true" data-ph="— caption —"></div>
         </div>
       </div>
 
@@ -483,6 +566,7 @@ CMYK: 0 26 26 99</div>
           <div class="upload-bar">
             <button class="upload-btn" onclick="mbPickImage('img-2')">사진 넣기</button>
           </div>
+          <div class="caption" contenteditable="true" data-ph="— caption —"></div>
         </div>
       </div>
 
@@ -507,6 +591,7 @@ CMYK: 0 0 2 5</div>
           <div class="upload-bar">
             <button class="upload-btn" onclick="mbPickImage('img-3')">사진 넣기</button>
           </div>
+          <div class="caption" contenteditable="true" data-ph="— caption —"></div>
         </div>
       </div>
 
@@ -531,6 +616,7 @@ CMYK: 0 11 11 84</div>
           <div class="upload-bar">
             <button class="upload-btn" onclick="mbPickImage('img-4')">사진 넣기</button>
           </div>
+          <div class="caption" contenteditable="true" data-ph="— caption —"></div>
         </div>
       </div>
 
@@ -544,6 +630,7 @@ CMYK: 0 11 11 84</div>
           <div class="upload-bar">
             <button class="upload-btn" onclick="mbPickImage('img-5')">사진 넣기</button>
           </div>
+          <div class="caption" contenteditable="true" data-ph="— caption —"></div>
         </div>
       </div>
 
