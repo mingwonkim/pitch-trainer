@@ -427,61 +427,64 @@
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Hub 말풍선 메모 ── */
-.hub-bubble-wrap{position:relative;max-width:340px;}
+/* ── Hub 말풍선 메모 — 흰 구름 스타일 ── */
+.hub-bubble-wrap{position:relative;max-width:520px;padding-bottom:42px;}
 .hub-bubble-label{
   font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;
   letter-spacing:.22em;text-transform:uppercase;
-  color:rgba(255,180,162,.35);margin-bottom:10px;
+  color:rgba(255,255,255,.28);margin-bottom:14px;
 }
 .hub-bubble{
   position:relative;
-  background:#191616;
-  border:1px solid rgba(255,180,162,.16);
-  border-radius:4px 16px 16px 16px;
-  padding:18px 20px 18px;
-  min-height:88px;
+  background:rgba(255,255,255,0.96);
+  border-radius:36px 36px 36px 20px;
+  padding:28px 32px 22px;
+  min-height:130px;
+  filter:drop-shadow(0 6px 28px rgba(0,0,0,0.42)) drop-shadow(0 2px 6px rgba(0,0,0,0.18));
 }
-/* 꼬리 — 왼쪽 위 모서리 */
+/* 구름 꼬리 — 큰 원 */
 .hub-bubble::before{
   content:'';position:absolute;
-  left:-10px;top:0px;
-  border-top:10px solid rgba(255,180,162,.16);
-  border-left:10px solid transparent;
+  bottom:-24px;left:44px;
+  width:22px;height:22px;
+  background:rgba(255,255,255,0.96);
+  border-radius:50%;
 }
+/* 구름 꼬리 — 작은 원 */
 .hub-bubble::after{
   content:'';position:absolute;
-  left:-8px;top:0px;
-  border-top:9px solid #191616;
-  border-left:9px solid transparent;
+  bottom:-40px;left:32px;
+  width:13px;height:13px;
+  background:rgba(255,255,255,0.96);
+  border-radius:50%;
 }
 .hub-bubble-memo{
   font-family:'Inter',sans-serif;
-  font-size:13px;line-height:1.75;
-  color:rgba(255,255,255,.65);
-  outline:none;min-height:52px;
+  font-size:14px;line-height:1.8;
+  color:rgba(0,0,0,0.72);
+  outline:none;min-height:64px;
   cursor:text;white-space:pre-wrap;word-break:break-word;
-  caret-color:#ffb4a2;
+  caret-color:#333;
 }
 .hub-bubble-memo:empty::before{
   content:attr(data-ph);
-  color:rgba(255,255,255,.16);pointer-events:none;display:block;
+  color:rgba(0,0,0,0.22);pointer-events:none;display:block;
 }
 .hub-bubble-footer{
-  display:flex;justify-content:flex-end;margin-top:10px;
-  border-top:1px solid rgba(255,255,255,.04);padding-top:8px;
+  display:flex;justify-content:flex-end;margin-top:12px;
+  border-top:1px solid rgba(0,0,0,0.06);padding-top:8px;
 }
 .hub-bubble-save{
   font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;
   letter-spacing:.18em;text-transform:uppercase;
-  color:rgba(255,180,162,.3);cursor:pointer;
+  color:rgba(0,0,0,0.25);cursor:pointer;
   transition:color .2s;background:none;border:none;padding:0;
 }
-.hub-bubble-save:hover{color:rgba(255,180,162,.7);}
+.hub-bubble-save:hover{color:rgba(0,0,0,0.55);}
 .hub-bubble-saved{
   font-family:'Space Grotesk',sans-serif;font-size:9px;
   letter-spacing:.18em;text-transform:uppercase;
-  color:rgba(255,180,162,.4);opacity:0;transition:opacity .4s;
+  color:rgba(0,0,0,0.3);opacity:0;transition:opacity .4s;
 }
 
 /* Todo day cells */
