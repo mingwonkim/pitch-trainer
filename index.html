@@ -527,6 +527,15 @@
 /* 달력 요일 헤더 색상 */
 .cal-head-sat{color:#6ab0ff!important;}
 .cal-head-sun{color:#ff6b6b!important;}
+/* ── 갤러리 입장 애니메이션 ── */
+@keyframes mobGalPop{
+  from{opacity:0;transform:scale(0.88) translateY(14px);}
+  to{opacity:1;transform:scale(1) translateY(0);}
+}
+/* ── 픽처 확장 모달 슬라이드 ── */
+.pic-snap-slide{flex:none;width:100%;height:100%;scroll-snap-align:start;overflow:hidden;}
+#picSlider::-webkit-scrollbar{display:none;}
+
 /* ════════════════════════════════════════════
    MOBILE — mkhub2 전용 (max-width: 767px)
    iPhone 16 Pro 기준. 데스크탑(≥768px) 불변.
@@ -619,51 +628,51 @@
   .gallery-marquee-item{font-size:clamp(28px,6vw,44px)!important;}
   .gallery-marquee{will-change:transform;}
 
-  /* ══ 7. 세로 스크롤 피드 갤러리 ══
+  /* ══ 7. Instagram 3열 갤러리 그리드 ══
      iPhone 16 Pro 393px 기준
-     한 카드 = 전체 너비, 높이 246px
-     iframe 1440×900 → scale(0.273) = 393×245px */
+     3열 × 1.5px 갭 → 각 셀 ≈130px 정사각형
+     iframe 1440×900 → scale(0.1444): 높이=130px, 좌우 크롭 left:-39px */
   #mobileGalleryGrid{
-    display:flex!important;
-    flex-direction:column!important;
-    gap:0!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:1.5px!important;
     margin-top:48px!important;
-    background:transparent!important;
+    background:#0a0808!important;
   }
   .mob-gal-item{
-    width:100%!important;
-    height:246px!important;
-    aspect-ratio:auto!important;
+    aspect-ratio:1/1!important;
     background:#0f0909!important;
     cursor:pointer!important;
     position:relative!important;
     overflow:hidden!important;
     border-radius:0!important;
-    border-top:1px solid #1a1414!important;
+    opacity:0;
   }
-  /* 피드 카드 아이프레임 */
+  .mob-gal-item.gal-visible{
+    animation:mobGalPop 0.42s cubic-bezier(0.34,1.56,0.64,1) forwards!important;
+  }
+  /* 썸네일 아이프레임 — 센터 크롭 */
   .mob-gal-item iframe{
     position:absolute!important;
     width:1440px!important;height:900px!important;
     border:none!important;
     transform-origin:top left!important;
-    transform:scale(0.273)!important;
-    left:0!important;
+    transform:scale(0.1444)!important;
+    left:-39px!important;
     top:0!important;
     pointer-events:none!important;
     max-width:none!important;
   }
-
   /* 섹션 라벨 — 좌하단 */
   .mob-gal-label{
     position:absolute!important;
-    bottom:10px!important;left:12px!important;
+    bottom:6px!important;left:8px!important;
     top:auto!important;right:auto!important;
     background:none!important;
     padding:0!important;
     font-family:'Space Grotesk',sans-serif!important;
-    font-size:9px!important;font-weight:700!important;
-    letter-spacing:.18em!important;
+    font-size:8px!important;font-weight:700!important;
+    letter-spacing:.16em!important;
     text-transform:uppercase!important;
     color:rgba(255,180,162,.6)!important;
     pointer-events:none!important;
@@ -1334,7 +1343,7 @@
 
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getFirestore,collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,query}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import{getFirestore,collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,query,onSnapshot}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import{getStorage,ref as sRef,uploadBytes,getDownloadURL,deleteObject,listAll}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 const app=initializeApp({apiKey:"AIzaSyDWXJ1nIQIZXSMruwFhyoMSU3gf3omiyMc",authDomain:"mingwon-hub.firebaseapp.com",projectId:"mingwon-hub",storageBucket:"mingwon-hub.firebasestorage.app",messagingSenderId:"108345228898",appId:"1:108345228898:web:81aa09a240d48e54081b3b"});
 const db=getFirestore(app),stg=getStorage(app);
@@ -1342,6 +1351,28 @@ const memosCol=collection(db,'mk_app','data','memos'),memoFoldersCol=collection(
 const filesCol=collection(db,'mk_app','data','files'),fileFoldersCol=collection(db,'mk_app','data','file_folders');
 const bgImagesDoc=doc(db,'mk_app','bg_images');
 const todosCol=collection(db,'mk_app','data','todos');
+const hubMemoDoc=doc(db,'mk_app','hub_memo');
+
+/* ===== Hub Bubble Memo — Firestore 실시간 동기화 ===== */
+(async function(){
+  var el=document.getElementById('hubBubbleMemo');
+  var savedEl=document.getElementById('hubBubbleSaved');
+  if(!el)return;
+  // 초기 로드
+  try{var snap=await getDoc(hubMemoDoc);if(snap.exists()&&snap.data().text!==undefined)el.textContent=snap.data().text;}catch(e){}
+  // 다른 기기에서 저장 시 실시간 반영 (포커스 없을 때만)
+  onSnapshot(hubMemoDoc,function(snap){
+    if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el)el.textContent=snap.data().text;
+  });
+  // 입력 시 Firestore 저장 (600ms 디바운스)
+  var t;
+  el.addEventListener('input',function(){
+    clearTimeout(t);
+    t=setTimeout(async function(){
+      try{await setDoc(hubMemoDoc,{text:el.textContent});if(savedEl){savedEl.style.opacity='1';setTimeout(function(){savedEl.style.opacity='0';},1200);}}catch(e){}
+    },600);
+  });
+})();
 
 /* ===== Passwords ===== */
 let isUnlocked=sessionStorage.getItem('mk_unlocked')==='1';
@@ -2509,21 +2540,7 @@ window.dlFile=dlFile;window.rmFile=rmFile;
 function notifyLtFrame(val){const f=document.getElementById('ltScaleFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyEdFrame(val){const f=document.getElementById('edLayoutFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyMbFrame(val){const f=document.getElementById('mbFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
-// ── 말풍선 메모 ──
-(function(){
-  var el=document.getElementById('hubBubbleMemo');
-  var saved=document.getElementById('hubBubbleSaved');
-  if(!el)return;
-  try{var s=localStorage.getItem('hubBubbleMemo');if(s)el.textContent=s;}catch(e){}
-  var t;
-  el.addEventListener('input',function(){
-    clearTimeout(t);
-    t=setTimeout(function(){
-      try{localStorage.setItem('hubBubbleMemo',el.textContent);}catch(e){}
-      if(saved){saved.style.opacity='1';setTimeout(function(){saved.style.opacity='0';},1200);}
-    },600);
-  });
-})();
+// ── 말풍선 메모: Firestore 모듈에서 처리 ──
 function notifyP4Frame(val){const f=document.getElementById('p4Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyP5Frame(val){const f=document.getElementById('p5Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyAllFrames(val){notifyLtFrame(val);notifyEdFrame(val);notifyMbFrame(val);notifyP4Frame(val);notifyP5Frame(val);}
@@ -2622,12 +2639,51 @@ function renderTodoCal(){
   if(ed>0){for(var i=1;i<=7-ed;i++)html+='<div class="todo-cal-cell other"><div class="todo-cal-num">'+i+'</div></div>';}
   grid.innerHTML=html;
 }
-/* ===== Swipe Gallery ===== */
-var _pics=['1picture.html','2picture.html','3picture.html','4picture.html','5picture.html'];var _picIdx=0,_touchX0=0,_touchDX=0,_swiping=false;
-function _loadSlides(){var s=document.getElementById('picSlider');document.getElementById('picSlide0').src=_picIdx>0?_pics[_picIdx-1]:'';document.getElementById('picSlide1').src=_pics[_picIdx];document.getElementById('picSlide2').src=_picIdx<_pics.length-1?_pics[_picIdx+1]:'';s.style.transition='none';s.style.transform='translateX(-100%)';document.getElementById('picDots').innerHTML=_pics.map(function(_,i){return '<div style="width:'+(i===_picIdx?'18px':'6px')+';height:6px;border-radius:3px;background:'+(i===_picIdx?'#ffb4a2':'rgba(255,180,162,.3)')+';transition:all .3s;"></div>';}).join('');document.getElementById('picExpandTitle').textContent=(_picIdx+1<10?'0':'')+(_picIdx+1)+' / 05';}
-function openPicExpand(src){_picIdx=_pics.indexOf(src);if(_picIdx<0)_picIdx=0;document.getElementById('picExpandModal').style.display='block';_loadSlides();var s=document.getElementById('picSlider');s.ontouchstart=function(e){if(e.touches.length===1){_touchX0=e.touches[0].clientX;_touchDX=0;_swiping=true;s.style.transition='none';}};s.ontouchmove=function(e){if(!_swiping)return;_touchDX=e.touches[0].clientX-_touchX0;if((_picIdx===0&&_touchDX>0)||(_picIdx===_pics.length-1&&_touchDX<0))_touchDX*=0.3;s.style.transform='translateX(calc(-100% + '+_touchDX+'px))';};s.ontouchend=function(){if(!_swiping)return;_swiping=false;var vw=window.innerWidth;s.style.transition='transform .3s ease';if(_touchDX<-vw*0.2&&_picIdx<_pics.length-1){s.style.transform='translateX(-200%)';setTimeout(function(){_picIdx++;_loadSlides();},320);}else if(_touchDX>vw*0.2&&_picIdx>0){s.style.transform='translateX(0%)';setTimeout(function(){_picIdx--;_loadSlides();},320);}else{s.style.transform='translateX(-100%)';};};}
-function closePicExpand(){document.getElementById('picExpandModal').style.display='none';['picSlide0','picSlide1','picSlide2'].forEach(function(id){document.getElementById(id).src='';});document.getElementById('picSlider').ontouchstart=null;}
+/* ===== Picture Gallery ===== */
+var _pics=['1picture.html','2picture.html','3picture.html','4picture.html','5picture.html'];
+var _picIdx=0,_picScrollTimer=null;
+
+function _updatePicDots(){
+  document.getElementById('picExpandTitle').textContent=(_picIdx+1<10?'0':'')+(_picIdx+1)+' / 05';
+  document.getElementById('picDots').innerHTML=_pics.map(function(_,i){
+    return '<div style="width:'+(i===_picIdx?'18px':'6px')+';height:6px;border-radius:3px;background:'+(i===_picIdx?'#ffb4a2':'rgba(255,180,162,.3)')+';transition:all .3s ease;flex-shrink:0;"></div>';
+  }).join('');
+}
+
+function openPicExpand(src){
+  _picIdx=_pics.indexOf(src);
+  if(_picIdx<0)_picIdx=0;
+  /* 모든 슬라이드 src 로드 */
+  _pics.forEach(function(p,i){document.getElementById('picSlide'+i).src=p;});
+  document.getElementById('picExpandModal').style.display='block';
+  /* layout 후 즉시 해당 슬라이드로 이동 */
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      var slider=document.getElementById('picSlider');
+      slider.style.scrollBehavior='auto';
+      slider.scrollLeft=_picIdx*slider.offsetWidth;
+      _updatePicDots();
+      /* 스크롤 위치로 현재 슬라이드 인덱스 추적 */
+      slider.onscroll=function(){
+        if(_picScrollTimer)clearTimeout(_picScrollTimer);
+        _picScrollTimer=setTimeout(function(){
+          var idx=Math.round(slider.scrollLeft/Math.max(slider.offsetWidth,1));
+          if(idx>=0&&idx<_pics.length&&idx!==_picIdx){_picIdx=idx;_updatePicDots();}
+        },80);
+      };
+    });
+  });
+}
+
+function closePicExpand(){
+  var modal=document.getElementById('picExpandModal');
+  modal.style.display='none';
+  var slider=document.getElementById('picSlider');
+  slider.onscroll=null;
+  _pics.forEach(function(_,i){document.getElementById('picSlide'+i).src='';});
+}
 window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
+
 /* ── iOS 스크롤 락: 모달 열릴 때 메인 스크롤 차단 ── */
 (function(){
   var savedTop=0;
@@ -2636,6 +2692,25 @@ window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
   var modal=document.getElementById('picExpandModal');
   if(!modal)return;
   new MutationObserver(function(muts){muts.forEach(function(m){if(m.attributeName==='style'){var d=modal.style.display;if(!d||d==='none'){unlockBody();}else{lockBody();}}});}).observe(modal,{attributes:true});
+})();
+
+/* ── 갤러리 카드 입장 애니메이션 (IntersectionObserver) ── */
+(function(){
+  if(!('IntersectionObserver' in window))return;
+  var delays=[0,80,160,0,80];
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var el=e.target,d=parseInt(el.dataset.galDelay)||0;
+        setTimeout(function(){el.classList.add('gal-visible');},d);
+        obs.unobserve(el);
+      }
+    });
+  },{threshold:0.1});
+  document.querySelectorAll('.mob-gal-item').forEach(function(el,i){
+    el.dataset.galDelay=delays[i]||0;
+    obs.observe(el);
+  });
 })();
 /* ===== Init ===== */
 (function(){
@@ -2868,16 +2943,21 @@ renderGallery();
 
 
 <div id="picExpandModal" style="display:none;position:fixed;inset:0;z-index:10000;background:#0a0a0a;overflow:hidden;">
-  <div style="position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;padding:12px 16px;background:linear-gradient(180deg,rgba(10,10,10,.9) 60%,transparent);">
-    <button onclick="closePicExpand()" style="background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;">← Back</button>
+  <!-- 상단 바 -->
+  <div style="position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;padding:12px 16px;background:linear-gradient(180deg,rgba(10,8,8,.92) 60%,transparent);pointer-events:none;">
+    <button onclick="closePicExpand()" style="pointer-events:auto;background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;">← Back</button>
     <span id="picExpandTitle" style="flex:1;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(255,180,162,.5);padding-right:80px;"></span>
   </div>
-  <div id="picSlider" style="position:absolute;inset:0;display:flex;transition:transform .35s ease;">
-    <iframe id="picSlide0" style="flex:none;width:100%;height:100%;border:none;background:#0a0a0a;" allow="autoplay"></iframe>
-    <iframe id="picSlide1" style="flex:none;width:100%;height:100%;border:none;background:#0a0a0a;" allow="autoplay"></iframe>
-    <iframe id="picSlide2" style="flex:none;width:100%;height:100%;border:none;background:#0a0a0a;" allow="autoplay"></iframe>
+  <!-- CSS scroll-snap 슬라이더: touch-action:pan-y → 내부 iframe 세로스크롤 + 부모 가로스와이프 동시 작동 -->
+  <div id="picSlider" style="position:absolute;inset:0;display:flex;overflow-x:scroll;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;">
+    <div class="pic-snap-slide"><iframe id="picSlide0" src="" style="width:100%;height:100%;border:none;display:block;touch-action:pan-y;" allow="autoplay" scrolling="yes"></iframe></div>
+    <div class="pic-snap-slide"><iframe id="picSlide1" src="" style="width:100%;height:100%;border:none;display:block;touch-action:pan-y;" allow="autoplay" scrolling="yes"></iframe></div>
+    <div class="pic-snap-slide"><iframe id="picSlide2" src="" style="width:100%;height:100%;border:none;display:block;touch-action:pan-y;" allow="autoplay" scrolling="yes"></iframe></div>
+    <div class="pic-snap-slide"><iframe id="picSlide3" src="" style="width:100%;height:100%;border:none;display:block;touch-action:pan-y;" allow="autoplay" scrolling="yes"></iframe></div>
+    <div class="pic-snap-slide"><iframe id="picSlide4" src="" style="width:100%;height:100%;border:none;display:block;touch-action:pan-y;" allow="autoplay" scrolling="yes"></iframe></div>
   </div>
-  <div id="picDots" style="position:absolute;bottom:20px;left:0;right:0;z-index:2;display:flex;justify-content:center;gap:6px;"></div>
+  <!-- 하단 인디케이터 닷 -->
+  <div id="picDots" style="position:absolute;bottom:20px;left:0;right:0;z-index:20;display:flex;justify-content:center;gap:6px;pointer-events:none;"></div>
 </div>
 <div class="page min-h-screen pt-24 pb-40 px-2 md:px-6" id="page-todo">
   <div class="w-full max-w-5xl mx-auto">
