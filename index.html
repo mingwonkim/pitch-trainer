@@ -303,7 +303,7 @@
 .bg-thumb .bg-del{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.7);color:#FF3B00;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:.2s;}
 .bg-thumb:hover .bg-del{opacity:1;}
 /* ===== Photo Gallery — lowtheory polaroid wall ===== */
-.gallery-section{margin:0 -24px;}
+.gallery-section{margin:0 -24px;position:relative;}
 @media(min-width:768px){.gallery-section{margin:0 -32px;}}
 .gallery-marquee-wrap{overflow:hidden;border-top:1px solid #1e1e1e;border-bottom:1px solid #1e1e1e;padding:14px 0;}
 .gallery-marquee{display:flex;white-space:nowrap;animation:marqueeScroll 22s linear infinite;will-change:transform;}
@@ -385,6 +385,19 @@
 .gallery-lb-prev{left:16px;}.gallery-lb-next{right:16px;}
 .gallery-lb-counter{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.3);}
 .gallery-lb-del{position:fixed;bottom:24px;right:20px;display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:rgba(255,59,0,.08);border:1px solid rgba(255,59,0,.25);border-radius:9999px;color:#FF3B00;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.2s;}.gallery-lb-del:hover{background:rgba(255,59,0,.2);}
+/* ── Gallery separators ── */
+.gal-sep{display:flex;align-items:center;gap:16px;padding:0 24px;}
+@media(min-width:768px){.gal-sep{padding:0 32px;}}
+.gal-sep-idx{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,180,162,.4);flex-shrink:0;min-width:22px;}
+.gal-sep-rule{flex:1;height:1px;background:linear-gradient(90deg,rgba(255,180,162,.2) 0%,rgba(255,255,255,.05) 55%,transparent 100%);}
+.gal-sep-tag{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.1);flex-shrink:0;}
+/* Side accent lines visible in the gaps between iframes */
+.gallery-section::before,.gallery-section::after{
+  content:'';position:absolute;top:0;bottom:0;width:1px;pointer-events:none;z-index:0;
+  background:linear-gradient(to bottom,transparent 0%,rgba(255,180,162,.09) 8%,rgba(255,180,162,.09) 92%,transparent 100%);
+}
+.gallery-section::before{left:6px;}
+.gallery-section::after{right:6px;}
 /* Black fade overlay on scroll past marquee */
 #blackFadeOverlay{
   position:fixed;inset:0;
@@ -644,20 +657,45 @@
         </div>
       </div>
 
-      <!-- ===== Editorial Layout iframe ===== -->
-      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:80px;"></iframe>
+      <!-- ── 01 EDITORIAL ── -->
+      <div class="gal-sep" style="margin-top:28px;">
+        <span class="gal-sep-idx">01</span>
+        <span class="gal-sep-rule"></span>
+        <span class="gal-sep-tag">Editorial</span>
+      </div>
+      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:52px;"></iframe>
 
-      <!-- ===== Lowtheory Scale ===== -->
-      <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:180px;overflow:hidden;" loading="lazy"></iframe>
+      <!-- ── 02 LOWTHEORY ── -->
+      <div class="gal-sep" style="margin-top:110px;">
+        <span class="gal-sep-idx">02</span>
+        <span class="gal-sep-rule"></span>
+        <span class="gal-sep-tag">Lowtheory</span>
+      </div>
+      <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:28px;overflow:hidden;" loading="lazy"></iframe>
 
-      <!-- ===== Moodboard ===== -->
-      <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:90px;" loading="lazy"></iframe>
+      <!-- ── 03 MOODBOARD ── -->
+      <div class="gal-sep" style="margin-top:52px;">
+        <span class="gal-sep-idx">03</span>
+        <span class="gal-sep-rule"></span>
+        <span class="gal-sep-tag">Moodboard</span>
+      </div>
+      <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:28px;" loading="lazy"></iframe>
 
-      <!-- ===== 4PICTURE ===== -->
-      <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:200px;" loading="lazy"></iframe>
+      <!-- ── 04 ARCHIVE ── -->
+      <div class="gal-sep" style="margin-top:140px;">
+        <span class="gal-sep-idx">04</span>
+        <span class="gal-sep-rule"></span>
+        <span class="gal-sep-tag">Archive</span>
+      </div>
+      <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:28px;" loading="lazy"></iframe>
 
-      <!-- ===== 5PICTURE ===== -->
-      <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:300px;" loading="lazy"></iframe>
+      <!-- ── 05 GRID ── -->
+      <div class="gal-sep" style="margin-top:200px;">
+        <span class="gal-sep-idx">05</span>
+        <span class="gal-sep-rule"></span>
+        <span class="gal-sep-tag">Grid</span>
+      </div>
+      <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:28px;" loading="lazy"></iframe>
 
     <!-- Mobile gallery -->
       <div id="mobileGalleryGrid" style="display:none;">
