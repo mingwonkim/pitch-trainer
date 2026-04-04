@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="preconnect" href="https://firestore.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="preconnect" href="https://firestore.googleapis.com"/>
@@ -427,64 +427,64 @@
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Hub 말풍선 메모 — 흰 구름 스타일 ── */
-.hub-bubble-wrap{position:relative;max-width:520px;padding-bottom:42px;}
+/* ── Hub 말풍선 메모 — 동글동글 타원 ── */
+.hub-bubble-wrap{position:relative;max-width:480px;padding-bottom:46px;}
 .hub-bubble-label{
-  font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;
-  letter-spacing:.22em;text-transform:uppercase;
-  color:rgba(255,255,255,.28);margin-bottom:14px;
+  font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.30);margin-bottom:14px;
 }
 .hub-bubble{
   position:relative;
-  background:rgba(255,255,255,0.96);
-  border-radius:36px 36px 36px 20px;
-  padding:28px 32px 22px;
-  min-height:130px;
-  filter:drop-shadow(0 6px 28px rgba(0,0,0,0.42)) drop-shadow(0 2px 6px rgba(0,0,0,0.18));
+  background:rgba(255,255,255,0.97);
+  border-radius:56px;
+  padding:30px 38px 24px;
+  min-height:120px;
+  filter:drop-shadow(0 8px 32px rgba(0,0,0,0.44)) drop-shadow(0 2px 8px rgba(0,0,0,0.20));
 }
 /* 구름 꼬리 — 큰 원 */
 .hub-bubble::before{
   content:'';position:absolute;
-  bottom:-24px;left:44px;
-  width:22px;height:22px;
-  background:rgba(255,255,255,0.96);
+  bottom:-26px;left:52px;
+  width:24px;height:24px;
+  background:rgba(255,255,255,0.97);
   border-radius:50%;
 }
 /* 구름 꼬리 — 작은 원 */
 .hub-bubble::after{
   content:'';position:absolute;
-  bottom:-40px;left:32px;
-  width:13px;height:13px;
-  background:rgba(255,255,255,0.96);
+  bottom:-43px;left:40px;
+  width:14px;height:14px;
+  background:rgba(255,255,255,0.97);
   border-radius:50%;
 }
 .hub-bubble-memo{
-  font-family:'Inter',sans-serif;
-  font-size:14px;line-height:1.8;
-  color:rgba(0,0,0,0.72);
-  outline:none;min-height:64px;
+  font-family:'Nunito',sans-serif;
+  font-size:15px;font-weight:500;line-height:1.85;
+  color:rgba(30,20,20,0.75);
+  outline:none;min-height:60px;
   cursor:text;white-space:pre-wrap;word-break:break-word;
-  caret-color:#333;
+  caret-color:#555;
 }
 .hub-bubble-memo:empty::before{
   content:attr(data-ph);
-  color:rgba(0,0,0,0.22);pointer-events:none;display:block;
+  color:rgba(0,0,0,0.20);pointer-events:none;display:block;
 }
 .hub-bubble-footer{
   display:flex;justify-content:flex-end;margin-top:12px;
-  border-top:1px solid rgba(0,0,0,0.06);padding-top:8px;
+  border-top:1px solid rgba(0,0,0,0.05);padding-top:8px;
 }
 .hub-bubble-save{
-  font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;
-  letter-spacing:.18em;text-transform:uppercase;
-  color:rgba(0,0,0,0.25);cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;
+  color:rgba(0,0,0,0.22);cursor:pointer;
   transition:color .2s;background:none;border:none;padding:0;
 }
-.hub-bubble-save:hover{color:rgba(0,0,0,0.55);}
+.hub-bubble-save:hover{color:rgba(0,0,0,0.50);}
 .hub-bubble-saved{
-  font-family:'Space Grotesk',sans-serif;font-size:9px;
-  letter-spacing:.18em;text-transform:uppercase;
-  color:rgba(0,0,0,0.3);opacity:0;transition:opacity .4s;
+  font-family:'Nunito',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:.10em;text-transform:uppercase;
+  color:rgba(0,0,0,0.28);opacity:0;transition:opacity .4s;
 }
 
 /* Todo day cells */
