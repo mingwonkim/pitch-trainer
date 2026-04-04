@@ -527,130 +527,170 @@
 /* 달력 요일 헤더 색상 */
 .cal-head-sat{color:#6ab0ff!important;}
 .cal-head-sun{color:#ff6b6b!important;}
-/* ════════════════════════════════════════
+/* ════════════════════════════════════════════
    MOBILE — mkhub2 전용 (max-width: 767px)
-   데스크탑(≥768px)에는 절대 영향 없음
-   ════════════════════════════════════════ */
+   iPhone 16 Pro 기준. 데스크탑(≥768px) 불변.
+   ════════════════════════════════════════════ */
 @media(max-width:767px){
 
-  /* ── 전체 가로 스크롤 방지 ── */
-  body{overflow-x:hidden!important;max-width:100vw!important;}
-
-  /* ── Hub 페이지 패딩 ── */
-  #page-hub{
-    padding:76px 16px 110px!important;
+  /* ══ 1. 오버플로우 완전 차단 ══
+     gallery-section의 margin:0 -24px이 주범.
+     html+body 양쪽 모두 막아야 iOS Safari에서도 확실히 작동. */
+  html,body{
     overflow-x:hidden!important;
     max-width:100vw!important;
     box-sizing:border-box!important;
   }
+  *{max-width:100%!important;box-sizing:border-box!important;}
+  /* 예외: iframe은 max-width 제거 (transform으로 scale되므로) */
+  .mob-gal-item iframe,
+  .gallery-section iframe{max-width:none!important;}
 
-  /* ── 섹션 간격 축소 (space-y-24 = 96px → 44px) ── */
+  /* ══ 2. Hub 페이지 ══ */
+  #page-hub{
+    padding:76px 16px 110px!important;
+    overflow:hidden!important;
+    width:100vw!important;
+    max-width:100vw!important;
+  }
+
+  /* 섹션 간격 96px→44px */
   .space-y-24>:not([hidden])~:not([hidden]){margin-top:44px!important;}
 
-  /* ── 히어로: 제목 + 버블 세로 배치 ── */
-  #page-hub .grid.grid-cols-1.md\:grid-cols-12{
+  /* ══ 3. 히어로: MK.HUB + 버블 ══ */
+  #page-hub section.grid{
     display:flex!important;flex-direction:column!important;gap:20px!important;
   }
-  #page-hub .md\:col-span-8,
-  #page-hub .md\:col-span-4{width:100%!important;padding-bottom:0!important;}
-
-  /* ── 말풍선 모바일 축소 ── */
-  .hub-bubble-wrap{max-width:100%!important;padding-bottom:46px!important;}
-  .hub-bubble{
-    border-radius:52px!important;
-    padding:22px 26px 16px!important;
-    min-height:90px!important;
+  .md\:col-span-8,.md\:col-span-4{
+    width:100%!important;padding-bottom:0!important;
   }
-  .hub-bubble::before{width:20px!important;height:20px!important;bottom:-22px!important;left:50px!important;}
-  .hub-bubble::after{width:12px!important;height:12px!important;bottom:-37px!important;left:38px!important;}
-  .hub-bubble-memo{font-size:17px!important;min-height:44px!important;}
 
-  /* ── 앱 카드 세로 스택 ── */
-  #hubCardGrid{display:flex!important;flex-direction:column!important;gap:12px!important;}
-  #page-hub .hub-card,#hubCardGrid>section{
+  /* ══ 4. 말풍선 (모바일 축소) ══ */
+  .hub-bubble-wrap{max-width:100%!important;padding-bottom:44px!important;}
+  .hub-bubble{
+    border-radius:48px!important;
+    padding:20px 24px 16px!important;
+    min-height:84px!important;
+    filter:drop-shadow(0 6px 20px rgba(0,0,0,0.45))!important;
+  }
+  .hub-bubble::before{
+    width:18px!important;height:18px!important;
+    bottom:-20px!important;left:44px!important;
+  }
+  .hub-bubble::after{
+    width:11px!important;height:11px!important;
+    bottom:-34px!important;left:34px!important;
+  }
+  .hub-bubble-memo{font-size:16px!important;min-height:40px!important;}
+
+  /* ══ 5. 앱 카드 세로 스택 ══ */
+  #hubCardGrid{
+    display:flex!important;flex-direction:column!important;gap:10px!important;
+  }
+  #hubCardGrid>section{
     height:auto!important;min-height:0!important;
     padding:20px 18px!important;
     transform:none!important;
-    width:100%!important;max-width:100%!important;
-    box-sizing:border-box!important;
+    width:100%!important;
   }
-  /* 카드 내부 하단 여백 축소 */
-  #hubCardGrid>section .mb-12{margin-bottom:16px!important;}
-  #hubCardGrid>section .mb-10{margin-bottom:14px!important;}
-  #hubCardGrid>section .mb-8{margin-bottom:12px!important;}
+  #hubCardGrid>section .mb-12{margin-bottom:14px!important;}
+  #hubCardGrid>section .mb-10{margin-bottom:12px!important;}
+  #hubCardGrid>section .mb-8{margin-bottom:10px!important;}
 
-  /* ── 갤러리 섹션 ── */
+  /* ══ 6. 갤러리 섹션 — 풀블리드 ══
+     instagram 스타일을 위해 좌우 패딩 상쇄 */
   .gallery-section{
-    margin:0!important;
-    overflow-x:hidden!important;
-    overflow-y:visible!important;
+    margin:0 -16px!important;
+    overflow:hidden!important;
+    position:relative!important;
   }
-  /* 데스크탑 아이프레임 숨김 */
-  .gallery-section>iframe{display:none!important;}
-  /* 데스크탑 섹션 구분선 숨김 (모바일 그리드 라벨로 대체) */
-  .gal-sep{display:none!important;}
-  /* 사이드 수직선 숨김 */
-  .gallery-section::before,.gallery-section::after{display:none!important;}
-  /* 마퀴 폰트 축소 */
-  .gallery-marquee-item{font-size:24px!important;}
+  .gallery-section::before,
+  .gallery-section::after{display:none!important;}
 
-  /* ── 모바일 갤러리 그리드 — 2열, 더 큰 썸네일 ── */
+  /* 데스크탑 iframe + 구분선 숨김 */
+  .gallery-section>iframe{display:none!important;}
+  .gal-sep{display:none!important;}
+
+  /* 마퀴 래퍼 패딩 복원 (풀블리드 상쇄) */
+  .gallery-marquee-wrap{
+    padding:14px 16px!important;
+    overflow:hidden!important;
+  }
+  .gallery-marquee-item{font-size:clamp(28px,6vw,44px)!important;}
+  .gallery-marquee{will-change:transform;}
+
+  /* ══ 7. Instagram 스타일 갤러리 그리드 ══
+     iPhone 16 Pro 393px 기준
+     3열 × 1px 갭 = 각 셀 130.3px
+     iframe 1440×900 → scale(0.1448) = 208×130px
+     left:-39px으로 수평 센터 크롭 */
   #mobileGalleryGrid{
     display:grid!important;
-    grid-template-columns:repeat(2,1fr)!important;
-    gap:3px!important;
-    margin-top:18px!important;
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:1.5px!important;
+    margin-top:1.5px!important;
+    background:#0a0808!important;
   }
-  .mob-gal-item{
-    aspect-ratio:16/10;
-    background:#0a0808;
-    cursor:pointer;
-    position:relative;
-    overflow:hidden;
-    border-radius:3px;
+  .mob-gal-item,.mob-gal-wide{
+    aspect-ratio:1/1!important;
+    background:#0f0909!important;
+    cursor:pointer!important;
+    position:relative!important;
+    overflow:hidden!important;
+    border-radius:0!important;
   }
-  /* 5번째 아이템 2열 전체 너비 — aspect-ratio 16/10 유지, 스케일 0.27로 정확히 맞춤 */
-  .mob-gal-wide{grid-column:span 2!important;aspect-ratio:16/10!important;}
-  /* 아이프레임 스케일 — 2열 기준 */
-  .mob-gal-item iframe{
-    position:absolute;left:0;top:0;
-    width:1440px;height:900px;
-    border:none;
-    transform-origin:top left;
-    transform:scale(0.134)!important;
-    pointer-events:none;
+  /* 모든 아이프레임 — 수평 센터 크롭 */
+  .mob-gal-item iframe,
+  .mob-gal-wide iframe{
+    position:absolute!important;
+    width:1440px!important;height:900px!important;
+    border:none!important;
+    transform-origin:top left!important;
+    transform:scale(0.1448)!important;
+    left:-39px!important;
+    top:0!important;
+    pointer-events:none!important;
+    max-width:none!important;
   }
-  /* 개별 top 오프셋 초기화 */
-  .mob-gal-item:nth-child(2) iframe,
-  .mob-gal-item:nth-child(3) iframe,
-  .mob-gal-item:nth-child(4) iframe{top:0!important;}
-  /* 5번째 (full-width) — 더 큰 스케일 */
-  .mob-gal-wide iframe{transform:scale(0.27)!important;top:0!important;}
+  /* mob-gal-wide → 3열 전체 (1행 = 피처드) */
+  .mob-gal-wide{
+    grid-column:1 / -1!important;
+    aspect-ratio:3/1!important;
+  }
+  .mob-gal-wide iframe{
+    transform:scale(0.273)!important;
+    left:0!important;
+    top:-16px!important;
+  }
 
-  /* 썸네일 라벨 오버레이 */
+  /* 섹션 번호 — 우상단 배지 (Instagram 느낌) */
   .mob-gal-label{
-    position:absolute;bottom:0;left:0;right:0;
-    background:linear-gradient(transparent 0%,rgba(0,0,0,0.72) 100%);
-    padding:18px 10px 7px;
-    font-family:'Space Grotesk',sans-serif;
-    font-size:9px;font-weight:700;
-    letter-spacing:.20em;text-transform:uppercase;
-    color:rgba(255,180,162,.78);
-    pointer-events:none;
+    position:absolute!important;
+    top:7px!important;right:8px!important;
+    bottom:auto!important;left:auto!important;
+    background:none!important;
+    padding:0!important;
+    font-family:'Space Grotesk',sans-serif!important;
+    font-size:9px!important;font-weight:700!important;
+    letter-spacing:.18em!important;
+    text-transform:uppercase!important;
+    color:rgba(255,180,162,.55)!important;
+    pointer-events:none!important;
   }
 
-  /* ── 위클리 투두 캘린더 ── */
-  #todoCalHead{gap:2px!important;margin-bottom:2px!important;}
+  /* ══ 8. 위클리 투두 캘린더 ══ */
+  #todoCalHead{gap:1px!important;margin-bottom:2px!important;}
   #todoCalGrid{gap:2px!important;}
-  .todo-cal-cell{min-height:68px!important;padding:4px 3px!important;}
+  .todo-cal-cell{min-height:64px!important;padding:4px 3px!important;}
   .todo-cal-num{font-size:11px!important;}
   .todo-item span{font-size:10px!important;}
   .todo-inline-input{font-size:11px!important;}
-  #page-todo .mb-10{margin-bottom:20px!important;}
+  #page-todo .mb-10{margin-bottom:18px!important;}
 
-  /* ── 기타 페이지 패딩 ── */
+  /* ══ 9. 기타 페이지 ══ */
   #page-memo,#page-files,#page-music{
     padding-left:16px!important;padding-right:16px!important;
+    overflow-x:hidden!important;
   }
 }
 </style>
@@ -900,11 +940,11 @@
 
     <!-- Mobile gallery -->
       <div id="mobileGalleryGrid" style="display:none;">
-        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">01 · Editorial</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">02 · Lowtheory</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">03 · Moodboard</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">04 · Archive</div></div>
-        <div class="mob-gal-item mob-gal-wide" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="lazy" sandbox="allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">05 · Grid</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">01</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">02</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">03</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">04</div></div>
+        <div class="mob-gal-item mob-gal-wide" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">05</div></div>
       </div>
 
     <!-- Lightbox -->
