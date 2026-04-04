@@ -427,6 +427,63 @@
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ── Hub 말풍선 메모 ── */
+.hub-bubble-wrap{position:relative;max-width:340px;}
+.hub-bubble-label{
+  font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,180,162,.35);margin-bottom:10px;
+}
+.hub-bubble{
+  position:relative;
+  background:#191616;
+  border:1px solid rgba(255,180,162,.16);
+  border-radius:4px 16px 16px 16px;
+  padding:18px 20px 18px;
+  min-height:88px;
+}
+/* 꼬리 — 왼쪽 위 모서리 */
+.hub-bubble::before{
+  content:'';position:absolute;
+  left:-10px;top:0px;
+  border-top:10px solid rgba(255,180,162,.16);
+  border-left:10px solid transparent;
+}
+.hub-bubble::after{
+  content:'';position:absolute;
+  left:-8px;top:0px;
+  border-top:9px solid #191616;
+  border-left:9px solid transparent;
+}
+.hub-bubble-memo{
+  font-family:'Inter',sans-serif;
+  font-size:13px;line-height:1.75;
+  color:rgba(255,255,255,.65);
+  outline:none;min-height:52px;
+  cursor:text;white-space:pre-wrap;word-break:break-word;
+  caret-color:#ffb4a2;
+}
+.hub-bubble-memo:empty::before{
+  content:attr(data-ph);
+  color:rgba(255,255,255,.16);pointer-events:none;display:block;
+}
+.hub-bubble-footer{
+  display:flex;justify-content:flex-end;margin-top:10px;
+  border-top:1px solid rgba(255,255,255,.04);padding-top:8px;
+}
+.hub-bubble-save{
+  font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,180,162,.3);cursor:pointer;
+  transition:color .2s;background:none;border:none;padding:0;
+}
+.hub-bubble-save:hover{color:rgba(255,180,162,.7);}
+.hub-bubble-saved{
+  font-family:'Space Grotesk',sans-serif;font-size:9px;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,180,162,.4);opacity:0;transition:opacity .4s;
+}
+
 /* Todo day cells */
 .todo-day{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:10px;padding:10px 8px;min-height:90px;transition:.2s;}
 .todo-day:hover{border-color:rgba(255,180,162,.12);}
@@ -573,7 +630,15 @@
         <h1 class="font-headline text-7xl md:text-[10rem] font-bold tracking-tighter uppercase leading-[.85] text-on-surface">MK.HUB</h1>
       </div>
       <div class="md:col-span-4 pb-4">
-        <p class="font-body text-lg md:text-xl text-on-surface-variant max-w-sm leading-relaxed">A curated intersection of brutalist architecture and cinematic rhythm. MK.HUB is your obsidian landscape for technical precision.</p>
+        <div class="hub-bubble-wrap">
+          <div class="hub-bubble-label">— note</div>
+          <div class="hub-bubble">
+            <div class="hub-bubble-memo" id="hubBubbleMemo" contenteditable="true" data-ph="메모…"></div>
+            <div class="hub-bubble-footer">
+              <span class="hub-bubble-saved" id="hubBubbleSaved">저장됨</span>
+            </div>
+          </div>
+        </div>
         <div class="flex items-center gap-4 mt-4"><span class="font-label text-[10px] tracking-[.15em] uppercase text-outline">Status: Online</span><span class="text-[#353535]">——</span><span class="font-label text-[10px] tracking-[.15em] uppercase text-outline">V.1.0.0</span></div>
       </div>
     </section>
@@ -2305,6 +2370,21 @@ window.dlFile=dlFile;window.rmFile=rmFile;
 function notifyLtFrame(val){const f=document.getElementById('ltScaleFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyEdFrame(val){const f=document.getElementById('edLayoutFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyMbFrame(val){const f=document.getElementById('mbFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
+// ── 말풍선 메모 ──
+(function(){
+  var el=document.getElementById('hubBubbleMemo');
+  var saved=document.getElementById('hubBubbleSaved');
+  if(!el)return;
+  try{var s=localStorage.getItem('hubBubbleMemo');if(s)el.textContent=s;}catch(e){}
+  var t;
+  el.addEventListener('input',function(){
+    clearTimeout(t);
+    t=setTimeout(function(){
+      try{localStorage.setItem('hubBubbleMemo',el.textContent);}catch(e){}
+      if(saved){saved.style.opacity='1';setTimeout(function(){saved.style.opacity='0';},1200);}
+    },600);
+  });
+})();
 function notifyP4Frame(val){const f=document.getElementById('p4Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyP5Frame(val){const f=document.getElementById('p5Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyAllFrames(val){notifyLtFrame(val);notifyEdFrame(val);notifyMbFrame(val);notifyP4Frame(val);notifyP5Frame(val);}
