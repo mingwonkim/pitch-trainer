@@ -619,62 +619,53 @@
   .gallery-marquee-item{font-size:clamp(28px,6vw,44px)!important;}
   .gallery-marquee{will-change:transform;}
 
-  /* ══ 7. Instagram 스타일 갤러리 그리드 ══
+  /* ══ 7. 세로 스크롤 피드 갤러리 ══
      iPhone 16 Pro 393px 기준
-     3열 × 1px 갭 = 각 셀 130.3px
-     iframe 1440×900 → scale(0.1448) = 208×130px
-     left:-39px으로 수평 센터 크롭 */
+     한 카드 = 전체 너비, 높이 246px
+     iframe 1440×900 → scale(0.273) = 393×245px */
   #mobileGalleryGrid{
-    display:grid!important;
-    grid-template-columns:repeat(3,1fr)!important;
-    gap:1.5px!important;
-    margin-top:1.5px!important;
-    background:#0a0808!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:0!important;
+    margin-top:48px!important;
+    background:transparent!important;
   }
-  .mob-gal-item,.mob-gal-wide{
-    aspect-ratio:1/1!important;
+  .mob-gal-item{
+    width:100%!important;
+    height:246px!important;
+    aspect-ratio:auto!important;
     background:#0f0909!important;
     cursor:pointer!important;
     position:relative!important;
     overflow:hidden!important;
     border-radius:0!important;
+    border-top:1px solid #1a1414!important;
   }
-  /* 모든 아이프레임 — 수평 센터 크롭 */
-  .mob-gal-item iframe,
-  .mob-gal-wide iframe{
+  /* 피드 카드 아이프레임 */
+  .mob-gal-item iframe{
     position:absolute!important;
     width:1440px!important;height:900px!important;
     border:none!important;
     transform-origin:top left!important;
-    transform:scale(0.1448)!important;
-    left:-39px!important;
+    transform:scale(0.273)!important;
+    left:0!important;
     top:0!important;
     pointer-events:none!important;
     max-width:none!important;
   }
-  /* mob-gal-wide → 3열 전체 (1행 = 피처드) */
-  .mob-gal-wide{
-    grid-column:1 / -1!important;
-    aspect-ratio:3/1!important;
-  }
-  .mob-gal-wide iframe{
-    transform:scale(0.273)!important;
-    left:0!important;
-    top:-16px!important;
-  }
 
-  /* 섹션 번호 — 우상단 배지 (Instagram 느낌) */
+  /* 섹션 라벨 — 좌하단 */
   .mob-gal-label{
     position:absolute!important;
-    top:7px!important;right:8px!important;
-    bottom:auto!important;left:auto!important;
+    bottom:10px!important;left:12px!important;
+    top:auto!important;right:auto!important;
     background:none!important;
     padding:0!important;
     font-family:'Space Grotesk',sans-serif!important;
     font-size:9px!important;font-weight:700!important;
     letter-spacing:.18em!important;
     text-transform:uppercase!important;
-    color:rgba(255,180,162,.55)!important;
+    color:rgba(255,180,162,.6)!important;
     pointer-events:none!important;
   }
 
@@ -940,11 +931,11 @@
 
     <!-- Mobile gallery -->
       <div id="mobileGalleryGrid" style="display:none;">
-        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">01</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">02</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">03</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">04</div></div>
-        <div class="mob-gal-item mob-gal-wide" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">05</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">01 · Editorial</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">02 · Lowtheory</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">03 · Moodboard</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">04 · Archive</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">05 · Grid</div></div>
       </div>
 
     <!-- Lightbox -->
@@ -2637,6 +2628,15 @@ function _loadSlides(){var s=document.getElementById('picSlider');document.getEl
 function openPicExpand(src){_picIdx=_pics.indexOf(src);if(_picIdx<0)_picIdx=0;document.getElementById('picExpandModal').style.display='block';_loadSlides();var s=document.getElementById('picSlider');s.ontouchstart=function(e){if(e.touches.length===1){_touchX0=e.touches[0].clientX;_touchDX=0;_swiping=true;s.style.transition='none';}};s.ontouchmove=function(e){if(!_swiping)return;_touchDX=e.touches[0].clientX-_touchX0;if((_picIdx===0&&_touchDX>0)||(_picIdx===_pics.length-1&&_touchDX<0))_touchDX*=0.3;s.style.transform='translateX(calc(-100% + '+_touchDX+'px))';};s.ontouchend=function(){if(!_swiping)return;_swiping=false;var vw=window.innerWidth;s.style.transition='transform .3s ease';if(_touchDX<-vw*0.2&&_picIdx<_pics.length-1){s.style.transform='translateX(-200%)';setTimeout(function(){_picIdx++;_loadSlides();},320);}else if(_touchDX>vw*0.2&&_picIdx>0){s.style.transform='translateX(0%)';setTimeout(function(){_picIdx--;_loadSlides();},320);}else{s.style.transform='translateX(-100%)';};};}
 function closePicExpand(){document.getElementById('picExpandModal').style.display='none';['picSlide0','picSlide1','picSlide2'].forEach(function(id){document.getElementById(id).src='';});document.getElementById('picSlider').ontouchstart=null;}
 window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
+/* ── iOS 스크롤 락: 모달 열릴 때 메인 스크롤 차단 ── */
+(function(){
+  var savedTop=0;
+  function lockBody(){savedTop=window.scrollY||0;document.body.style.overflow='hidden';document.body.style.position='fixed';document.body.style.top='-'+savedTop+'px';document.body.style.width='100%';}
+  function unlockBody(){document.body.style.overflow='';document.body.style.position='';document.body.style.top='';document.body.style.width='';window.scrollTo(0,savedTop);}
+  var modal=document.getElementById('picExpandModal');
+  if(!modal)return;
+  new MutationObserver(function(muts){muts.forEach(function(m){if(m.attributeName==='style'){var d=modal.style.display;if(!d||d==='none'){unlockBody();}else{lockBody();}}});}).observe(modal,{attributes:true});
+})();
 /* ===== Init ===== */
 (function(){
   const nav=document.querySelector('nav.fixed.top-0');
