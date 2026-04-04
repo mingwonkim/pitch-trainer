@@ -437,10 +437,10 @@
 .hub-bubble{
   position:relative;
   background-color:#faf9f6;
-  background-image:linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px);
-  background-position:44px 96px,44px 148px;
-  background-size:calc(100% - 88px) 1px,calc(100% - 88px) 1px;
-  background-repeat:no-repeat,no-repeat;
+  background-image:linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px);
+  background-position:44px 56px,44px 96px,44px 148px;
+  background-size:calc(100% - 88px) 1px,calc(100% - 88px) 1px,calc(100% - 88px) 1px;
+  background-repeat:no-repeat,no-repeat,no-repeat;
   border-radius:96px;
   padding:36px 44px 30px;
   min-height:160px;
@@ -496,8 +496,9 @@
 .hub-page-dots{display:flex;gap:6px;align-items:center;}
 .hub-pdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.18);transition:background .25s,transform .25s;display:inline-block;}
 .hub-pdot.active{background:rgba(255,255,255,0.62);transform:scale(1.3);}
-.hub-quote-text{font-family:'Fredoka',sans-serif;font-size:18px;font-weight:500;line-height:1.68;color:rgba(28,18,18,0.80);margin-bottom:10px;min-height:58px;}
-.hub-quote-author{font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(20,15,15,0.32);text-align:right;}
+.hub-quote-text{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:600;line-height:1.75;color:rgba(28,18,18,0.74);margin-bottom:10px;min-height:72px;}
+.hub-quote-author{font-family:'Fredoka',sans-serif;font-size:14px;font-weight:500;color:rgba(28,18,18,0.45);text-align:right;}
+.hub-bubble.hub-no-lines{background-image:none;}
 
 /* Todo day cells */
 .todo-day{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:10px;padding:10px 8px;min-height:90px;transition:.2s;}
@@ -587,16 +588,16 @@
   }
 
   /* ══ 4. 말풍선 (모바일 축소) ══ */
-  .hub-bubble-wrap{max-width:82%!important;padding-bottom:44px!important;}
+  .hub-bubble-wrap{max-width:100%!important;padding-bottom:44px!important;}
   .hub-bubble{
     border-radius:64px!important;
     padding:20px 24px 16px!important;
     min-height:84px!important;
     filter:drop-shadow(0 6px 20px rgba(0,0,0,0.45))!important;
-    background-position:24px 72px,24px 112px!important;
-    background-size:calc(100% - 48px) 1px,calc(100% - 48px) 1px!important;
+    background-position:24px 40px,24px 72px,24px 112px!important;
+    background-size:calc(100% - 48px) 1px,calc(100% - 48px) 1px,calc(100% - 48px) 1px!important;
   }
-  .hub-quote-text{font-size:15px!important;min-height:44px!important;}
+  .hub-quote-text{font-size:16px!important;min-height:48px!important;}
   .hub-nav-btn{font-size:22px!important;}
   .hub-bubble::before{
     width:18px!important;height:18px!important;
@@ -1410,17 +1411,19 @@ const hubMemo2Doc=doc(db,'mk_app','hub_memo2');
   var _pages=[document.getElementById('hubPage0'),document.getElementById('hubPage1'),document.getElementById('hubPage2')];
   var _dots=document.querySelectorAll('.hub-pdot');
   var _footer=document.getElementById('hubBubbleFooter');
+  var _bubble=document.querySelector('.hub-bubble');
   function _showPage(n){
     _pages.forEach(function(p,i){if(p)p.style.display=i===n?'':'none';});
     _dots.forEach(function(d,i){d.classList.toggle('active',i===n);});
     if(_footer)_footer.style.display=n>0?'':'none';
+    if(_bubble)_bubble.classList.toggle('hub-no-lines',n===0);
     _pg=n;
   }
   var prevBtn=document.getElementById('hubBubblePrev');
   var nextBtn=document.getElementById('hubBubbleNext');
   if(prevBtn)prevBtn.addEventListener('click',function(){_showPage((_pg+2)%3);});
   if(nextBtn)nextBtn.addEventListener('click',function(){_showPage((_pg+1)%3);});
-  _showPage(0);
+  _showPage(1);
 
   // 메모 1 — Firestore 실시간 동기화
   var el=document.getElementById('hubBubbleMemo');
