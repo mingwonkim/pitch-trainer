@@ -436,7 +436,11 @@
 }
 .hub-bubble{
   position:relative;
-  background:#faf9f6;
+  background-color:#faf9f6;
+  background-image:linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px);
+  background-position:44px 96px,44px 148px;
+  background-size:calc(100% - 88px) 1px,calc(100% - 88px) 1px;
+  background-repeat:no-repeat,no-repeat;
   border-radius:96px;
   padding:36px 44px 30px;
   min-height:160px;
@@ -486,6 +490,14 @@
   letter-spacing:.12em;text-transform:uppercase;
   color:rgba(0,0,0,0.30);opacity:0;transition:opacity .4s;
 }
+.hub-bubble-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 2px;}
+.hub-nav-btn{background:none;border:none;color:rgba(255,255,255,0.28);font-size:28px;line-height:1;cursor:pointer;padding:0 6px;border-radius:50%;transition:color .2s;font-family:'Nunito',sans-serif;}
+.hub-nav-btn:hover{color:rgba(255,255,255,0.68);}
+.hub-page-dots{display:flex;gap:6px;align-items:center;}
+.hub-pdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.18);transition:background .25s,transform .25s;display:inline-block;}
+.hub-pdot.active{background:rgba(255,255,255,0.62);transform:scale(1.3);}
+.hub-quote-text{font-family:'Fredoka',sans-serif;font-size:18px;font-weight:500;line-height:1.68;color:rgba(28,18,18,0.80);margin-bottom:10px;min-height:58px;}
+.hub-quote-author{font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(20,15,15,0.32);text-align:right;}
 
 /* Todo day cells */
 .todo-day{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:10px;padding:10px 8px;min-height:90px;transition:.2s;}
@@ -581,7 +593,11 @@
     padding:20px 24px 16px!important;
     min-height:84px!important;
     filter:drop-shadow(0 6px 20px rgba(0,0,0,0.45))!important;
+    background-position:24px 72px,24px 112px!important;
+    background-size:calc(100% - 48px) 1px,calc(100% - 48px) 1px!important;
   }
+  .hub-quote-text{font-size:15px!important;min-height:44px!important;}
+  .hub-nav-btn{font-size:22px!important;}
   .hub-bubble::before{
     width:18px!important;height:18px!important;
     bottom:-20px!important;left:44px!important;
@@ -780,9 +796,27 @@
       </div>
       <div class="md:col-span-4 pb-4">
         <div class="hub-bubble-wrap">
+          <div class="hub-bubble-nav-row">
+            <button class="hub-nav-btn" id="hubBubblePrev">&#8249;</button>
+            <div class="hub-page-dots">
+              <span class="hub-pdot active" data-pg="0"></span>
+              <span class="hub-pdot" data-pg="1"></span>
+              <span class="hub-pdot" data-pg="2"></span>
+            </div>
+            <button class="hub-nav-btn" id="hubBubbleNext">&#8250;</button>
+          </div>
           <div class="hub-bubble">
-            <div class="hub-bubble-memo" id="hubBubbleMemo" contenteditable="true" data-ph="메모…"></div>
-            <div class="hub-bubble-footer">
+            <div class="hub-page" id="hubPage0">
+              <div class="hub-quote-text" id="hubQuoteText"></div>
+              <div class="hub-quote-author" id="hubQuoteAuthor"></div>
+            </div>
+            <div class="hub-page" id="hubPage1" style="display:none">
+              <div class="hub-bubble-memo" id="hubBubbleMemo" contenteditable="true"></div>
+            </div>
+            <div class="hub-page" id="hubPage2" style="display:none">
+              <div class="hub-bubble-memo" id="hubBubbleMemo2" contenteditable="true"></div>
+            </div>
+            <div class="hub-bubble-footer" id="hubBubbleFooter" style="display:none">
               <span class="hub-bubble-saved" id="hubBubbleSaved">저장됨</span>
             </div>
           </div>
@@ -1351,26 +1385,71 @@ const filesCol=collection(db,'mk_app','data','files'),fileFoldersCol=collection(
 const bgImagesDoc=doc(db,'mk_app','bg_images');
 const todosCol=collection(db,'mk_app','data','todos');
 const hubMemoDoc=doc(db,'mk_app','hub_memo');
+const hubMemo2Doc=doc(db,'mk_app','hub_memo2');
 
-/* ===== Hub Bubble Memo — Firestore 실시간 동기화 ===== */
+/* ===== Hub Bubble 3-page (명언 + 메모1 + 메모2) ===== */
 (async function(){
+  // 명언 — GitHub에서 fetch
+  fetch('https://raw.githubusercontent.com/mingwonkim/pitch-trainer/main/quotes.html')
+    .then(function(r){return r.text();})
+    .then(function(html){
+      var p=new DOMParser(),doc=p.parseFromString(html,'text/html'),q=[];
+      doc.querySelectorAll('.card').forEach(function(c){
+        var t=c.querySelector('.text'),a=c.querySelector('.author');
+        if(t){var tx=t.textContent.trim().replace(/^"|"$/g,'');q.push({t:tx,a:a?a.textContent.trim().replace(/^— /,''):''});}
+      });
+      if(!q.length)return;
+      var i=Math.floor(Date.now()/86400000)%q.length;
+      var qtEl=document.getElementById('hubQuoteText'),qaEl=document.getElementById('hubQuoteAuthor');
+      if(qtEl)qtEl.textContent='“'+q[i].t+'”';
+      if(qaEl)qaEl.textContent=q[i].a?'— '+q[i].a:'';
+    }).catch(function(){});
+
+  // 페이지 네비게이션
+  var _pg=0;
+  var _pages=[document.getElementById('hubPage0'),document.getElementById('hubPage1'),document.getElementById('hubPage2')];
+  var _dots=document.querySelectorAll('.hub-pdot');
+  var _footer=document.getElementById('hubBubbleFooter');
+  function _showPage(n){
+    _pages.forEach(function(p,i){if(p)p.style.display=i===n?'':'none';});
+    _dots.forEach(function(d,i){d.classList.toggle('active',i===n);});
+    if(_footer)_footer.style.display=n>0?'':'none';
+    _pg=n;
+  }
+  var prevBtn=document.getElementById('hubBubblePrev');
+  var nextBtn=document.getElementById('hubBubbleNext');
+  if(prevBtn)prevBtn.addEventListener('click',function(){_showPage((_pg+2)%3);});
+  if(nextBtn)nextBtn.addEventListener('click',function(){_showPage((_pg+1)%3);});
+  _showPage(0);
+
+  // 메모 1 — Firestore 실시간 동기화
   var el=document.getElementById('hubBubbleMemo');
   var savedEl=document.getElementById('hubBubbleSaved');
-  if(!el)return;
-  // 초기 로드
-  try{var snap=await getDoc(hubMemoDoc);if(snap.exists()&&snap.data().text!==undefined)el.textContent=snap.data().text;}catch(e){}
-  // 다른 기기에서 저장 시 실시간 반영 (포커스 없을 때만)
-  onSnapshot(hubMemoDoc,function(snap){
-    if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el)el.textContent=snap.data().text;
-  });
-  // 입력 시 Firestore 저장 (600ms 디바운스)
-  var t;
-  el.addEventListener('input',function(){
-    clearTimeout(t);
-    t=setTimeout(async function(){
-      try{await setDoc(hubMemoDoc,{text:el.textContent});if(savedEl){savedEl.style.opacity='1';setTimeout(function(){savedEl.style.opacity='0';},1200);}}catch(e){}
-    },600);
-  });
+  if(el){
+    try{var snap=await getDoc(hubMemoDoc);if(snap.exists()&&snap.data().text!==undefined)el.textContent=snap.data().text;}catch(e){}
+    onSnapshot(hubMemoDoc,function(snap){if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el)el.textContent=snap.data().text;});
+    var t1;
+    el.addEventListener('input',function(){
+      clearTimeout(t1);
+      t1=setTimeout(async function(){
+        try{await setDoc(hubMemoDoc,{text:el.textContent});if(savedEl){savedEl.style.opacity='1';setTimeout(function(){savedEl.style.opacity='0';},1200);}}catch(e){}
+      },600);
+    });
+  }
+
+  // 메모 2 — Firestore 실시간 동기화
+  var el2=document.getElementById('hubBubbleMemo2');
+  if(el2){
+    try{var snap2=await getDoc(hubMemo2Doc);if(snap2.exists()&&snap2.data().text!==undefined)el2.textContent=snap2.data().text;}catch(e){}
+    onSnapshot(hubMemo2Doc,function(snap){if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el2)el2.textContent=snap.data().text;});
+    var t2;
+    el2.addEventListener('input',function(){
+      clearTimeout(t2);
+      t2=setTimeout(async function(){
+        try{await setDoc(hubMemo2Doc,{text:el2.textContent});if(savedEl){savedEl.style.opacity='1';setTimeout(function(){savedEl.style.opacity='0';},1200);}}catch(e){}
+      },600);
+    });
+  }
 })();
 
 /* ===== Passwords ===== */
