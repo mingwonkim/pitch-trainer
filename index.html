@@ -532,9 +532,8 @@
   from{opacity:0;transform:scale(0.88) translateY(14px);}
   to{opacity:1;transform:scale(1) translateY(0);}
 }
-/* ── 픽처 확장 모달 슬라이드 ── */
-.pic-snap-slide{flex:none;width:100%;height:100%;scroll-snap-align:start;overflow:hidden;}
-#picSlider::-webkit-scrollbar{display:none;}
+/* ── 픽처 확장 모달 ── */
+.mob-gal-label{display:none!important;}  /* 핑크 라벨 완전 숨김 */
 
 /* ════════════════════════════════════════════
    MOBILE — mkhub2 전용 (max-width: 767px)
@@ -896,7 +895,7 @@
           <div class="gal-sep-rule"></div>
         </div>
       </div>
-      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:40px;"></iframe>
+      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="eager" style="width:100%;height:100px;border:none;display:block;margin-top:40px;"></iframe>
 
       <!-- ── 02 LOWTHEORY ── -->
       <div class="gal-sep" style="margin-top:100px;">
@@ -906,7 +905,7 @@
           <div class="gal-sep-rule"></div>
         </div>
       </div>
-      <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;overflow:hidden;" loading="lazy"></iframe>
+      <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;overflow:hidden;" loading="eager"></iframe>
 
       <!-- ── 03 MOODBOARD ── -->
       <div class="gal-sep" style="margin-top:60px;">
@@ -916,7 +915,7 @@
           <div class="gal-sep-rule"></div>
         </div>
       </div>
-      <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
+      <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="eager"></iframe>
 
       <!-- ── 04 ARCHIVE ── -->
       <div class="gal-sep" style="margin-top:120px;">
@@ -926,7 +925,7 @@
           <div class="gal-sep-rule"></div>
         </div>
       </div>
-      <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
+      <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="eager"></iframe>
 
       <!-- ── 05 GRID ── -->
       <div class="gal-sep" style="margin-top:180px;">
@@ -936,7 +935,7 @@
           <div class="gal-sep-rule"></div>
         </div>
       </div>
-      <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
+      <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="eager"></iframe>
 
     <!-- Mobile gallery -->
       <div id="mobileGalleryGrid" style="display:none;">
@@ -2640,47 +2639,97 @@ function renderTodoCal(){
   grid.innerHTML=html;
 }
 /* ===== Picture Gallery ===== */
-var _pics=['1picture.html','2picture.html','3picture.html','4picture.html','5picture.html'];
-var _picIdx=0,_picScrollTimer=null;
+/* 1-4picture: 스와이프로 이동 (투명 오버레이가 touch 처리, iframe 간섭 없음)
+   5picture: 오버레이가 vertical scroll을 iframe.contentWindow.scrollBy()로 전달 */
+var _pic14=['1picture.html','2picture.html','3picture.html','4picture.html'];
+var _picIdx=0;
 
-function _updatePicDots(){
-  document.getElementById('picExpandTitle').textContent=(_picIdx+1<10?'0':'')+(_picIdx+1)+' / 05';
-  document.getElementById('picDots').innerHTML=_pics.map(function(_,i){
-    return '<div style="width:'+(i===_picIdx?'18px':'6px')+';height:6px;border-radius:3px;background:'+(i===_picIdx?'#ffb4a2':'rgba(255,180,162,.3)')+';transition:all .3s ease;flex-shrink:0;"></div>';
+function _updateDots14(){
+  var t=document.getElementById('picExpandTitle');
+  var d=document.getElementById('picDots');
+  t.textContent='0'+(_picIdx+1)+' / 04';
+  d.innerHTML=_pic14.map(function(_,i){
+    return '<div style="width:'+(i===_picIdx?'18px':'6px')+';height:6px;border-radius:3px;background:'+(i===_picIdx?'#ffb4a2':'rgba(255,180,162,.3)')+';transition:all .3s;flex-shrink:0;"></div>';
   }).join('');
 }
 
+function _loadFrame(src, enableScroll){
+  var fr=document.getElementById('picMainFrame');
+  fr.onload=null;
+  fr.src=src;
+  if(enableScroll){
+    fr.onload=function(){
+      try{
+        var s=this.contentDocument.createElement('style');
+        s.textContent='html,body{overflow-y:scroll!important;overflow-x:hidden!important;height:auto!important;}';
+        this.contentDocument.head.appendChild(s);
+      }catch(e){}
+    };
+  }
+}
+
+function _clearOverlay(){
+  var ov=document.getElementById('picTouchOverlay');
+  if(ov._tm){ov.removeEventListener('touchmove',ov._tm);delete ov._tm;}
+  ov.ontouchstart=null;ov.ontouchend=null;
+}
+
+function _setupSwipe14(){
+  var ov=document.getElementById('picTouchOverlay');
+  _clearOverlay();
+  var sx,sy,isH=null;
+  ov.ontouchstart=function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;isH=null;};
+  ov._tm=function(e){
+    var dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
+    if(isH===null&&(Math.abs(dx)>8||Math.abs(dy)>8))isH=Math.abs(dx)>=Math.abs(dy);
+    if(isH)e.preventDefault();
+  };
+  ov.addEventListener('touchmove',ov._tm,{passive:false});
+  ov.ontouchend=function(e){
+    if(!isH)return;
+    var dx=e.changedTouches[0].clientX-sx;
+    if(dx<-50&&_picIdx<3){_picIdx++;_loadFrame(_pic14[_picIdx],false);_updateDots14();}
+    else if(dx>50&&_picIdx>0){_picIdx--;_loadFrame(_pic14[_picIdx],false);_updateDots14();}
+  };
+}
+
+function _setupScroll5(){
+  var ov=document.getElementById('picTouchOverlay');
+  _clearOverlay();
+  var lastY=0;
+  ov.ontouchstart=function(e){lastY=e.touches[0].clientY;};
+  ov._tm=function(e){
+    e.preventDefault();
+    var y=e.touches[0].clientY;
+    try{document.getElementById('picMainFrame').contentWindow.scrollBy(0,lastY-y);}catch(ex){}
+    lastY=y;
+  };
+  ov.addEventListener('touchmove',ov._tm,{passive:false});
+}
+
 function openPicExpand(src){
-  _picIdx=_pics.indexOf(src);
-  if(_picIdx<0)_picIdx=0;
-  /* 모든 슬라이드 src 로드 */
-  _pics.forEach(function(p,i){document.getElementById('picSlide'+i).src=p;});
+  var dots=document.getElementById('picDots');
   document.getElementById('picExpandModal').style.display='block';
-  /* layout 후 즉시 해당 슬라이드로 이동 */
-  requestAnimationFrame(function(){
-    requestAnimationFrame(function(){
-      var slider=document.getElementById('picSlider');
-      slider.style.scrollBehavior='auto';
-      slider.scrollLeft=_picIdx*slider.offsetWidth;
-      _updatePicDots();
-      /* 스크롤 위치로 현재 슬라이드 인덱스 추적 */
-      slider.onscroll=function(){
-        if(_picScrollTimer)clearTimeout(_picScrollTimer);
-        _picScrollTimer=setTimeout(function(){
-          var idx=Math.round(slider.scrollLeft/Math.max(slider.offsetWidth,1));
-          if(idx>=0&&idx<_pics.length&&idx!==_picIdx){_picIdx=idx;_updatePicDots();}
-        },80);
-      };
-    });
-  });
+  if(src==='5picture.html'){
+    dots.style.display='none';
+    document.getElementById('picExpandTitle').textContent='05 · GRID';
+    _loadFrame('5picture.html',true);
+    _setupScroll5();
+  }else{
+    _picIdx=_pic14.indexOf(src);
+    if(_picIdx<0)_picIdx=0;
+    dots.style.display='flex';
+    _loadFrame(src,false);
+    _updateDots14();
+    _setupSwipe14();
+  }
 }
 
 function closePicExpand(){
-  var modal=document.getElementById('picExpandModal');
-  modal.style.display='none';
-  var slider=document.getElementById('picSlider');
-  slider.onscroll=null;
-  _pics.forEach(function(_,i){document.getElementById('picSlide'+i).src='';});
+  document.getElementById('picExpandModal').style.display='none';
+  _clearOverlay();
+  document.getElementById('picMainFrame').src='';
+  document.getElementById('picMainFrame').onload=null;
 }
 window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
 
@@ -2948,16 +2997,12 @@ renderGallery();
     <button onclick="closePicExpand()" style="pointer-events:auto;background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;">← Back</button>
     <span id="picExpandTitle" style="flex:1;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(255,180,162,.5);padding-right:80px;"></span>
   </div>
-  <!-- CSS scroll-snap 슬라이더: touch-action:pan-y → 내부 iframe 세로스크롤 + 부모 가로스와이프 동시 작동 -->
-  <div id="picSlider" style="position:absolute;inset:0;display:flex;overflow-x:scroll;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;">
-    <div class="pic-snap-slide"><iframe id="picSlide0" src="" style="width:100%;height:100%;border:none;display:block;touch-action:pan-y;" allow="autoplay" scrolling="yes"></iframe></div>
-    <div class="pic-snap-slide"><iframe id="picSlide1" src="" style="width:100%;height:100%;border:none;display:block;touch-action:pan-y;" allow="autoplay" scrolling="yes"></iframe></div>
-    <div class="pic-snap-slide"><iframe id="picSlide2" src="" style="width:100%;height:100%;border:none;display:block;touch-action:pan-y;" allow="autoplay" scrolling="yes"></iframe></div>
-    <div class="pic-snap-slide"><iframe id="picSlide3" src="" style="width:100%;height:100%;border:none;display:block;touch-action:pan-y;" allow="autoplay" scrolling="yes"></iframe></div>
-    <div class="pic-snap-slide"><iframe id="picSlide4" src="" style="width:100%;height:100%;border:none;display:block;touch-action:pan-y;" allow="autoplay" scrolling="yes"></iframe></div>
-  </div>
-  <!-- 하단 인디케이터 닷 -->
-  <div id="picDots" style="position:absolute;bottom:20px;left:0;right:0;z-index:20;display:flex;justify-content:center;gap:6px;pointer-events:none;"></div>
+  <!-- 단일 iframe (전체화면) -->
+  <iframe id="picMainFrame" src="" style="position:absolute;inset:0;width:100%;height:100%;border:none;display:block;" allow="autoplay" scrolling="no"></iframe>
+  <!-- 투명 오버레이: 스와이프(1-4) 또는 스크롤(5) 처리 -->
+  <div id="picTouchOverlay" style="position:absolute;inset:0;z-index:10;"></div>
+  <!-- 닷 인디케이터 (1-4picture용) -->
+  <div id="picDots" style="position:absolute;bottom:20px;left:0;right:0;z-index:20;display:none;justify-content:center;gap:6px;pointer-events:none;"></div>
 </div>
 <div class="page min-h-screen pt-24 pb-40 px-2 md:px-6" id="page-todo">
   <div class="w-full max-w-5xl mx-auto">
