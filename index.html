@@ -437,10 +437,6 @@
 .hub-bubble{
   position:relative;
   background-color:#faf9f6;
-  background-image:linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px);
-  background-position:44px 80px,44px 115px,44px 150px,44px 185px;
-  background-size:calc(100% - 88px) 1px,calc(100% - 88px) 1px,calc(100% - 88px) 1px,calc(100% - 88px) 1px;
-  background-repeat:no-repeat,no-repeat,no-repeat,no-repeat;
   border-radius:96px;
   padding:36px 44px 30px;
   min-height:160px;
@@ -596,8 +592,6 @@
     padding:26px 30px 20px!important;
     min-height:130px!important;
     filter:drop-shadow(0 6px 20px rgba(0,0,0,0.45))!important;
-    background-position:30px 68px,30px 100px,30px 132px,30px 164px!important;
-    background-size:calc(100% - 60px) 1px,calc(100% - 60px) 1px,calc(100% - 60px) 1px,calc(100% - 60px) 1px!important;
   }
   .hub-quote-text{font-size:18px!important;min-height:56px!important;}
   .hub-nav-btn{font-size:24px!important;}
@@ -876,9 +870,9 @@
             </div>
           </div>
           <div class="space-y-8">
-            <div class="flex items-center gap-4 text-on-surface/60"><span class="material-symbols-outlined text-base text-[#FF3B00]">folder</span><span class="font-body text-sm">Project Archives</span></div>
-            <div class="flex items-center gap-4 text-on-surface/60"><span class="material-symbols-outlined text-base text-[#FF3B00]">image</span><span class="font-body text-sm">Visual References</span></div>
-            <div class="flex items-center gap-4 text-on-surface/60"><span class="material-symbols-outlined text-base text-[#FF3B00]">description</span><span class="font-body text-sm">Documents & Assets</span></div>
+            <div class="flex items-center gap-4 text-on-surface/60"><span class="material-symbols-outlined text-base text-[#FF3B00]">folder</span><span class="font-body text-sm" data-elabel="vault_line1">Project Archives</span></div>
+            <div class="flex items-center gap-4 text-on-surface/60"><span class="material-symbols-outlined text-base text-[#FF3B00]">image</span><span class="font-body text-sm" data-elabel="vault_line2">Visual References</span></div>
+            <div class="flex items-center gap-4 text-on-surface/60"><span class="material-symbols-outlined text-base text-[#FF3B00]">description</span><span class="font-body text-sm" data-elabel="vault_line3">Documents & Assets</span></div>
           </div>
         </div>
         <button class="w-full border border-[#353535] text-[#ffb4a2] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:bg-[#ffb4a2] group-hover:text-[#360e05] group-hover:border-[#ffb4a2] transition-all">Enter Vault →</button>
@@ -893,9 +887,9 @@
             <div class="viz-bar" style="--h:35%;--d:0s;"></div><div class="viz-bar" style="--h:65%;--d:.07s;"></div><div class="viz-bar" style="--h:50%;--d:.14s;"></div><div class="viz-bar" style="--h:85%;--d:.21s;"></div><div class="viz-bar" style="--h:40%;--d:.28s;"></div><div class="viz-bar" style="--h:70%;--d:.10s;"></div><div class="viz-bar" style="--h:55%;--d:.17s;"></div><div class="viz-bar" style="--h:90%;--d:.04s;"></div><div class="viz-bar" style="--h:45%;--d:.24s;"></div><div class="viz-bar" style="--h:60%;--d:.12s;"></div><div class="viz-bar" style="--h:75%;--d:.32s;"></div><div class="viz-bar" style="--h:30%;--d:.08s;"></div><div class="viz-bar" style="--h:80%;--d:.19s;"></div><div class="viz-bar" style="--h:55%;--d:.26s;"></div><div class="viz-bar" style="--h:42%;--d:.05s;"></div><div class="viz-bar" style="--h:68%;--d:.15s;"></div>
           </div>
           <ul class="space-y-8">
-            <li class="flex items-center gap-4 text-on-surface/60"><span class="w-1.5 h-1.5 rounded-full bg-[#FF3B00] shrink-0"></span><span class="font-body text-sm">Absolute Pitch Training</span></li>
-            <li class="flex items-center gap-4 text-on-surface/60"><span class="w-1.5 h-1.5 rounded-full bg-[#FF3B00] shrink-0"></span><span class="font-body text-sm">Chord Color Method</span></li>
-            <li class="flex items-center gap-4 text-on-surface/60"><span class="w-1.5 h-1.5 rounded-full bg-[#FF3B00] shrink-0"></span><span class="font-body text-sm">Wong 2025 Protocol</span></li>
+            <li class="flex items-center gap-4 text-on-surface/60"><span class="w-1.5 h-1.5 rounded-full bg-[#FF3B00] shrink-0"></span><span class="font-body text-sm" data-elabel="music_line1">Absolute Pitch Training</span></li>
+            <li class="flex items-center gap-4 text-on-surface/60"><span class="w-1.5 h-1.5 rounded-full bg-[#FF3B00] shrink-0"></span><span class="font-body text-sm" data-elabel="music_line2">Chord Color Method</span></li>
+            <li class="flex items-center gap-4 text-on-surface/60"><span class="w-1.5 h-1.5 rounded-full bg-[#FF3B00] shrink-0"></span><span class="font-body text-sm" data-elabel="music_line3">Wong 2025 Protocol</span></li>
           </ul>
         </div>
         <button class="w-full border border-[#353535] text-[#ffb4a2] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:bg-[#ffb4a2] group-hover:text-[#360e05] group-hover:border-[#ffb4a2] transition-all">Open Studio →</button>
@@ -928,9 +922,9 @@
 
       <!-- ── 01 EDITORIAL ── -->
       <div class="gal-sep" style="margin-top:20px;">
-        <span class="gal-sep-num">01</span>
+        <span class="gal-sep-num" data-elabel="gal_num1">01</span>
         <div class="gal-sep-body">
-          <span class="gal-sep-tag">Editorial</span>
+          <span class="gal-sep-tag" data-elabel="gal_tag1">Editorial</span>
           <div class="gal-sep-rule"></div>
         </div>
       </div>
@@ -938,9 +932,9 @@
 
       <!-- ── 02 LOWTHEORY ── -->
       <div class="gal-sep" style="margin-top:100px;">
-        <span class="gal-sep-num">02</span>
+        <span class="gal-sep-num" data-elabel="gal_num2">02</span>
         <div class="gal-sep-body">
-          <span class="gal-sep-tag">Lowtheory</span>
+          <span class="gal-sep-tag" data-elabel="gal_tag2">Lowtheory</span>
           <div class="gal-sep-rule"></div>
         </div>
       </div>
@@ -948,9 +942,9 @@
 
       <!-- ── 03 MOODBOARD ── -->
       <div class="gal-sep" style="margin-top:60px;">
-        <span class="gal-sep-num">03</span>
+        <span class="gal-sep-num" data-elabel="gal_num3">03</span>
         <div class="gal-sep-body">
-          <span class="gal-sep-tag">Moodboard</span>
+          <span class="gal-sep-tag" data-elabel="gal_tag3">Moodboard</span>
           <div class="gal-sep-rule"></div>
         </div>
       </div>
@@ -958,9 +952,9 @@
 
       <!-- ── 04 ARCHIVE ── -->
       <div class="gal-sep" style="margin-top:120px;">
-        <span class="gal-sep-num">04</span>
+        <span class="gal-sep-num" data-elabel="gal_num4">04</span>
         <div class="gal-sep-body">
-          <span class="gal-sep-tag">Archive</span>
+          <span class="gal-sep-tag" data-elabel="gal_tag4">Archive</span>
           <div class="gal-sep-rule"></div>
         </div>
       </div>
@@ -968,9 +962,9 @@
 
       <!-- ── 05 GRID ── -->
       <div class="gal-sep" style="margin-top:180px;">
-        <span class="gal-sep-num">05</span>
+        <span class="gal-sep-num" data-elabel="gal_num5">05</span>
         <div class="gal-sep-body">
-          <span class="gal-sep-tag">Grid</span>
+          <span class="gal-sep-tag" data-elabel="gal_tag5">Grid</span>
           <div class="gal-sep-rule"></div>
         </div>
       </div>
@@ -978,11 +972,11 @@
 
     <!-- Mobile gallery -->
       <div id="mobileGalleryGrid" style="display:none;">
-        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">01 · Editorial</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">02 · Lowtheory</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">03 · Moodboard</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">04 · Archive</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label">05 · Grid</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob1">01 · Editorial</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob2">02 · Lowtheory</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob3">03 · Moodboard</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob4">04 · Archive</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob5">05 · Grid</div></div>
       </div>
 
     <!-- Lightbox -->
@@ -1301,10 +1295,35 @@
           <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Music</div><input class="mk-input w-full" data-master-field="nav_music" placeholder="Music"></div>
           <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Notepad 카드 제목</div><input class="mk-input w-full" data-master-field="card_notepad" placeholder="Notepad"></div>
           <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Vault 카드 제목</div><input class="mk-input w-full" data-master-field="card_vault" placeholder="Vault"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Vault Line 1</div><input class="mk-input w-full" data-master-field="vault_line1" placeholder="Project Archives"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Vault Line 2</div><input class="mk-input w-full" data-master-field="vault_line2" placeholder="Visual References"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Vault Line 3</div><input class="mk-input w-full" data-master-field="vault_line3" placeholder="Documents & Assets"></div>
           <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Music 카드 제목</div><input class="mk-input w-full" data-master-field="card_music" placeholder="Music"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Music Line 1</div><input class="mk-input w-full" data-master-field="music_line1" placeholder="Absolute Pitch Training"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Music Line 2</div><input class="mk-input w-full" data-master-field="music_line2" placeholder="Chord Color Method"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Music Line 3</div><input class="mk-input w-full" data-master-field="music_line3" placeholder="Wong 2025 Protocol"></div>
           <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Notepad Line 1</div><input class="mk-input w-full" data-master-field="notepad_line1" placeholder="Visual Architecture Breakdown"></div>
           <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Notepad Line 2</div><input class="mk-input w-full" data-master-field="notepad_line2" placeholder="Manifesto of Quiet Luxury"></div>
           <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Notepad Line 3</div><input class="mk-input w-full" data-master-field="notepad_line3" placeholder="Typography Tension Guidelines"></div>
+          <div style="font-size:10px;color:#a08d88;margin:14px 0 8px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;border-top:1px solid #252525;padding-top:12px;">갤러리 레이블</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">01 번호</div><input class="mk-input w-full" data-master-field="gal_num1" placeholder="01"></div>
+            <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">01 이름</div><input class="mk-input w-full" data-master-field="gal_tag1" placeholder="Editorial"></div>
+            <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">02 번호</div><input class="mk-input w-full" data-master-field="gal_num2" placeholder="02"></div>
+            <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">02 이름</div><input class="mk-input w-full" data-master-field="gal_tag2" placeholder="Lowtheory"></div>
+            <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">03 번호</div><input class="mk-input w-full" data-master-field="gal_num3" placeholder="03"></div>
+            <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">03 이름</div><input class="mk-input w-full" data-master-field="gal_tag3" placeholder="Moodboard"></div>
+            <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">04 번호</div><input class="mk-input w-full" data-master-field="gal_num4" placeholder="04"></div>
+            <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">04 이름</div><input class="mk-input w-full" data-master-field="gal_tag4" placeholder="Archive"></div>
+            <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">05 번호</div><input class="mk-input w-full" data-master-field="gal_num5" placeholder="05"></div>
+            <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">05 이름</div><input class="mk-input w-full" data-master-field="gal_tag5" placeholder="Grid"></div>
+          </div>
+          <div style="font-size:10px;color:#a08d88;margin:10px 0 6px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">모바일 갤러리 레이블</div>
+          <div><input class="mk-input w-full" data-master-field="gal_mob1" placeholder="01 · Editorial"></div>
+          <div><input class="mk-input w-full" data-master-field="gal_mob2" placeholder="02 · Lowtheory"></div>
+          <div><input class="mk-input w-full" data-master-field="gal_mob3" placeholder="03 · Moodboard"></div>
+          <div><input class="mk-input w-full" data-master-field="gal_mob4" placeholder="04 · Archive"></div>
+          <div><input class="mk-input w-full" data-master-field="gal_mob5" placeholder="05 · Grid"></div>
         </div>
         <div class="flex gap-2 mb-6">
           <button class="app-action-btn !py-2 !px-5 !text-xs flex-1" onclick="saveMasterLabels()">저장</button>
@@ -1432,28 +1451,13 @@ const hubMemo2Doc=doc(db,'mk_app','hub_memo2');
 
 /* ===== Hub Bubble 3-page (명언 + 메모1 + 메모2) ===== */
 (async function(){
-  // 명언 — GitHub fetch or master mode override
+  // 명언 — 인라인 데이터 (fetch 불필요)
+  var _QUOTES=[{“t”:”행복은 작은 것들 속에 있다.”,”a”:””},{“t”:”모든 꿈은 손에 닿을 수 있다. 당신이 해야 할 일은 그저 계속 그것을 향해 나아가는 것뿐이다.”,”a”:””},{“t”:”꿈은 공짜다. 그것을 실현하는 것은 대가를 치러야 한다.”,”a”:””},{“t”:”나에게 있어 성공이란 어딘가에 도착하거나 특정한 목표를 달성하는 것이 아니다. 나는 그것을 전진하는 움직임, 진화하는 수단, 더 나은 자아를 향해 끊임없이 도달하는 방법으로 본다.”,”a”:””},{“t”:”인생의 의미는 당신의 재능을 발견하는 것이다. 인생의 목적은 그것을 나누는 것이다.”,”a”:””},{“t”:”연민보다 더 좋은 나침반은 없다.”,”a”:””},{“t”:”당신이 누구인지 되는 것은 결코 늦지 않았다.”,”a”:””},{“t”:”사랑은 상대방의 행복이 자신의 행복에 필수적인 조건이 되는 상태이다.”,”a”:””},{“t”:”사랑은 영원하다. 그 모습은 변할 수 있지만, 본질은 변하지 않는다.”,”a”:””},{“t”:”혁신은 평범한 것을 비범하게 만드는 것이다.”,”a”:””},{“t”:”당신의 머리에 뇌가 있다. 당신의 발에 신발이 있다. 당신은 어느 방향으로든 갈 수 있다.”,”a”:””},{“t”:”당신의 삶이 끝났을 때, 당신이 살았던 삶이 당신이 꿈꾸었던 삶이기를.”,”a”:””},{“t”:”챔피언은 제대로 될 때까지 계속 플레이한다.”,”a”:””},{“t”:”성공은 최종적인 것이 아니며, 실패는 치명적인 것이 아니다. 중요한 것은 계속할 용기이다.”,”a”:””},{“t”:”시간은 당신이 가진 유일한 자본이다.”,”a”:””},{“t”:”창의성은 지능이 즐겁게 노는 것이다.”,”a”:””},{“t”:”당신이 할 수 있다고 믿든 할 수 없다고 믿든, 당신의 믿음이 옳다.”,”a”:””},{“t”:”우리는 우리가 생각하는 대로 된다.”,”a”:””},{“t”:”침묵은 때때로 가장 강력한 대답이다.”,”a”:””},{“t”:”가장 위대한 예술가들은 모방자가 아니라 혁신가들이다.”,”a”:””},{“t”:”목표를 높게 세워라. 그리고 그것에 도달할 때까지 멈추지 마라.”,”a”:””},{“t”:”꿈을 적어라. 그것을 실행 계획으로 만들어라.”,”a”:””},{“t”:”오늘 할 수 있는 일을 내일로 미루지 마라.”,”a”:””},{“t”:”바다를 건너려면 배에서 눈을 떼지 말고 물만 바라보고 있어서는 안 된다.”,”a”:””},{“t”:”당신의 시간은 제한되어 있다. 그러니 다른 사람의 인생을 사느라 시간을 낭비하지 마라.”,”a”:””},{“t”:”사랑은 서로를 바라보는 것이 아니라 함께 같은 방향을 바라보는 것이다.”,”a”:””},{“t”:”리더십은 다른 사람들의 가치와 능력을 끌어올리는 것이다.”,”a”:””},{“t”:”시간을 낭비하는 것은 존재를 낭비하는 것이다.”,”a”:””},{“t”:”인생은 당신이 용기 있게 행동하는 만큼 확장된다.”,”a”:””},{“t”:”당신이 다른 사람들을 판단할 때마다, 당신은 그들에 대해서가 아니라 당신 자신에 대해 더 많은 것을 말하고 있는 것이다.”,”a”:””},{“t”:”깊이 사랑받는 것이 당신에게 힘을 주고, 깊이 사랑하는 것이 당신에게 용기를 준다.”,”a”:””},{“t”:”상상력은 지식보다 중요하다. 지식은 제한적이지만 상상력은 세상을 아우른다.”,”a”:””},{“t”:”문제는 기회다. 당신이 최선을 다할 수 있는 기회.”,”a”:””},{“t”:”당신의 삶에 만족하지 못한다면, 그것을 바꿔라. 당신은 나무가 아니다.”,”a”:””},{“t”:”시간은 돈이다.”,”a”:””},{“t”:”당신의 열정을 따르라. 그것이 당신을 이끌어갈 것이다.”,”a”:””},{“t”:”꿈이 있다면 그것을 붙잡아라. 절대 놓지 마라.”,”a”:””},{“t”:”사랑받기 위해서가 아니라 사랑하기 위해 태어났다.”,”a”:””},{“t”:”리더십은 실천이다. 그것은 당신이 무엇인가를 하는 것이지, 당신이 무엇인가를 말하는 것이 아니다.”,”a”:””},{“t”:”창의성은 실수를 허용하는 것이다. 예술은 그 실수를 어떻게 활용할지 아는 것이다.”,”a”:””},{“t”:”인생은 자전거를 타는 것과 같다. 균형을 잡으려면 계속 움직여야 한다.”,”a”:””},{“t”:”실패는 단지 다시 시도할 기회일 뿐이다. 이번에는 더 현명하게.”,”a”:””},{“t”:”시계를 되돌릴 순 없지만, 다시 감을 순 있다.”,”a”:””},{“t”:”매일 당신을 두렵게 만드는 일을 하나씩 하라.”,”a”:””},{“t”:”인생에서 가장 중요한 날은 두 날이다. 하나는 당신이 태어난 날이고, 다른 하나는 당신이 그 이유를 깨닫는 날이다.”,”a”:””},{“t”:”답을 보지 말고 질문을 보라.”,”a”:””},{“t”:”당신이 할 수 있다고 믿으면 절반은 된 것이다.”,”a”:””},{“t”:”현명한 사람은 큰 마음, 호기심 많은 두뇌, 그리고 열린 귀를 가지고 있다.”,”a”:””},{“t”:”사랑은 모든 장벽을 넘어선다.”,”a”:””},{“t”:”당신의 한계는 오직 당신이 설정한 것들뿐이다.”,”a”:””},{“t”:”태도는 작은 것이지만 큰 차이를 만든다.”,”a”:””},{“t”:”사랑은 불타오르는 것, 불 속에 있는 것이다.”,”a”:””},{“t”:”진정한 지혜란 자신이 모든 것을 알지 못한다는 것을 아는 것이다.”,”a”:””},{“t”:”변화를 가져오려면 첫 걸음을 두려워해서는 안 된다.”,”a”:””},{“t”:”세상을 변화시키고 싶다면, 먼저 당신의 침대를 정리하라.”,”a”:””},{“t”:”다른 사람들에게 친절하라. 모든 사람이 힘든 싸움을 하고 있다.”,”a”:””},{“t”:”인생은 폭풍우를 지나갈 때까지 기다리는 것이 아니라, 비 속에서 춤추는 법을 배우는 것이다.”,”a”:””},{“t”:”진정한 친구는 당신의 과거를 알고, 당신의 미래를 믿으며, 현재의 당신을 있는 그대로 받아들인다.”,”a”:””},{“t”:”당신이 변화하고 싶은 세상의 변화가 되어라.”,”a”:””},{“t”:”지혜는 살아가면서 얻어지는 부산물이다.”,”a”:””},{“t”:”삶이 당신을 어떤 방향으로 밀어내더라도, 당신이 그 방향으로 가고 싶지 않다면 다른 길을 만들어라.”,”a”:””},{“t”:”가장 행복한 사람은 반드시 최고의 것을 가진 사람이 아니라, 가진 것을 최고로 만드는 사람이다.”,”a”:””},{“t”:”사람들은 당신이 한 말을 잊어버릴 수 있다. 하지만 당신이 그들에게 어떤 느낌을 주었는지는 절대 잊지 않을 것이다.”,”a”:””},{“t”:”당신이 다른 사람들에게서 보고 싶은 변화의 모습이 되어라.”,”a”:””},{“t”:”목표는 꿈에 날짜를 붙인 것이다.”,”a”:””},{“t”:”당신의 일을 사랑하라. 그렇지 않다면 사랑할 수 있는 일을 찾아라.”,”a”:””},{“t”:”진정한 리더는 자신을 따르는 사람들의 마음속에 리더십을 심어준다.”,”a”:””},{“t”:”행복은 여행이지 목적지가 아니다.”,”a”:””},{“t”:”리더십은 공포가 아닌 희망을 주는 것이다.”,”a”:””},{“t”:”사랑은 상대방의 행복을 자신의 행복보다 먼저 생각하는 것이다.”,”a”:””},{“t”:”따라갈 사람을 찾을 수 없을 때, 당신이 본보기가 되어 이끌어야 한다.”,”a”:””},{“t”:”당신의 행복은 당신이 무엇을 하느냐가 아니라, 어떻게 하느냐에 달려있다.”,”a”:””},{“t”:”지혜란 우주의 시간을 믿는 것이다.”,”a”:””},{“t”:”좋은 리더는 사람들이 자신의 잠재력을 믿게 만들고 그것을 개발하도록 돕는다.”,”a”:””},{“t”:”당신이 정말로 하고 싶은 일을 포기하지 마라. 사랑과 영감이 있는 곳이라면 잘못될 리가 없다.”,”a”:””},{“t”:”나는 내 안에 있는 두려움에도 불구하고, 이기고자 하는 욕망이 항상 더 강하다.”,”a”:””},{“t”:”당신이 세상에 줄 수 있는 가장 큰 선물은 당신 자신의 최고의 모습이다.”,”a”:””},{“t”:”당신의 미래는 당신이 지금 무엇을 하고 있느냐에 달려있다.”,”a”:””},{“t”:”모든 꿈은 이루어질 수 있다. 우리에게 그것을 추구할 용기만 있다면.”,”a”:””},{“t”:”우리는 우리가 되고 싶은 사람이 될 때까지 계속해서 만들어진다.”,”a”:””},{“t”:”당신의 시간은 제한되어 있다. 그러니 다른 사람의 인생을 살며 시간을 낭비하지 마라.”,”a”:””},{“t”:”실제 변화, 지속적인 변화는 한 번에 한 걸음씩 일어난다.”,”a”:””},{“t”:”인생은 자신을 발견하는 모험이다. 지금 당신이 누구인지 알아가는 여정이다.”,”a”:””},{“t”:”우리는 우리가 생각하는 대로 된다. 모든 것은 생각에서 비롯된다.”,”a”:””},{“t”:”당신의 자존감은 당신이 결정한다. 다른 사람이 당신이 누구인지 말해주는 것에 의존할 필요가 없다.”,”a”:””},{“t”:”진정한 사랑 이야기에는 결말이 없다.”,”a”:””},{“t”:”약점은 그저 잘못된 환경에 놓인 강점일 뿐이다.”,”a”:””},{“t”:”자기 자신에 대한 사랑은 평생의 로맨스다.”,”a”:””},{“t”:”당신의 한계는 오직 당신의 마음속에 있을 뿐이다.”,”a”:””},{“t”:”행복은 내면의 일이다. 그것은 외부 환경에 의해 결정되지 않는다.”,”a”:””},{“t”:”불가능이란 없다. 불가능이라는 단어 자체가 '나는 가능하다'라고 말하고 있다!”,”a”:””},{“t”:”당신의 꿈이 당신을 두렵게 만들지 않는다면, 그것은 충분히 크지 않은 것이다.”,”a”:””},{“t”:”네 자신을 알라.”,”a”:””},{“t”:”당신이 포기할 때, 그때가 바로 게임이 끝나는 때다.”,”a”:””},{“t”:”당신이 걷고 있는 길이 마음에 들지 않는다면, 다른 길을 만들어라.”,”a”:””},{“t”:”행복은 선택이다. 당신은 행복해지기로 선택할 수 있다.”,”a”:””},{“t”:”용기란 자신이 누구인지 진정으로 성장하는 것이다.”,”a”:””}];
   window._reloadHubQuote=function(){
     var qtEl=document.getElementById('hubQuoteText'),qaEl=document.getElementById('hubQuoteAuthor');
-    if(localStorage.getItem('masterModeActive')==='1'){
-      var custom=localStorage.getItem('masterQuoteText')||'';
-      if(qtEl)qtEl.textContent=custom?'\u201c'+custom+'\u201d':'';
-      if(qaEl)qaEl.textContent='';
-      return;
-    }
-    fetch('./quotes.html')
-      .then(function(r){return r.text();})
-      .then(function(html){
-        var p=new DOMParser(),doc=p.parseFromString(html,'text/html'),q=[];
-        doc.querySelectorAll('.card').forEach(function(c){
-          var t=c.querySelector('.text'),a=c.querySelector('.author');
-          if(t){var tx=t.textContent.trim().replace(/^”|”$/g,'');q.push({t:tx,a:a?a.textContent.trim().replace(/^— /,''):''});}
-        });
-        if(!q.length)return;
-        var i=Math.floor(Date.now()/86400000)%q.length;
-        if(qtEl)qtEl.textContent='\u201c'+q[i].t+'\u201d';
-        if(qaEl)qaEl.textContent=q[i].a?'— '+q[i].a:'';
-      }).catch(function(){});
+    var q=_QUOTES[Math.floor(Date.now()/86400000)%_QUOTES.length];
+    if(qtEl)qtEl.textContent='\u201c'+q.t+'\u201d';
+    if(qaEl)qaEl.textContent=q.a?'— '+q.a:'';
   };
   window._reloadHubQuote();
 
@@ -1506,25 +1510,6 @@ const hubMemo2Doc=doc(db,'mk_app','hub_memo2');
   }
 })();
 
-// 말풍선 밑줄 동적 보정
-function calibrateBubbleLines(){
-  var bubble=document.querySelector('.hub-bubble');
-  var navRow=document.querySelector('.hub-bubble-nav-row');
-  if(!bubble||!navRow)return;
-  var navH=navRow.getBoundingClientRect().height;
-  var mB=parseFloat(getComputedStyle(navRow).marginBottom)||12;
-  var padTop=parseFloat(getComputedStyle(bubble).paddingTop)||36;
-  var isMob=window.innerWidth<768;
-  var lineH=isMob?32:35;
-  var padH=isMob?30:44;
-  var start=Math.round(padTop+navH+mB+lineH);
-  var pos=[0,1,2,3].map(function(i){return padH+'px '+(start+lineH*i)+'px';}).join(',');
-  var sz=(isMob?'calc(100% - 60px)':'calc(100% - 88px)')+' 1px';
-  bubble.style.backgroundPosition=pos;
-  bubble.style.backgroundSize=[sz,sz,sz,sz].join(',');
-}
-calibrateBubbleLines();
-window.addEventListener('resize',calibrateBubbleLines);
 
 /* ===== Passwords ===== */
 let isUnlocked=sessionStorage.getItem('mk_unlocked')==='1';
@@ -2739,7 +2724,7 @@ function resetMasterLabels(){
 function applyMasterLabels(){
   var raw=localStorage.getItem('masterLabels');
   var fields=raw?JSON.parse(raw):{};
-  var def={brand:'MONOLITH_OS',nav_hub:'Hub',nav_notepad:'Notepad',nav_vault:'Vault',nav_music:'Music',card_notepad:'Notepad',card_vault:'Vault',card_music:'Music',notepad_line1:'Visual Architecture Breakdown',notepad_line2:'Manifesto of Quiet Luxury',notepad_line3:'Typography Tension Guidelines'};
+  var def={brand:'MONOLITH_OS',nav_hub:'Hub',nav_notepad:'Notepad',nav_vault:'Vault',nav_music:'Music',card_notepad:'Notepad',card_vault:'Vault',card_music:'Music',notepad_line1:'Visual Architecture Breakdown',notepad_line2:'Manifesto of Quiet Luxury',notepad_line3:'Typography Tension Guidelines',vault_line1:'Project Archives',vault_line2:'Visual References',vault_line3:'Documents & Assets',music_line1:'Absolute Pitch Training',music_line2:'Chord Color Method',music_line3:'Wong 2025 Protocol',gal_num1:'01',gal_tag1:'Editorial',gal_num2:'02',gal_tag2:'Lowtheory',gal_num3:'03',gal_tag3:'Moodboard',gal_num4:'04',gal_tag4:'Archive',gal_num5:'05',gal_tag5:'Grid',gal_mob1:'01 · Editorial',gal_mob2:'02 · Lowtheory',gal_mob3:'03 · Moodboard',gal_mob4:'04 · Archive',gal_mob5:'05 · Grid'};
   document.querySelectorAll('[data-elabel]').forEach(function(el){
     var k=el.getAttribute('data-elabel');
     el.textContent=fields[k]||def[k]||el.textContent;
@@ -2989,7 +2974,7 @@ var _picExtract={
     for(var i=1;i<=5;i++){
       var slot=doc.querySelector('[data-slot="'+i+'"]');
       var img=slot?slot.querySelector('img'):null;
-      out.push(img&&img.naturalWidth>0?img.src:'');
+      out.push(img&&img.src?img.src:'');
     }
     return out;
   },
@@ -2997,14 +2982,14 @@ var _picExtract={
     var ids=['center-photo','photo-1','photo-2','photo-3','photo-4','photo-5'];
     return ids.map(function(id){
       var img=doc.getElementById(id);
-      return img&&img.naturalWidth>0?img.src:'';
+      return img&&img.src?img.src:'';
     });
   },
   '3picture.html':function(doc){
     var out=[];
     for(var i=1;i<=5;i++){
       var img=doc.getElementById('img-'+i);
-      out.push(img&&img.naturalWidth>0?img.src:'');
+      out.push(img&&img.src?img.src:'');
     }
     return out;
   },
@@ -3012,7 +2997,7 @@ var _picExtract={
     var out=[];
     for(var i=0;i<=3;i++){
       var img=doc.getElementById('img-'+i);
-      out.push(img&&img.naturalWidth>0?img.src:'');
+      out.push(img&&img.src?img.src:'');
     }
     return out;
   }
@@ -3113,24 +3098,11 @@ function openPicExpand(src){
       pre.onload=function(){
         if(_carouselPic!==src)return;
         var doc=this.contentDocument;
-        var imgs=Array.from(doc.querySelectorAll('img'));
-        var pending=imgs.filter(function(img){return !img.complete||img.naturalWidth===0;});
-        var done=function(){
-          if(_carouselPic!==src)return;
-          var extractor=_picExtract[src];
-          var srcs=extractor?extractor(doc):[];
-          if(!srcs.length){srcs=Array.from({length:4},function(){return '';});}
-          _picCache[src]=srcs; /* 캐시 저장 */
-          _renderCarousel(srcs);
-        };
-        if(!pending.length){done();return;}
-        var loaded=0;
-        pending.forEach(function(img){
-          var finish=function(){if(++loaded>=pending.length)done();};
-          img.addEventListener('load',finish,{once:true});
-          img.addEventListener('error',finish,{once:true});
-        });
-        setTimeout(done,8000); /* 8초 후 강제 완료 */
+        var extractor=_picExtract[src];
+        var srcs=extractor?extractor(doc):[];
+        if(!srcs.length){srcs=Array.from({length:4},function(){return '';});}
+        _picCache[src]=srcs;
+        _renderCarousel(srcs);
       };
       pre.src=src;
     });
