@@ -437,10 +437,10 @@
 .hub-bubble{
   position:relative;
   background-color:#faf9f6;
-  background-image:linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px);
-  background-position:44px 80px,44px 115px,44px 150px;
-  background-size:calc(100% - 88px) 1px,calc(100% - 88px) 1px,calc(100% - 88px) 1px;
-  background-repeat:no-repeat,no-repeat,no-repeat;
+  background-image:linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px);
+  background-position:44px 80px,44px 115px,44px 150px,44px 185px;
+  background-size:calc(100% - 88px) 1px,calc(100% - 88px) 1px,calc(100% - 88px) 1px,calc(100% - 88px) 1px;
+  background-repeat:no-repeat,no-repeat,no-repeat,no-repeat;
   border-radius:96px;
   padding:36px 44px 30px;
   min-height:160px;
@@ -490,9 +490,11 @@
   letter-spacing:.12em;text-transform:uppercase;
   color:rgba(0,0,0,0.30);opacity:0;transition:opacity .4s;
 }
-.hub-bubble-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding:0 2px;}
-.hub-nav-btn{background:none;border:none;color:rgba(20,15,15,0.20);font-size:28px;line-height:1;cursor:pointer;padding:0 6px;border-radius:50%;transition:color .2s;font-family:'Nunito',sans-serif;}
+.hub-bubble-nav-row{display:flex;align-items:center;justify-content:center;margin-bottom:12px;padding:0 2px;}
+.hub-nav-btn{background:none;border:none;color:rgba(20,15,15,0.20);font-size:28px;line-height:1;cursor:pointer;padding:0 6px;border-radius:50%;transition:color .2s;font-family:'Nunito',sans-serif;position:absolute;top:50%;transform:translateY(-50%);z-index:2;}
 .hub-nav-btn:hover{color:rgba(20,15,15,0.55);}
+#hubBubblePrev{left:14px;}
+#hubBubbleNext{right:14px;}
 .hub-page-dots{display:flex;gap:6px;align-items:center;}
 .hub-pdot{width:6px;height:6px;border-radius:50%;background:rgba(20,15,15,0.14);transition:background .25s,transform .25s;display:inline-block;}
 .hub-pdot.active{background:rgba(20,15,15,0.48);transform:scale(1.3);}
@@ -594,11 +596,15 @@
     padding:26px 30px 20px!important;
     min-height:130px!important;
     filter:drop-shadow(0 6px 20px rgba(0,0,0,0.45))!important;
-    background-position:30px 68px,30px 100px,30px 132px!important;
-    background-size:calc(100% - 60px) 1px,calc(100% - 60px) 1px,calc(100% - 60px) 1px!important;
+    background-position:30px 68px,30px 100px,30px 132px,30px 164px!important;
+    background-size:calc(100% - 60px) 1px,calc(100% - 60px) 1px,calc(100% - 60px) 1px,calc(100% - 60px) 1px!important;
+    background-image:linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px)!important;
+    background-repeat:no-repeat,no-repeat,no-repeat,no-repeat!important;
   }
   .hub-quote-text{font-size:18px!important;min-height:56px!important;}
   .hub-nav-btn{font-size:24px!important;}
+  #hubBubblePrev{left:10px!important;}
+  #hubBubbleNext{right:10px!important;}
   .hub-bubble::before{
     width:22px!important;height:22px!important;
     bottom:-11px!important;left:48px!important;
@@ -798,14 +804,14 @@
       <div class="md:col-span-4 pb-4">
         <div class="hub-bubble-wrap">
           <div class="hub-bubble">
+            <button class="hub-nav-btn" id="hubBubblePrev">&#8249;</button>
+            <button class="hub-nav-btn" id="hubBubbleNext">&#8250;</button>
             <div class="hub-bubble-nav-row">
-              <button class="hub-nav-btn" id="hubBubblePrev">&#8249;</button>
               <div class="hub-page-dots">
                 <span class="hub-pdot active" data-pg="0"></span>
                 <span class="hub-pdot" data-pg="1"></span>
                 <span class="hub-pdot" data-pg="2"></span>
               </div>
-              <button class="hub-nav-btn" id="hubBubbleNext">&#8250;</button>
             </div>
             <div class="hub-page" id="hubPage0">
               <div class="hub-quote-text" id="hubQuoteText"></div>
@@ -827,7 +833,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="hubCardGrid">
       <!-- Notepad -->
-      <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('memo')">
+      <section data-card="memo" class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('memo')">
         <div>
           <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]">edit_note</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">01</span></div>
           <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter" data-elabel="card_notepad">Notepad</h2>
@@ -854,7 +860,7 @@
       </section>
 
       <!-- Vault -->
-      <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] md:-translate-y-8 shadow-2xl shadow-black/30 hover:translate-y-[-16px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('files')">
+      <section data-card="files" class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] md:-translate-y-8 shadow-2xl shadow-black/30 hover:translate-y-[-16px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('files')">
         <div>
           <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]" style="font-variation-settings:'FILL' 1;">inventory_2</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">02</span></div>
           <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter" data-elabel="card_vault">Vault</h2>
@@ -881,7 +887,7 @@
       </section>
 
       <!-- Music -->
-      <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('music')">
+      <section data-card="music" class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('music')">
         <div>
           <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]">music_note</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">03</span></div>
           <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter" data-elabel="card_music">Music</h2>
@@ -1301,10 +1307,12 @@
           <button class="app-ghost-btn !py-2 !px-4 !text-xs" onclick="resetMasterLabels()">초기화</button>
         </div>
         <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#a08d88;margin-bottom:12px;">파일 순서 변경</div>
-        <div class="flex gap-3">
+        <div class="flex gap-3 mb-6">
           <button class="app-action-btn !py-2.5 !text-xs flex-1" onclick="openReorderMemo()">메모 폴더</button>
           <button class="app-action-btn !py-2.5 !text-xs flex-1" onclick="openReorderMusic()">음악 목록</button>
         </div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#a08d88;margin-bottom:12px;">허브 카드 순서</div>
+        <div id="hubCardOrderList"></div>
       </div>
     </div>
 
@@ -2291,7 +2299,7 @@ window.newPlaylist=newPlaylist;window.openPlaylist=openPlaylist;window.addSongTo
 
 /* ===== MEMO FOLDERS ===== */
 let curMemoFolder=null,cachedMemoFolders=[],cachedMemos=[];
-async function loadMemoFolders(){try{const s=await getDocs(query(memoFoldersCol,orderBy('order','asc')));cachedMemoFolders=[];s.forEach(d=>{cachedMemoFolders.push({id:d.id,...d.data()});});}catch(e){cachedMemoFolders=[];}}
+async function loadMemoFolders(){try{const s=await getDocs(query(memoFoldersCol,orderBy('order','asc')));cachedMemoFolders=[];s.forEach(d=>{cachedMemoFolders.push({id:d.id,...d.data()});});const sv=JSON.parse(localStorage.getItem('memoFolderOrder')||'null');if(sv){const m={};cachedMemoFolders.forEach(f=>{m[f.id]=f;});const o=sv.filter(id=>m[id]).map(id=>m[id]);cachedMemoFolders.forEach(f=>{if(!sv.includes(f.id))o.push(f);});cachedMemoFolders=o;}}catch(e){cachedMemoFolders=[];}}
 async function renderMemoFolders(){
   await loadMemoFolders();
   const el=document.getElementById('memoFolderGrid');
@@ -2573,7 +2581,7 @@ window.drawUndo=drawUndo;window.drawClear=drawClear;window.setDrawTool=setDrawTo
 
 /* ===== FILE FOLDERS ===== */
 let curFileFolder=null,cachedFileFolders=[],cachedFiles=[];
-async function loadFileFolders(){try{const s=await getDocs(query(fileFoldersCol,orderBy('order','asc')));cachedFileFolders=[];s.forEach(d=>{cachedFileFolders.push({id:d.id,...d.data()});});}catch(e){cachedFileFolders=[];}}
+async function loadFileFolders(){try{const s=await getDocs(query(fileFoldersCol,orderBy('order','asc')));cachedFileFolders=[];s.forEach(d=>{cachedFileFolders.push({id:d.id,...d.data()});});const sv=JSON.parse(localStorage.getItem('fileFolderOrder')||'null');if(sv){const m={};cachedFileFolders.forEach(f=>{m[f.id]=f;});const o=sv.filter(id=>m[id]).map(id=>m[id]);cachedFileFolders.forEach(f=>{if(!sv.includes(f.id))o.push(f);});cachedFileFolders=o;}}catch(e){cachedFileFolders=[];}}
 async function renderFileFolders(){
   await loadFileFolders();
   const el=document.getElementById('fileFolderGrid');
@@ -2677,7 +2685,130 @@ function updateMasterModeUI(){
   if(panel)panel.style.display=on?'':'none';
   var inp=document.getElementById('masterQuoteInput');
   if(inp)inp.value=localStorage.getItem('masterQuoteText')||'';
+  // 저장된 레이블 값을 입력창에 반영
+  var raw=localStorage.getItem('masterLabels');
+  var fields=raw?JSON.parse(raw):{};
+  document.querySelectorAll('[data-master-field]').forEach(function(el){
+    el.value=fields[el.getAttribute('data-master-field')]||'';
+  });
+  if(on)renderHubCardOrderUI();
 }
+function saveMasterLabels(){
+  var fields={};
+  document.querySelectorAll('[data-master-field]').forEach(function(inp){
+    var k=inp.getAttribute('data-master-field');
+    var v=inp.value.trim();
+    if(v)fields[k]=v;
+  });
+  localStorage.setItem('masterLabels',JSON.stringify(fields));
+  applyMasterLabels();
+  toast('저장됨');
+}
+function resetMasterLabels(){
+  localStorage.removeItem('masterLabels');
+  document.querySelectorAll('[data-master-field]').forEach(function(inp){inp.value='';});
+  applyMasterLabels();
+  toast('초기화됨');
+}
+function applyMasterLabels(){
+  var raw=localStorage.getItem('masterLabels');
+  var fields=raw?JSON.parse(raw):{};
+  var def={brand:'MONOLITH_OS',nav_hub:'Hub',nav_notepad:'Notepad',nav_vault:'Vault',nav_music:'Music',card_notepad:'Notepad',card_vault:'Vault',card_music:'Music'};
+  document.querySelectorAll('[data-elabel]').forEach(function(el){
+    var k=el.getAttribute('data-elabel');
+    el.textContent=fields[k]||def[k]||el.textContent;
+  });
+}
+// Hub Card Order
+function applyHubCardOrder(){
+  var order=JSON.parse(localStorage.getItem('hubCardOrder')||'["memo","files","music"]');
+  var grid=document.getElementById('hubCardGrid');if(!grid)return;
+  var cards={};
+  grid.querySelectorAll('[data-card]').forEach(function(s){cards[s.getAttribute('data-card')]=s;});
+  order.forEach(function(k){if(cards[k])grid.appendChild(cards[k]);});
+}
+function renderHubCardOrderUI(){
+  var el=document.getElementById('hubCardOrderList');if(!el)return;
+  var order=JSON.parse(localStorage.getItem('hubCardOrder')||'["memo","files","music"]');
+  var labels={memo:'Notepad',files:'Vault',music:'Music'};
+  el.innerHTML=order.map(function(k,i){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:8px;margin-bottom:6px;">'
+      +'<span style="font-family:\'Space Grotesk\',sans-serif;font-size:12px;color:#e5e2e1;">'+(labels[k]||k)+'</span>'
+      +'<div style="display:flex;gap:4px;">'
+      +(i>0?'<button onclick="moveHubCard('+i+',-1)" style="background:none;border:1px solid #353535;border-radius:4px;color:#ffb4a2;width:26px;height:26px;cursor:pointer;font-size:12px;">↑</button>':'<span style="display:inline-block;width:26px;"></span>')
+      +(i<order.length-1?'<button onclick="moveHubCard('+i+',1)" style="background:none;border:1px solid #353535;border-radius:4px;color:#ffb4a2;width:26px;height:26px;cursor:pointer;font-size:12px;">↓</button>':'<span style="display:inline-block;width:26px;"></span>')
+      +'</div></div>';
+  }).join('');
+}
+function moveHubCard(idx,dir){
+  var order=JSON.parse(localStorage.getItem('hubCardOrder')||'["memo","files","music"]');
+  var tmp=order[idx];order[idx]=order[idx+dir];order[idx+dir]=tmp;
+  localStorage.setItem('hubCardOrder',JSON.stringify(order));
+  applyHubCardOrder();renderHubCardOrderUI();
+}
+window.moveHubCard=moveHubCard;
+// Reorder Modal (메모 폴더 / 음악 목록)
+var _reorderModalData={key:'',ids:[],map:{}};
+async function openReorderMemo(){
+  await loadMemoFolders();
+  _reorderModalData={key:'memoFolderOrder',ids:_getOrderedIds('memoFolderOrder',cachedMemoFolders),map:{}};
+  cachedMemoFolders.forEach(function(f){_reorderModalData.map[f.id]=f.name;});
+  _showReorderModal('메모 폴더 순서');
+}
+async function openReorderMusic(){
+  try{
+    var s=await getDocs(collection(db,'mk_app','data','playlists'));
+    var pls=[];s.forEach(function(d){pls.push({id:d.id,name:d.data().name||'Playlist'});});
+    _reorderModalData={key:'musicListOrder',ids:_getOrderedIds('musicListOrder',pls),map:{}};
+    pls.forEach(function(p){_reorderModalData.map[p.id]=p.name;});
+    _showReorderModal('음악 목록 순서');
+  }catch(e){toast('목록을 불러올 수 없습니다');}
+}
+function _getOrderedIds(storageKey,items){
+  var saved=JSON.parse(localStorage.getItem(storageKey)||'null');
+  var allIds=items.map(function(x){return x.id;});
+  if(!saved)return allIds;
+  var ordered=saved.filter(function(id){return allIds.indexOf(id)>=0;});
+  allIds.forEach(function(id){if(ordered.indexOf(id)<0)ordered.push(id);});
+  return ordered;
+}
+function _showReorderModal(title){
+  var existing=document.getElementById('reorderModal');if(existing)existing.remove();
+  var d=_reorderModalData;
+  var rows=d.ids.map(function(id,i){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:8px;margin-bottom:6px;">'
+      +'<span style="font-family:\'Inter\',sans-serif;font-size:13px;color:#e5e2e1;">'+(d.map[id]||id)+'</span>'
+      +'<div style="display:flex;gap:4px;">'
+      +(i>0?'<button onclick="shiftReorderItem('+i+',-1)" style="background:none;border:1px solid #353535;border-radius:4px;color:#ffb4a2;width:26px;height:26px;cursor:pointer;font-size:13px;line-height:26px;">↑</button>':'<span style="display:inline-block;width:26px;"></span>')
+      +(i<d.ids.length-1?'<button onclick="shiftReorderItem('+i+',1)" style="background:none;border:1px solid #353535;border-radius:4px;color:#ffb4a2;width:26px;height:26px;cursor:pointer;font-size:13px;line-height:26px;">↓</button>':'<span style="display:inline-block;width:26px;"></span>')
+      +'</div></div>';
+  }).join('');
+  var modal=document.createElement('div');
+  modal.id='reorderModal';
+  modal.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(6,6,10,.95);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(16px);';
+  modal.innerHTML='<div style="width:100%;max-width:400px;padding:24px;background:#1c1b1b;border:1px solid #252525;border-radius:20px;margin:20px;max-height:80vh;overflow-y:auto;">'
+    +'<div style="font-family:\'Space Grotesk\',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#a08d88;margin-bottom:16px;">'+title+'</div>'
+    +'<div>'+rows+'</div>'
+    +'<div style="display:flex;gap:10px;margin-top:16px;">'
+    +'<button onclick="saveReorderModal()" style="flex:1;padding:9px 20px;background:#ffb4a2;color:#360e05;border:none;border-radius:9999px;font-family:\'Space Grotesk\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;">저장</button>'
+    +'<button onclick="document.getElementById(\'reorderModal\').remove()" style="padding:9px 16px;background:transparent;color:#ffb4a2;border:1px solid #353535;border-radius:9999px;font-family:\'Space Grotesk\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;">닫기</button>'
+    +'</div></div>';
+  document.body.appendChild(modal);
+}
+function shiftReorderItem(idx,dir){
+  var ids=_reorderModalData.ids;
+  var tmp=ids[idx];ids[idx]=ids[idx+dir];ids[idx+dir]=tmp;
+  var title=document.querySelector('#reorderModal div[style*="uppercase"]').textContent;
+  _showReorderModal(title);
+}
+function saveReorderModal(){
+  localStorage.setItem(_reorderModalData.key,JSON.stringify(_reorderModalData.ids));
+  document.getElementById('reorderModal').remove();
+  toast('순서 저장됨');
+  if(_reorderModalData.key==='memoFolderOrder')renderMemoFolders();
+  if(_reorderModalData.key==='musicListOrder')renderPlaylists();
+}
+window.shiftReorderItem=shiftReorderItem;window.saveReorderModal=saveReorderModal;
 function saveMasterQuote(){
   var inp=document.getElementById('masterQuoteInput');
   if(!inp)return;
@@ -2793,7 +2924,7 @@ function renderTodoCal(){
 /* 1-4picture: 히든 iframe에서 이미지 추출 → 네이티브 div 캐러셀 (완벽한 스와이프)
    5picture: iframe 직접 스크롤, 오버레이 없음 (iOS 관성 스크롤) */
 
-var _carouselIdx=0,_carouselTotal=0,_carouselPic='';
+var _carouselIdx=0,_carouselTotal=0,_carouselPic='',_picCache={};
 
 /* 각 picture 파일의 이미지 슬롯 추출 정의 */
 var _picExtract={
@@ -2902,10 +3033,12 @@ function openPicExpand(src){
     };
     fr.src='5picture.html';
   }else{
-    /* 1-4picture: 로딩 스피너 → 이미지 추출 → 캐러셀 */
+    /* 1-4picture: 캐시 확인 → 없으면 iframe 추출 */
     fr.style.display='none';fr.onload=null;fr.src='';
     cv.style.display='block';
     _carouselPic=src;
+    /* 캐시 히트: 즉시 렌더 */
+    if(_picCache[src]){_renderCarousel(_picCache[src]);return;}
     document.getElementById('picExpandTitle').textContent='Loading…';
     document.getElementById('picCarouselDots').innerHTML='';
     document.getElementById('picPhotoTrack').innerHTML=
@@ -2919,14 +3052,14 @@ function openPicExpand(src){
       pre.onload=function(){
         if(_carouselPic!==src)return;
         var doc=this.contentDocument;
-        /* 이미지 로드 대기 후 추출 */
         var imgs=Array.from(doc.querySelectorAll('img'));
-        var pending=imgs.filter(function(img){return !img.complete;});
+        var pending=imgs.filter(function(img){return !img.complete||img.naturalWidth===0;});
         var done=function(){
           if(_carouselPic!==src)return;
           var extractor=_picExtract[src];
           var srcs=extractor?extractor(doc):[];
           if(!srcs.length){srcs=Array.from({length:4},function(){return '';});}
+          _picCache[src]=srcs; /* 캐시 저장 */
           _renderCarousel(srcs);
         };
         if(!pending.length){done();return;}
@@ -2936,7 +3069,7 @@ function openPicExpand(src){
           img.addEventListener('load',finish,{once:true});
           img.addEventListener('error',finish,{once:true});
         });
-        setTimeout(done,3000); /* 3초 후 강제 완료 */
+        setTimeout(done,8000); /* 8초 후 강제 완료 */
       };
       pre.src=src;
     });
@@ -2990,6 +3123,8 @@ window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
 })();
 loadBgImages().then(()=>renderBgGrid());
 loadTodos().then(function(){renderTodoHub();});
+applyMasterLabels();
+applyHubCardOrder();
 // Hub storage bar
 async function updateHubStorage(){
   try{
