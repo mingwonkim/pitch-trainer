@@ -1443,10 +1443,10 @@ let memosCol=null,memoFoldersCol=null,filesCol=null,fileFoldersCol=null;
 let bgImagesDoc=null,todosCol=null,hubMemoDoc=null,hubMemo2Doc=null;
 // Firebase dynamic load — static import 실패 시에도 모듈 실행 가능
 (async()=>{try{
-  const{initializeApp}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+  const{initializeApp}=await import('./firebase/firebase-app.js');
   let getFirestore,getStorage;
-  ({getFirestore,collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,query,onSnapshot}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js'));
-  ({getStorage,ref:sRef,uploadBytes,getDownloadURL,deleteObject,listAll}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js'));
+  ({getFirestore,collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,query,onSnapshot}=await import('./firebase/firebase-firestore.js'));
+  ({getStorage,ref:sRef,uploadBytes,getDownloadURL,deleteObject,listAll}=await import('./firebase/firebase-storage.js'));
   const _app=initializeApp({apiKey:"AIzaSyDWXJ1nIQIZXSMruwFhyoMSU3gf3omiyMc",authDomain:"mingwon-hub.firebaseapp.com",projectId:"mingwon-hub",storageBucket:"mingwon-hub.firebasestorage.app",messagingSenderId:"108345228898",appId:"1:108345228898:web:81aa09a240d48e54081b3b"});
   db=getFirestore(_app);stg=getStorage(_app);
   memosCol=collection(db,'mk_app','data','memos');memoFoldersCol=collection(db,'mk_app','data','folders');
