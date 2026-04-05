@@ -1435,17 +1435,42 @@
 </div>
 
 <script type="module">
-import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getFirestore,collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,query,onSnapshot}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-import{getStorage,ref as sRef,uploadBytes,getDownloadURL,deleteObject,listAll}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
-const app=initializeApp({apiKey:"AIzaSyDWXJ1nIQIZXSMruwFhyoMSU3gf3omiyMc",authDomain:"mingwon-hub.firebaseapp.com",projectId:"mingwon-hub",storageBucket:"mingwon-hub.firebasestorage.app",messagingSenderId:"108345228898",appId:"1:108345228898:web:81aa09a240d48e54081b3b"});
-const db=getFirestore(app),stg=getStorage(app);
-const memosCol=collection(db,'mk_app','data','memos'),memoFoldersCol=collection(db,'mk_app','data','folders');
-const filesCol=collection(db,'mk_app','data','files'),fileFoldersCol=collection(db,'mk_app','data','file_folders');
-const bgImagesDoc=doc(db,'mk_app','bg_images');
-const todosCol=collection(db,'mk_app','data','todos');
-const hubMemoDoc=doc(db,'mk_app','hub_memo');
-const hubMemo2Doc=doc(db,'mk_app','hub_memo2');
+// Firebase 함수 — dynamic import 전까지 null
+let collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,query,onSnapshot;
+let sRef,uploadBytes,getDownloadURL,deleteObject,listAll;
+let db=null,stg=null;
+let memosCol=null,memoFoldersCol=null,filesCol=null,fileFoldersCol=null;
+let bgImagesDoc=null,todosCol=null,hubMemoDoc=null,hubMemo2Doc=null;
+// Firebase dynamic load — static import 실패 시에도 모듈 실행 가능
+(async()=>{try{
+  const{initializeApp}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+  let getFirestore,getStorage;
+  ({getFirestore,collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,query,onSnapshot}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js'));
+  ({getStorage,ref:sRef,uploadBytes,getDownloadURL,deleteObject,listAll}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js'));
+  const _app=initializeApp({apiKey:"AIzaSyDWXJ1nIQIZXSMruwFhyoMSU3gf3omiyMc",authDomain:"mingwon-hub.firebaseapp.com",projectId:"mingwon-hub",storageBucket:"mingwon-hub.firebasestorage.app",messagingSenderId:"108345228898",appId:"1:108345228898:web:81aa09a240d48e54081b3b"});
+  db=getFirestore(_app);stg=getStorage(_app);
+  memosCol=collection(db,'mk_app','data','memos');memoFoldersCol=collection(db,'mk_app','data','folders');
+  filesCol=collection(db,'mk_app','data','files');fileFoldersCol=collection(db,'mk_app','data','file_folders');
+  bgImagesDoc=doc(db,'mk_app','bg_images');todosCol=collection(db,'mk_app','data','todos');
+  hubMemoDoc=doc(db,'mk_app','hub_memo');hubMemo2Doc=doc(db,'mk_app','hub_memo2');
+  musicNotesCol=collection(db,'mk_app','data','music_notes');
+  favSongsCol=collection(db,'mk_app','data','fav_songs');
+  ytKeyDoc=doc(db,'mk_app','settings');masterSettingsDoc=doc(db,'mk_app','master_settings');
+  playlistsCol=collection(db,'mk_app','data','playlists');playlistSongsCol=collection(db,'mk_app','data','playlist_songs');
+  gallerCol=collection(db,'mk_app','data','gallery');
+  // Firebase 로드 완료 — 초기화 작업 실행
+  loadBgImages().then(()=>renderBgGrid());
+  loadTodos().then(function(){renderTodoHub();});
+  getDoc(masterSettingsDoc).then(function(snap){
+    if(!snap||!snap.exists())return;
+    var d=snap.data();
+    if(d.labels){localStorage.setItem('masterLabels',JSON.stringify(d.labels));applyMasterLabels();}
+    if(d.cardOrder){localStorage.setItem('hubCardOrder',JSON.stringify(d.cardOrder));applyHubCardOrder();}
+    if(d.memoFolderOrder){localStorage.setItem('memoFolderOrder',JSON.stringify(d.memoFolderOrder));}
+    if(d.musicModuleOrder){localStorage.setItem('musicModuleOrder',JSON.stringify(d.musicModuleOrder));applyMusicModuleOrder();}
+  }).catch(function(){});
+  updateHubStorage();
+}catch(e){console.error('Firebase load failed:',e);}})();
 
 /* ===== Hub Bubble 3-page (명언 + 메모1 + 메모2) ===== */
 (async function(){
@@ -1482,8 +1507,8 @@ const hubMemo2Doc=doc(db,'mk_app','hub_memo2');
   var el=document.getElementById('hubBubbleMemo');
   var savedEl=document.getElementById('hubBubbleSaved');
   if(el){
-    try{var snap=await getDoc(hubMemoDoc);if(snap.exists()&&snap.data().text!==undefined)el.textContent=snap.data().text;}catch(e){}
-    onSnapshot(hubMemoDoc,function(snap){if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el)el.textContent=snap.data().text;});
+    try{var snap=await getDoc(hubMemoDoc);if(snap&&snap.exists()&&snap.data().text!==undefined)el.textContent=snap.data().text;}catch(e){}
+    if(typeof onSnapshot==='function'&&hubMemoDoc)onSnapshot(hubMemoDoc,function(snap){if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el)el.textContent=snap.data().text;});
     var t1;
     el.addEventListener('input',function(){
       clearTimeout(t1);
@@ -1496,8 +1521,8 @@ const hubMemo2Doc=doc(db,'mk_app','hub_memo2');
   // 메모 2 — Firestore 실시간 동기화
   var el2=document.getElementById('hubBubbleMemo2');
   if(el2){
-    try{var snap2=await getDoc(hubMemo2Doc);if(snap2.exists()&&snap2.data().text!==undefined)el2.textContent=snap2.data().text;}catch(e){}
-    onSnapshot(hubMemo2Doc,function(snap){if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el2)el2.textContent=snap.data().text;});
+    try{var snap2=await getDoc(hubMemo2Doc);if(snap2&&snap2.exists()&&snap2.data().text!==undefined)el2.textContent=snap2.data().text;}catch(e){}
+    if(typeof onSnapshot==='function'&&hubMemo2Doc)onSnapshot(hubMemo2Doc,function(snap){if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el2)el2.textContent=snap.data().text;});
     var t2;
     el2.addEventListener('input',function(){
       clearTimeout(t2);
@@ -2111,7 +2136,7 @@ function musicSmartBack(){var nv=document.getElementById('musicNotesView');var f
 window.openMusicApp=openMusicApp;window.closeMusicApp=closeMusicApp;window.closeMusicSubView=closeMusicSubView;window.musicSmartBack=musicSmartBack;window.favWhyBack=favWhyBack;
 
 // ---- Music Notes ----
-const musicNotesCol=collection(db,'mk_app','data','music_notes');
+let musicNotesCol=null;
 let cachedMusicNotes=[],editMusicNoteId=null;
 async function renderMusicNotes(){
   const el=document.getElementById('musicNotesList');el.innerHTML='<div class="text-center py-8 text-outline text-sm">Loading...</div>';
@@ -2131,7 +2156,7 @@ async function delMusicNote(id){if(!confirm('Delete?'))return;try{await deleteDo
 window.newMusicNote=newMusicNote;window.editMusicNoteItem=editMusicNoteItem;window.saveMusicNote=saveMusicNote;window.cancelMusicNote=cancelMusicNote;window.delMusicNote=delMusicNote;
 
 // ---- Fav Songs ----
-const favSongsCol=collection(db,'mk_app','data','fav_songs');
+let favSongsCol=null;
 let cachedFavSongs=[],editFavSongId=null;
 
 async function renderFavSongs(){
@@ -2155,8 +2180,8 @@ async function renderFavSongs(){
 }
 
 // YouTube Data API v3 — Firestore에 저장 (시크릿/다기기 모두 동작)
-const ytKeyDoc=doc(db,'mk_app','settings');
-const masterSettingsDoc=doc(db,'mk_app','master_settings');
+let ytKeyDoc=null;
+let masterSettingsDoc=null;
 let _ytKeyCache='';
 
 async function getYTKey(){
@@ -2274,8 +2299,8 @@ async function delFavSong(id){if(!confirm('Delete?'))return;try{await deleteDoc(
 window.newFavSong=newFavSong;window.saveFavSong=saveFavSong;window.cancelFavSong=cancelFavSong;window.delFavSong=delFavSong;window.openFavDetail=openFavDetail;window.closeFavDetail=closeFavDetail;
 
 // ---- Playlists ----
-const playlistsCol=collection(db,'mk_app','data','playlists');
-const playlistSongsCol=collection(db,'mk_app','data','playlist_songs');
+let playlistsCol=null;
+let playlistSongsCol=null;
 let cachedPlaylists=[],curPlaylistId=null,curPlaylistSongs=[];
 async function renderPlaylists(){
   document.getElementById('playlistHome').style.display='';document.getElementById('playlistInside').style.display='none';
@@ -3183,19 +3208,10 @@ window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
   function setH(){if(nav)document.documentElement.style.setProperty('--nav-h',nav.offsetHeight+'px');}
   setH();window.addEventListener('resize',setH);
 })();
-loadBgImages().then(()=>renderBgGrid());
-loadTodos().then(function(){renderTodoHub();});
-// Master settings: localStorage 먼저 적용 후 Firestore 동기화
+// Firebase 로드 완료 후 실행 — Firebase async 블록으로 이동됨
+// localStorage 기반 초기화는 즉시 실행
 applyMasterLabels();
 applyHubCardOrder();
-getDoc(masterSettingsDoc).then(function(snap){
-  if(!snap.exists())return;
-  var d=snap.data();
-  if(d.labels){localStorage.setItem('masterLabels',JSON.stringify(d.labels));applyMasterLabels();}
-  if(d.cardOrder){localStorage.setItem('hubCardOrder',JSON.stringify(d.cardOrder));applyHubCardOrder();}
-  if(d.memoFolderOrder){localStorage.setItem('memoFolderOrder',JSON.stringify(d.memoFolderOrder));}
-  if(d.musicModuleOrder){localStorage.setItem('musicModuleOrder',JSON.stringify(d.musicModuleOrder));applyMusicModuleOrder();}
-}).catch(function(){});
 // Hub storage bar
 async function updateHubStorage(){
   try{
@@ -3212,10 +3228,10 @@ async function updateHubStorage(){
     document.getElementById('hubStoragePct').textContent=pct.toFixed(1)+'%';
   }catch(e){}
 }
-updateHubStorage();
+// updateHubStorage() — Firebase 로드 완료 후 async 블록에서 호출됨
 
 /* ===== Photo Gallery ===== */
-const gallerCol=collection(db,'mk_app','data','gallery');
+let gallerCol=null;
 let cachedGallery=[], lbIndex=0;
 
 async function loadGallery(){
