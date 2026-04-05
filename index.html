@@ -16,9 +16,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="preconnect" href="https://firestore.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Nunito:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="preconnect" href="https://firestore.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>
 
@@ -973,11 +970,11 @@
 
     <!-- Mobile gallery -->
       <div id="mobileGalleryGrid" style="display:none;">
-        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob1">01 · Editorial</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob2">02 · Lowtheory</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob3">03 · Moodboard</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob4">04 · Archive</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="eager" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob5">05 · Grid</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="eager" sandbox="allow-scripts" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob1">01 · Editorial</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="eager" sandbox="allow-scripts" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob2">02 · Lowtheory</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="eager" sandbox="allow-scripts" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob3">03 · Moodboard</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="eager" sandbox="allow-scripts" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob4">04 · Archive</div></div>
+        <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="eager" sandbox="allow-scripts" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob5">05 · Grid</div></div>
       </div>
 
     <!-- Lightbox -->
@@ -1912,6 +1909,7 @@ function doOpenApp(a){
 window.goHub=goHub;window.goBack=goBack;window.memoSmartBack=memoSmartBack;window.fileSmartBack=fileSmartBack;window.openApp=openApp;
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 /* ===== Storage ===== */
 async function updateSettingsStorage(){
@@ -2184,7 +2182,7 @@ async function openFavDetail(id){
     wrap.innerHTML=`<iframe id="favDetailFrame" src="https://www.youtube.com/embed?listType=search&list=${q}&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
   }
   const reasonEl=document.getElementById('favDetailReason');
-  if(s.reason){reasonEl.style.display='';reasonEl.innerHTML=`<span class="fav-reason-label">이유</span>${s.reason}`;}
+  if(s.reason){reasonEl.style.display='';const lbl=document.createElement('span');lbl.className='fav-reason-label';lbl.textContent='이유';reasonEl.textContent='';reasonEl.appendChild(lbl);reasonEl.appendChild(document.createTextNode(s.reason));}
   else{reasonEl.style.display='none';}
 }
 
