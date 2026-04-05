@@ -4,7 +4,34 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <meta name="referrer" content="strict-origin-when-cross-origin"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://www.youtube.com https://www.youtube-nocookie.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.googleapis.com https://*.googleusercontent.com https://*.firebasestorage.app https://i.ytimg.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebasestorage.app https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self';"/>
 <title>MK.HUB</title>
+<script>
+/* ===== Content Protection — early init ===== */
+(function(){
+  // 우클릭 차단
+  document.addEventListener('contextmenu',function(e){e.preventDefault();return false;},true);
+  // 드래그 차단 (이미지 끌어서 저장 방지)
+  document.addEventListener('dragstart',function(e){e.preventDefault();return false;},true);
+  // 복사/붙여넣기/잘라내기 차단 (input/textarea 제외)
+  ['copy','cut'].forEach(function(ev){
+    document.addEventListener(ev,function(e){
+      var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)return;
+      e.preventDefault();return false;
+    },true);
+  });
+  // 키보드 단축키 차단: Ctrl+S, Ctrl+U(소스보기), Ctrl+Shift+I(DevTools), F12, Ctrl+P(인쇄)
+  document.addEventListener('keydown',function(e){
+    if(e.key==='F12')e.preventDefault();
+    if(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='i'||e.key==='J'||e.key==='j'||e.key==='C'||e.key==='c'))e.preventDefault();
+    if(e.ctrlKey&&(e.key==='u'||e.key==='U'||e.key==='s'||e.key==='S'||e.key==='p'||e.key==='P'))e.preventDefault();
+  },true);
+  // 이미지 롱프레스 방지 (모바일)
+  document.addEventListener('touchstart',function(e){
+    if(e.target.tagName==='IMG'){e.target.style.pointerEvents='none';setTimeout(function(){e.target.style.pointerEvents='';},300);}
+  },{passive:false});
+})();
+</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
 (function initTW(){
@@ -21,6 +48,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800;900&family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Nunito:wght@700;800&family=Fredoka:wght@500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet"/>
 <style>
+
+/* ===== Content Protection ===== */
+*{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+input,textarea,[contenteditable="true"]{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}
+img,video,canvas{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;-o-user-drag:none;user-drag:none;pointer-events:none;}
+img{-webkit-touch-callout:none;}
 
 .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
 #pwChangeInputKorean,#tpInputKorean{outline:none !important;box-shadow:none !important;border:none !important;-webkit-appearance:none;}
@@ -1590,6 +1623,12 @@ async function _initHubMemoSync(){
 }
 
 
+/* ===== Security Utilities ===== */
+const MK_ALLOWED_ORIGINS=(function(){const loc=window.location;const self=loc.origin;const allowed=new Set([self]);if(loc.hostname.endsWith('.github.io'))allowed.add('https://'+loc.hostname.replace('.github.io','.com'));['https://mingwonkim.github.io','https://xn--2i0b41co6mk5g.com'].forEach(o=>allowed.add(o));return allowed;})();
+function isTrustedOrigin(origin){return MK_ALLOWED_ORIGINS.has(origin);}
+function escHtml(s){if(!s)return '';const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function sanitizeVideoId(id){return /^[a-zA-Z0-9_-]{11}$/.test(id)?id:null;}
+
 /* ===== Passwords ===== */
 let isUnlocked=sessionStorage.getItem('mk_unlocked')==='1';
 
@@ -1668,9 +1707,7 @@ async function hashPw(s){
 }
 function getPw(){
   try{const r=localStorage.getItem('mk_pw4');if(r){const d=JSON.parse(r);if(d&&d.s1)return d;}}catch(e){}
-  // 기본값: 5940의 해시 - 즉시 저장
-  const def=hashStr('5940');
-  const defaultPw={s1:def,s1len:4,s2:null,s2len:0,s3:null,s3len:0};
+  const defaultPw={s1:'85fb7a889dd24ec8',s1len:4,s2:null,s2len:0,s3:null,s3len:0};
   try{localStorage.setItem('mk_pw4',JSON.stringify(defaultPw));}catch(e){}
   return defaultPw;
 }
@@ -2480,7 +2517,7 @@ async function renderMusicNotes(){
   if(!cachedMusicNotes.length){el.innerHTML='<div class="text-center py-12 text-outline text-sm">No notes yet. Create one!</div>';return;}
   el.innerHTML=cachedMusicNotes.map(m=>{
     const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
-    return`<div class="mk-card" onclick="editMusicNoteItem('${m.id}')"><div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-label font-bold text-sm mb-1">${m.t||'Untitled'}</div><div class="text-xs text-on-surface-variant truncate">${(m.b||'').substring(0,80)||'—'}</div><div class="text-[11px] text-outline mt-2">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMusicNote('${m.id}')">Delete</span></div></div>`;
+    return`<div class="mk-card" onclick="editMusicNoteItem('${m.id}')"><div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-label font-bold text-sm mb-1">${escHtml(m.t)||'Untitled'}</div><div class="text-xs text-on-surface-variant truncate">${escHtml((m.b||'').substring(0,80))||'—'}</div><div class="text-[11px] text-outline mt-2">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMusicNote('${m.id}')">Delete</span></div></div>`;
   }).join('');
 }
 function newMusicNote(){if(!isUnlocked){showTextPin(()=>newMusicNote());return;}editMusicNoteId=null;document.getElementById('musicNoteTitleInput').value='';document.getElementById('musicNoteBodyInput').value='';document.getElementById('musicNotesList').style.display='none';document.getElementById('musicNoteEditor').style.display='flex';}
@@ -2506,10 +2543,10 @@ async function renderFavSongs(){
     <div class="fav-list-item" onclick="openFavDetail('${s.id}')">
       <div class="fav-list-num">♪</div>
       <div class="fav-list-info">
-        <div class="fav-list-title">${s.title||'Untitled'}</div>
-        <div class="fav-list-artist">${s.artist||''}</div>
+        <div class="fav-list-title">${escHtml(s.title)||'Untitled'}</div>
+        <div class="fav-list-artist">${escHtml(s.artist)||''}</div>
       </div>
-      ${s.reason?`<div class="fav-list-reason-preview">${s.reason.substring(0,28)}${s.reason.length>28?'…':''}</div>`:''}
+      ${s.reason?`<div class="fav-list-reason-preview">${escHtml(s.reason.substring(0,28))}${s.reason.length>28?'…':''}</div>`:''}
       <span class="fav-list-del" onclick="event.stopPropagation();delFavSong('${s.id}')">✕</span>
     </div>`).join('');
 }
@@ -2565,8 +2602,8 @@ async function openFavDetail(id){
   document.getElementById('favDetailArtist').textContent=s.artist||'';
   const wrap=document.querySelector('.fav-yt-wrap');
   if(!wrap)return;
-  if(s.videoId){
-    wrap.innerHTML=`<iframe id="favDetailFrame" src="https://www.youtube-nocookie.com/embed/${s.videoId}?rel=0&modestbranding=1&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+  if(s.videoId&&sanitizeVideoId(s.videoId)){
+    wrap.innerHTML=`<iframe id="favDetailFrame" src="https://www.youtube-nocookie.com/embed/${sanitizeVideoId(s.videoId)}?rel=0&modestbranding=1&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
   }else{
     const q=encodeURIComponent((s.artist?s.artist+' ':'')+s.title+' official MV');
     wrap.innerHTML=`<iframe id="favDetailFrame" src="https://www.youtube.com/embed?listType=search&list=${q}&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
@@ -2709,8 +2746,8 @@ async function renderMemoFolders(){
   el.innerHTML=fs.map(f=>`
     <div class="folder-card${f.locked?' locked':''}" onclick="openMemoFolder('${f.id}')">
       ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('memo','${f.id}',true)" title="잠금 해제">🔒</span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delMemoFolder('${f.id}')">✕</span>
-      <div class="fc-icon"><span class="material-symbols-outlined">${f.icon||'folder'}</span></div>
-      <div class="fc-name">${f.name}</div>
+      <div class="fc-icon"><span class="material-symbols-outlined">${escHtml(f.icon)||'folder'}</span></div>
+      <div class="fc-name">${escHtml(f.name)}</div>
       <div class="fc-meta">${counts[f.id]||0} notes</div>
     </div>`).join('')+`
     <div class="folder-card add-card" onclick="newMemoFolder()">
@@ -2777,7 +2814,7 @@ function _doOpenMemoFolder(id){
   const lockBtn=!isUnlocked?'':f?.locked
     ?`<button onclick="toggleFolderLock('memo','${id}',true)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid rgba(255,180,162,.3);border-radius:8px;background:transparent;color:#ffb4a2;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.background='rgba(255,180,162,.08)'" onmouseout="this.style.background='transparent'"><span style="font-size:14px;">🔒</span>잠금 해제</button>`
     :`<button onclick="toggleFolderLock('memo','${id}',false)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid #353535;border-radius:8px;background:transparent;color:#a08d88;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.borderColor='#524340'" onmouseout="this.style.borderColor='#353535'"><span style="font-size:14px;">🔓</span>잠금 설정</button>`;
-  document.getElementById('memoBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToMemoFolders()">Notepad</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>${lockBtn}`;
+  document.getElementById('memoBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToMemoFolders()">Notepad</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${escHtml(f?.name)||'폴더'}</span>${lockBtn}`;
   renderMemos();
 }
 function backToMemoFolders(){curMemoFolder=null;document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';document.getElementById('memoFolderView').style.display='';renderMemoFolders();}
@@ -2995,8 +3032,8 @@ async function renderFileFolders(){
     const szStr=sz<1048576?(sz/1024).toFixed(0)+' KB':(sz/1048576).toFixed(1)+' MB';
     return`<div class="folder-card${f.locked?' locked':''}" onclick="openFileFolder('${f.id}')">
       ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('files','${f.id}',true)" title="잠금 해제">🔒</span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delFileFolder('${f.id}')">✕</span>
-      <div class="fc-icon"><span class="material-symbols-outlined">${f.icon||'folder'}</span></div>
-      <div class="fc-name">${f.name}</div>
+      <div class="fc-icon"><span class="material-symbols-outlined">${escHtml(f.icon)||'folder'}</span></div>
+      <div class="fc-name">${escHtml(f.name)}</div>
       <div class="fc-meta">${counts[f.id]||0} files · ${szStr}</div>
     </div>`;
   }).join('')+`<div class="folder-card add-card" onclick="newFileFolder()">
@@ -3021,7 +3058,7 @@ function _doOpenFileFolder(id){
   const lockBtn=!isUnlocked?'':f?.locked
     ?`<button onclick="toggleFolderLock('files','${id}',true)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid rgba(255,180,162,.3);border-radius:8px;background:transparent;color:#ffb4a2;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.background='rgba(255,180,162,.08)'" onmouseout="this.style.background='transparent'"><span style="font-size:14px;">🔒</span>잠금 해제</button>`
     :`<button onclick="toggleFolderLock('files','${id}',false)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid #353535;border-radius:8px;background:transparent;color:#a08d88;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.borderColor='#524340'" onmouseout="this.style.borderColor='#353535'"><span style="font-size:14px;">🔓</span>잠금 설정</button>`;
-  document.getElementById('fileBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToFileFolders()">Vault</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${f?.name||'폴더'}</span>${lockBtn}`;
+  document.getElementById('fileBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToFileFolders()">Vault</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${escHtml(f?.name)||'폴더'}</span>${lockBtn}`;
   renderFiles();
 }
 function backToFileFolders(){curFileFolder=null;document.getElementById('fileInsideFolder').style.display='none';document.getElementById('fileFolderView').style.display='';renderFileFolders();}
@@ -3050,7 +3087,7 @@ async function renderFiles(){
     return`<div style="background:rgba(255,255,255,.025);border:1px solid #252525;border-radius:16px;padding:22px 20px;transition:all .25s;display:flex;flex-direction:column;gap:10px;">
       <div style="font-size:28px;line-height:1;">${ic}</div>
       <div>
-        <div class="font-['Space_Grotesk'] font-bold text-[13px] text-on-surface break-all leading-tight mb-1">${f.n}</div>
+        <div class="font-['Space_Grotesk'] font-bold text-[13px] text-on-surface break-all leading-tight mb-1">${escHtml(f.n)}</div>
         <div class="font-['Space_Grotesk'] text-[10px] tracking-[.1em] uppercase text-outline/40">${sz} · ${dt}</div>
       </div>
       <div class="flex gap-2 mt-auto">
@@ -3065,9 +3102,9 @@ function dlFile(id){const f=cachedFiles.find(x=>x.id===id);if(f?.url)window.open
 async function rmFile(id){if(!confirm('Delete this file?'))return;const f=cachedFiles.find(x=>x.id===id);try{if(f?.path)await deleteObject(sRef(stg,f.path));await deleteDoc(doc(db,'mk_app','data','files',id));}catch(e){}renderFiles();}
 window.dlFile=dlFile;window.rmFile=rmFile;
 
-function notifyLtFrame(val){const f=document.getElementById('ltScaleFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
-function notifyEdFrame(val){const f=document.getElementById('edLayoutFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
-function notifyMbFrame(val){const f=document.getElementById('mbFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
+function notifyLtFrame(val){const f=document.getElementById('ltScaleFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},location.origin);}
+function notifyEdFrame(val){const f=document.getElementById('edLayoutFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},location.origin);}
+function notifyMbFrame(val){const f=document.getElementById('mbFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},location.origin);}
 // ── Master Mode ──
 function toggleMasterMode(){
   var on=localStorage.getItem('masterModeActive')==='1';
@@ -3239,10 +3276,11 @@ function clearMasterQuote(){
   updateMasterModeUI();
   if(window._reloadHubQuote)window._reloadHubQuote();
 }
-function notifyP4Frame(val){const f=document.getElementById('p4Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
-function notifyP5Frame(val){const f=document.getElementById('p5Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
+function notifyP4Frame(val){const f=document.getElementById('p4Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},location.origin);}
+function notifyP5Frame(val){const f=document.getElementById('p5Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},location.origin);}
 function notifyAllFrames(val){notifyLtFrame(val);notifyEdFrame(val);notifyMbFrame(val);notifyP4Frame(val);notifyP5Frame(val);}
 window.addEventListener('message',e=>{
+  if(!isTrustedOrigin(e.origin))return;
   if(e.data&&e.data.type==='lt_height'){
     const f=document.getElementById('ltScaleFrame');
     if(f)f.style.height=(e.data.value+40)+'px';
@@ -3282,7 +3320,7 @@ function renderTodoHub(){
     html+='<div class="todo-day-num">'+d.getDate()+'</div>';
     /* 처음 3개 */
     for(var j=0;j<Math.min(dt.length,3);j++){
-      html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+dt[j].text+'</div>';
+      html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+escHtml(dt[j].text)+'</div>';
     }
     /* 3개 초과분 */
     if(dt.length>3){
@@ -3290,7 +3328,7 @@ function renderTodoHub(){
       /* 숨겨진 항목 */
       html+='<div class="todo-hidden-items" id="thi-'+ds+'">';
       for(var j=3;j<dt.length;j++){
-        html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+dt[j].text+'</div>';
+        html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+escHtml(dt[j].text)+'</div>';
       }
       html+='</div>';
       /* 더보기 버튼 */
@@ -3329,7 +3367,7 @@ function renderTodoCal(){
     var dt=_todos.filter(function(t){return t.date===ds;});
     html+='<div class="'+cls+'" onclick="todoCalCellClick(\''+ds+'\',event)">';
     html+='<div class="todo-cal-num">'+d+'</div>';
-    dt.forEach(function(t){html+='<div class="todo-item'+(t.done?' done':'')+'"><input type="checkbox" '+(t.done?'checked':'')+' onchange="event.stopPropagation();toggleTodo(\''+t.id+'\')"><span>'+t.text+'</span><span style="cursor:pointer;color:#524340;font-size:10px;margin-left:auto;flex-shrink:0;" onclick="event.stopPropagation();delTodo(\''+t.id+'\')">✕</span></div>';});
+    dt.forEach(function(t){html+='<div class="todo-item'+(t.done?' done':'')+'"><input type="checkbox" '+(t.done?'checked':'')+' onchange="event.stopPropagation();toggleTodo(\''+t.id+'\')"><span>'+escHtml(t.text)+'</span><span style="cursor:pointer;color:#524340;font-size:10px;margin-left:auto;flex-shrink:0;" onclick="event.stopPropagation();delTodo(\''+t.id+'\')">✕</span></div>';});
     html+='<input class="todo-inline-input" id="ti-'+ds+'" style="display:none;" placeholder="할 일 추가..." onkeydown="if(event.key===\'Enter\'){event.stopPropagation();addTodoInline(\''+ds+'\',this);}if(event.key===\'Escape\'){event.stopPropagation();this.style.display=\'none\';}" onclick="event.stopPropagation();">';
     html+='</div>';
   }
