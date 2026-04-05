@@ -1578,8 +1578,12 @@ function hashStr(s){
   return (h>>>0).toString(16).padStart(8,'0')+(h2>>>0).toString(16).padStart(8,'0');
 }
 async function hashPw(s){
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(typeof crypto!=='undefined'&&crypto.subtle){
+    const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  // HTTP 환경(crypto.subtle 없음) — FNV 폴백
+  return hashStr(s);
 }
 function getPw(){
   try{const r=localStorage.getItem('mk_pw4');if(r){const d=JSON.parse(r);if(d&&d.s1)return d;}}catch(e){}
@@ -1592,12 +1596,24 @@ function getPw(){
 function setPwLocal(pw){localStorage.setItem('mk_pw4',JSON.stringify(pw));}
 async function checkPwHash(hash,val){
   if(!hash)return true;
+  const secure=typeof crypto!=='undefined'&&!!crypto.subtle;
   if(hash.length===16){
-    // 레거시 FNV 해시 — 검증 후 SHA-256으로 자동 마이그레이션
+    // FNV 해시
     if(hashStr(val)!==hash)return false;
-    const newHash=await hashPw(val);
+    if(secure){
+      // HTTPS: SHA-256으로 마이그레이션
+      const newHash=await hashPw(val);
+      const pw=getPw();
+      ['s1','s2','s3'].forEach(k=>{if(pw[k]===hash)pw[k]=newHash;});
+      setPwLocal(pw);
+    }
+    return true;
+  }
+  if(hash.length===64&&!secure){
+    // SHA-256 해시가 저장됐지만 HTTP 환경(crypto.subtle 없음)
+    // 비밀번호를 FNV로 재설정하고 통과
     const pw=getPw();
-    ['s1','s2','s3'].forEach(k=>{if(pw[k]===hash)pw[k]=newHash;});
+    ['s1','s2','s3'].forEach(k=>{if(pw[k]===hash)pw[k]=hashStr(val);});
     setPwLocal(pw);
     return true;
   }
