@@ -1441,12 +1441,28 @@ let sRef,uploadBytes,getDownloadURL,deleteObject,listAll;
 let db=null,stg=null;
 let memosCol=null,memoFoldersCol=null,filesCol=null,fileFoldersCol=null;
 let bgImagesDoc=null,todosCol=null,hubMemoDoc=null,hubMemo2Doc=null;
-// Firebase dynamic load — static import 실패 시에도 모듈 실행 가능
+// Firebase dynamic load — 로컬 번들 우선, 실패 시 CDN 폴백
 (async()=>{try{
-  const{initializeApp}=await import('./firebase/firebase-app.js');
+  const FB_VER='10.12.0';
+  let appMod,fsMod,stgMod;
+  try{
+    [appMod,fsMod,stgMod]=await Promise.all([
+      import('./firebase/firebase-app.js'),
+      import('./firebase/firebase-firestore.js'),
+      import('./firebase/firebase-storage.js'),
+    ]);
+  }catch(localErr){
+    console.warn('Firebase 로컬 로드 실패, CDN 폴백:',localErr.message||localErr);
+    [appMod,fsMod,stgMod]=await Promise.all([
+      import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-firestore.js'),
+      import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-storage.js'),
+    ]);
+  }
+  const{initializeApp}=appMod;
   let getFirestore,getStorage;
-  ({getFirestore,collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,query,onSnapshot}=await import('./firebase/firebase-firestore.js'));
-  ({getStorage,ref:sRef,uploadBytes,getDownloadURL,deleteObject,listAll}=await import('./firebase/firebase-storage.js'));
+  ({getFirestore,collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,query,onSnapshot}=fsMod);
+  ({getStorage,ref:sRef,uploadBytes,getDownloadURL,deleteObject,listAll}=stgMod);
   const _app=initializeApp({apiKey:"AIzaSyDWXJ1nIQIZXSMruwFhyoMSU3gf3omiyMc",authDomain:"mingwon-hub.firebaseapp.com",projectId:"mingwon-hub",storageBucket:"mingwon-hub.firebasestorage.app",messagingSenderId:"108345228898",appId:"1:108345228898:web:81aa09a240d48e54081b3b"});
   db=getFirestore(_app);stg=getStorage(_app);
   memosCol=collection(db,'mk_app','data','memos');memoFoldersCol=collection(db,'mk_app','data','folders');
@@ -1470,7 +1486,15 @@ let bgImagesDoc=null,todosCol=null,hubMemoDoc=null,hubMemo2Doc=null;
     if(d.musicModuleOrder){localStorage.setItem('musicModuleOrder',JSON.stringify(d.musicModuleOrder));applyMusicModuleOrder();}
   }).catch(function(){});
   updateHubStorage();
-}catch(e){console.error('Firebase load failed:',e);}})();
+  // 현재 활성 탭 재렌더링 — Firebase 로드 전에 탭이 열려 있었던 경우 데이터 없이 빈 화면으로 렌더링됐을 수 있음
+  if(curPage==='files')renderFileFolders();
+  if(curPage==='memo')renderMemoFolders();
+  if(curPage==='gallery')renderGallery();
+}catch(e){
+  console.error('Firebase load failed:',e);
+  var _ft=document.getElementById('toast');
+  if(_ft){_ft.textContent='Firebase 연결 오류 — 새로고침 해주세요';_ft.classList.add('show');setTimeout(function(){_ft.classList.remove('show');},4000);}
+}})();
 
 /* ===== Hub Bubble 3-page (명언 + 메모1 + 메모2) ===== */
 (async function(){
