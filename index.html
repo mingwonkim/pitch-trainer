@@ -838,15 +838,15 @@
           <div class="space-y-0 mb-1" style="position:relative;">
             <div class="writing-line" style="animation-delay:0s;">
               <span class="writing-dot" style="background:#FF3B00;"></span>
-              <div class="writing-text" style="width:88%;animation-delay:0.1s;color:rgba(229,226,225,.55);">Visual Architecture Breakdown</div>
+              <div class="writing-text" style="width:88%;animation-delay:0.1s;color:rgba(229,226,225,.55);" data-elabel="notepad_line1">Visual Architecture Breakdown</div>
             </div>
             <div class="writing-line" style="animation-delay:0.15s;">
               <span class="writing-dot" style="background:#FF3B00;"></span>
-              <div class="writing-text" style="width:72%;animation-delay:0.25s;color:rgba(229,226,225,.55);">Manifesto of Quiet Luxury</div>
+              <div class="writing-text" style="width:72%;animation-delay:0.25s;color:rgba(229,226,225,.55);" data-elabel="notepad_line2">Manifesto of Quiet Luxury</div>
             </div>
             <div class="writing-line" style="animation-delay:0.3s;">
               <span class="writing-dot" style="background:#FF3B00;"></span>
-              <div class="writing-text" style="width:80%;animation-delay:0.4s;color:rgba(229,226,225,.55);">Typography Tension Guidelines</div>
+              <div class="writing-text" style="width:80%;animation-delay:0.4s;color:rgba(229,226,225,.55);" data-elabel="notepad_line3">Typography Tension Guidelines</div>
             </div>
             <div class="writing-line writing-line-blank" style="animation-delay:0.45s;border-bottom-color:rgba(255,59,0,.2);">
               <span class="writing-dot writing-dot-blink" style="background:#FF3B00;"></span>
@@ -1133,43 +1133,43 @@
     </div>
 
     <div id="musicHome">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div class="app-module-card" onclick="openMusicApp('notes')">
+      <div id="musicModuleGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="app-module-card" data-module="notes" onclick="openMusicApp('notes')">
           <div class="amc-num">01</div>
           <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">music_note</span></div>
           <h3 class="amc-title">Music Notes</h3>
           <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">음악 이론 노트 & 개인 메모<br>코드 · 스케일 · 분석 기록</p>
           <div class="amc-arrow">→</div>
         </div>
-        <div class="app-module-card" onclick="openMusicApp('pitch')">
+        <div class="app-module-card" data-module="pitch" onclick="openMusicApp('pitch')">
           <div class="amc-num">02</div>
           <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">piano</span></div>
           <h3 class="amc-title">Absolute Pitch Trainer</h3>
           <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">에구치 메소드 + Wong 2025<br>성인 최적화 훈련</p>
           <div class="amc-arrow">→</div>
         </div>
-        <div class="app-module-card" onclick="openMusicApp('chord')">
+        <div class="app-module-card" data-module="chord" onclick="openMusicApp('chord')">
           <div class="amc-num">03</div>
           <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">piano</span></div>
           <h3 class="amc-title">Chord Dictionary</h3>
           <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">코드 사전 · 보이싱 · 진행<br>K-POP 코드 진행 분석</p>
           <div class="amc-arrow">→</div>
         </div>
-        <div class="app-module-card app-module-dim">
+        <div class="app-module-card app-module-dim" data-module="dim">
           <div class="amc-num">04</div>
           <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">equalizer</span></div>
           <h3 class="amc-title">Music Analysis</h3>
           <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">앨범 · 곡 구조 분석<br>준비 중</p>
           <div class="amc-badge">Soon</div>
         </div>
-        <div class="app-module-card" onclick="openMusicApp('favwhy')">
+        <div class="app-module-card" data-module="favwhy" onclick="openMusicApp('favwhy')">
           <div class="amc-num">05</div>
           <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">favorite</span></div>
           <h3 class="amc-title">Favorite Songs</h3>
           <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">내가 좋아하는 곡과<br>그 이유를 기록하는 공간</p>
           <div class="amc-arrow">→</div>
         </div>
-        <div class="app-module-card" onclick="openMusicApp('playlist')">
+        <div class="app-module-card" data-module="playlist" onclick="openMusicApp('playlist')">
           <div class="amc-num">06</div>
           <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">headphones</span></div>
           <h3 class="amc-title">My Playlist</h3>
@@ -1299,6 +1299,9 @@
           <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Notepad</div><input class="mk-input w-full" data-master-field="nav_notepad" placeholder="Notepad"></div>
           <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Vault</div><input class="mk-input w-full" data-master-field="nav_vault" placeholder="Vault"></div>
           <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Music</div><input class="mk-input w-full" data-master-field="nav_music" placeholder="Music"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Notepad Line 1</div><input class="mk-input w-full" data-master-field="notepad_line1" placeholder="Visual Architecture Breakdown"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Notepad Line 2</div><input class="mk-input w-full" data-master-field="notepad_line2" placeholder="Manifesto of Quiet Luxury"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Notepad Line 3</div><input class="mk-input w-full" data-master-field="notepad_line3" placeholder="Typography Tension Guidelines"></div>
         </div>
         <div class="flex gap-2 mb-6">
           <button class="app-action-btn !py-2 !px-5 !text-xs flex-1" onclick="saveMasterLabels()">저장</button>
@@ -1435,7 +1438,7 @@ const hubMemo2Doc=doc(db,'mk_app','hub_memo2');
       if(qaEl)qaEl.textContent='';
       return;
     }
-    fetch('https://raw.githubusercontent.com/mingwonkim/pitch-trainer/main/quotes.html')
+    fetch('./quotes.html')
       .then(function(r){return r.text();})
       .then(function(html){
         var p=new DOMParser(),doc=p.parseFromString(html,'text/html'),q=[];
@@ -1499,6 +1502,26 @@ const hubMemo2Doc=doc(db,'mk_app','hub_memo2');
     });
   }
 })();
+
+// 말풍선 밑줄 동적 보정
+function calibrateBubbleLines(){
+  var bubble=document.querySelector('.hub-bubble');
+  var navRow=document.querySelector('.hub-bubble-nav-row');
+  if(!bubble||!navRow)return;
+  var navH=navRow.getBoundingClientRect().height;
+  var mB=parseFloat(getComputedStyle(navRow).marginBottom)||12;
+  var padTop=parseFloat(getComputedStyle(bubble).paddingTop)||36;
+  var isMob=window.innerWidth<768;
+  var lineH=isMob?32:35;
+  var padH=isMob?30:44;
+  var start=Math.round(padTop+navH+mB+lineH);
+  var pos=[0,1,2,3].map(function(i){return padH+'px '+(start+lineH*i)+'px';}).join(',');
+  var sz=(isMob?'calc(100% - 60px)':'calc(100% - 88px)')+' 1px';
+  bubble.style.backgroundPosition=pos;
+  bubble.style.backgroundSize=[sz,sz,sz,sz].join(',');
+}
+calibrateBubbleLines();
+window.addEventListener('resize',calibrateBubbleLines);
 
 /* ===== Passwords ===== */
 let isUnlocked=sessionStorage.getItem('mk_unlocked')==='1';
@@ -1880,7 +1903,7 @@ function doOpenApp(a){
   if(a==='todo'){setPage('todo');loadTodos().then(function(){renderTodoCal();});return;}
   if(a==='memo'){curMemoFolder=null;document.getElementById('memoFolderView').style.display='';document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';renderMemoFolders();}
   if(a==='files'){curFileFolder=null;document.getElementById('fileFolderView').style.display='';document.getElementById('fileInsideFolder').style.display='none';renderFileFolders();}
-  if(a==='music'){document.getElementById('musicHome').style.display='';document.getElementById('musicAppView').style.display='none';}
+  if(a==='music'){document.getElementById('musicHome').style.display='';document.getElementById('musicAppView').style.display='none';applyMusicModuleOrder();}
   if(a==='settings'){
     updateSettingsStorage();
     updateMasterModeUI();
@@ -2116,6 +2139,7 @@ async function renderFavSongs(){
 
 // YouTube Data API v3 — Firestore에 저장 (시크릿/다기기 모두 동작)
 const ytKeyDoc=doc(db,'mk_app','settings');
+const masterSettingsDoc=doc(db,'mk_app','master_settings');
 let _ytKeyCache='';
 
 async function getYTKey(){
@@ -2700,6 +2724,7 @@ function saveMasterLabels(){
   });
   localStorage.setItem('masterLabels',JSON.stringify(fields));
   applyMasterLabels();
+  setDoc(masterSettingsDoc,{labels:fields},{merge:true}).catch(function(){});
   toast('저장됨');
 }
 function resetMasterLabels(){
@@ -2711,7 +2736,7 @@ function resetMasterLabels(){
 function applyMasterLabels(){
   var raw=localStorage.getItem('masterLabels');
   var fields=raw?JSON.parse(raw):{};
-  var def={brand:'MONOLITH_OS',nav_hub:'Hub',nav_notepad:'Notepad',nav_vault:'Vault',nav_music:'Music',card_notepad:'Notepad',card_vault:'Vault',card_music:'Music'};
+  var def={brand:'MONOLITH_OS',nav_hub:'Hub',nav_notepad:'Notepad',nav_vault:'Vault',nav_music:'Music',card_notepad:'Notepad',card_vault:'Vault',card_music:'Music',notepad_line1:'Visual Architecture Breakdown',notepad_line2:'Manifesto of Quiet Luxury',notepad_line3:'Typography Tension Guidelines'};
   document.querySelectorAll('[data-elabel]').forEach(function(el){
     var k=el.getAttribute('data-elabel');
     el.textContent=fields[k]||def[k]||el.textContent;
@@ -2742,6 +2767,7 @@ function moveHubCard(idx,dir){
   var order=JSON.parse(localStorage.getItem('hubCardOrder')||'["memo","files","music"]');
   var tmp=order[idx];order[idx]=order[idx+dir];order[idx+dir]=tmp;
   localStorage.setItem('hubCardOrder',JSON.stringify(order));
+  setDoc(masterSettingsDoc,{cardOrder:order},{merge:true}).catch(function(){});
   applyHubCardOrder();renderHubCardOrderUI();
 }
 window.moveHubCard=moveHubCard;
@@ -2754,14 +2780,25 @@ async function openReorderMemo(){
   _showReorderModal('메모 폴더 순서');
 }
 async function openReorderMusic(){
-  try{
-    var s=await getDocs(collection(db,'mk_app','data','playlists'));
-    var pls=[];s.forEach(function(d){pls.push({id:d.id,name:d.data().name||'Playlist'});});
-    _reorderModalData={key:'musicListOrder',ids:_getOrderedIds('musicListOrder',pls),map:{}};
-    pls.forEach(function(p){_reorderModalData.map[p.id]=p.name;});
-    _showReorderModal('음악 목록 순서');
-  }catch(e){toast('목록을 불러올 수 없습니다');}
+  var moduleLabels={notes:'Music Notes',pitch:'Absolute Pitch Trainer',chord:'Chord Dictionary',dim:'Music Analysis (Soon)',favwhy:'Favorite Songs',playlist:'My Playlist'};
+  var allIds=['notes','pitch','chord','dim','favwhy','playlist'];
+  var saved=JSON.parse(localStorage.getItem('musicModuleOrder')||'null');
+  var ids=saved||allIds;
+  var ordered=ids.filter(function(id){return allIds.indexOf(id)>=0;});
+  allIds.forEach(function(id){if(ordered.indexOf(id)<0)ordered.push(id);});
+  _reorderModalData={key:'musicModuleOrder',ids:ordered,map:moduleLabels};
+  _showReorderModal('음악 모듈 순서');
 }
+function applyMusicModuleOrder(){
+  var saved=JSON.parse(localStorage.getItem('musicModuleOrder')||'null');
+  if(!saved)return;
+  var grid=document.getElementById('musicModuleGrid');
+  if(!grid)return;
+  var cards={};
+  grid.querySelectorAll('[data-module]').forEach(function(c){cards[c.getAttribute('data-module')]=c;});
+  saved.forEach(function(k){if(cards[k])grid.appendChild(cards[k]);});
+}
+window.applyMusicModuleOrder=applyMusicModuleOrder;
 function _getOrderedIds(storageKey,items){
   var saved=JSON.parse(localStorage.getItem(storageKey)||'null');
   var allIds=items.map(function(x){return x.id;});
@@ -2801,10 +2838,12 @@ function shiftReorderItem(idx,dir){
 }
 function saveReorderModal(){
   localStorage.setItem(_reorderModalData.key,JSON.stringify(_reorderModalData.ids));
+  var fsKey=_reorderModalData.key;var fsData={};fsData[fsKey]=_reorderModalData.ids;setDoc(masterSettingsDoc,fsData,{merge:true}).catch(function(){});
   document.getElementById('reorderModal').remove();
   toast('순서 저장됨');
   if(_reorderModalData.key==='memoFolderOrder')renderMemoFolders();
   if(_reorderModalData.key==='musicListOrder')renderPlaylists();
+  if(_reorderModalData.key==='musicModuleOrder')applyMusicModuleOrder();
 }
 window.shiftReorderItem=shiftReorderItem;window.saveReorderModal=saveReorderModal;
 window.toggleMasterMode=toggleMasterMode;
@@ -2927,6 +2966,19 @@ function renderTodoCal(){
 
 var _carouselIdx=0,_carouselTotal=0,_carouselPic='',_picCache={};
 
+/* 직접 localStorage에서 이미지 읽기 (iframe 없이 즉시 로드) */
+var _picExtractLS={
+  '1picture.html':function(){
+    try{var r=localStorage.getItem('editorial_layout_state_v1');if(!r)return null;var s=JSON.parse(r);var imgs=s.images||{};var out=[1,2,3,4,5].map(function(i){return imgs['s'+i]||'';});if(out.every(function(x){return!x;}))return null;return out;}catch(e){return null;}
+  },
+  '2picture.html':function(){
+    try{var r=localStorage.getItem('lowtheory_editable_state_v10');if(!r)return null;var s=JSON.parse(r);var imgs=s.images||{};var out=['center-photo','photo-1','photo-2','photo-3','photo-4','photo-5'].map(function(id){return imgs[id]||'';});if(out.every(function(x){return!x;}))return null;return out;}catch(e){return null;}
+  },
+  '3picture.html':function(){
+    var out=[1,2,3,4,5].map(function(i){return localStorage.getItem('mb_img_img-'+i)||'';});if(out.every(function(x){return!x;}))return null;return out;
+  }
+};
+
 /* 각 picture 파일의 이미지 슬롯 추출 정의 */
 var _picExtract={
   '1picture.html':function(doc){
@@ -3040,6 +3092,11 @@ function openPicExpand(src){
     _carouselPic=src;
     /* 캐시 히트: 즉시 렌더 */
     if(_picCache[src]){_renderCarousel(_picCache[src]);return;}
+    /* localStorage 직접 읽기 시도 */
+    if(_picExtractLS[src]){
+      var lsSrcs=_picExtractLS[src]();
+      if(lsSrcs){_picCache[src]=lsSrcs;_renderCarousel(lsSrcs);return;}
+    }
     document.getElementById('picExpandTitle').textContent='Loading…';
     document.getElementById('picCarouselDots').innerHTML='';
     document.getElementById('picPhotoTrack').innerHTML=
@@ -3124,8 +3181,17 @@ window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
 })();
 loadBgImages().then(()=>renderBgGrid());
 loadTodos().then(function(){renderTodoHub();});
+// Master settings: localStorage 먼저 적용 후 Firestore 동기화
 applyMasterLabels();
 applyHubCardOrder();
+getDoc(masterSettingsDoc).then(function(snap){
+  if(!snap.exists())return;
+  var d=snap.data();
+  if(d.labels){localStorage.setItem('masterLabels',JSON.stringify(d.labels));applyMasterLabels();}
+  if(d.cardOrder){localStorage.setItem('hubCardOrder',JSON.stringify(d.cardOrder));applyHubCardOrder();}
+  if(d.memoFolderOrder){localStorage.setItem('memoFolderOrder',JSON.stringify(d.memoFolderOrder));}
+  if(d.musicModuleOrder){localStorage.setItem('musicModuleOrder',JSON.stringify(d.musicModuleOrder));applyMusicModuleOrder();}
+}).catch(function(){});
 // Hub storage bar
 async function updateHubStorage(){
   try{
