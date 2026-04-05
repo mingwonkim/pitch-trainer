@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LowTheory Editorial Layout</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>(function(){document.addEventListener('contextmenu',function(e){e.preventDefault();},true);document.addEventListener('dragstart',function(e){e.preventDefault();},true);['copy','cut'].forEach(function(ev){document.addEventListener(ev,function(e){var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)return;e.preventDefault();},true);});document.addEventListener('keydown',function(e){if(e.key==='F12')e.preventDefault();if(e.ctrlKey&&e.shiftKey&&/^[IJCijc]$/.test(e.key))e.preventDefault();if(e.ctrlKey&&/^[uUsSpP]$/.test(e.key))e.preventDefault();},true);})();</script>
 <style>
+  *{-webkit-user-select:none;-moz-user-select:none;user-select:none;}
+  input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;}
+  img{-webkit-user-drag:none;user-drag:none;pointer-events:none;-webkit-touch-callout:none;}
+  body.ed-unlocked img{pointer-events:auto;}
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
@@ -423,6 +428,7 @@
   let edUnlocked = false;
 
   window.addEventListener('message', e => {
+    if(e.origin!==window.location.origin)return;
     if (e.data && e.data.type === 'mk_unlock') {
       edUnlocked = e.data.value;
       const btn = document.getElementById('ed-edit-btn');
@@ -535,7 +541,7 @@
   function sendH(){
     var el = document.getElementById("editorialLayout") || document.body;
     var h = el.getBoundingClientRect().height || el.offsetHeight;
-    window.parent.postMessage({type:'iframe_height',id:'edLayoutFrame',value:h},'*');
+    window.parent.postMessage({type:'iframe_height',id:'edLayoutFrame',value:h},location.origin);
   }
   if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
   window.addEventListener('load', sendH);

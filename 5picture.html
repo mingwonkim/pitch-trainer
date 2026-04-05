@@ -4,6 +4,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Low Theory Lab - Archive Grid</title>
+<script>(function(){document.addEventListener('contextmenu',function(e){e.preventDefault();},true);document.addEventListener('dragstart',function(e){e.preventDefault();},true);['copy','cut'].forEach(function(ev){document.addEventListener(ev,function(e){var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)return;e.preventDefault();},true);});document.addEventListener('keydown',function(e){if(e.key==='F12')e.preventDefault();if(e.ctrlKey&&e.shiftKey&&/^[IJCijc]$/.test(e.key))e.preventDefault();if(e.ctrlKey&&/^[uUsSpP]$/.test(e.key))e.preventDefault();},true);})();</script>
+<style>*{-webkit-user-select:none;-moz-user-select:none;user-select:none;}input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;}img{-webkit-user-drag:none;user-drag:none;pointer-events:none;-webkit-touch-callout:none;}</style>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Space+Grotesk:wght@300;400;700&amp;family=Courier+Prime:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -328,6 +330,7 @@
   let p5EditMode = false;
 
   window.addEventListener('message', e => {
+    if(e.origin!==window.location.origin)return;
     if (e.data && e.data.type === 'mk_unlock') {
       p5Unlocked = e.data.value;
       const btn = document.getElementById('p5-edit-btn');
@@ -395,7 +398,7 @@
 <script>
 function sendHeight(){
   var h=document.documentElement.scrollHeight||document.body.scrollHeight;
-  window.parent.postMessage({type:'iframe_height',id:'p5Frame',value:h-80},'*');
+  window.parent.postMessage({type:'iframe_height',id:'p5Frame',value:h-80},location.origin);
 }
 if(window.ResizeObserver){new ResizeObserver(sendHeight).observe(document.body);}
 window.addEventListener('load',sendHeight);

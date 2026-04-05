@@ -1515,7 +1515,8 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
   let getFirestore,getStorage;
   ({getFirestore,collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,query,onSnapshot}=fsMod);
   ({getStorage,ref:sRef,uploadBytes,getDownloadURL,deleteObject,listAll}=stgMod);
-  ({getAuth,sendSignInLinkToEmail,isSignInWithEmailLink,signInWithEmailLink}=authMod);
+  let signInAnonymously,onAuthStateChanged;
+  ({getAuth,sendSignInLinkToEmail,isSignInWithEmailLink,signInWithEmailLink,signInAnonymously,onAuthStateChanged}=authMod);
   const _app=initializeApp({apiKey:"AIzaSyDWXJ1nIQIZXSMruwFhyoMSU3gf3omiyMc",authDomain:"mingwon-hub.firebaseapp.com",projectId:"mingwon-hub",storageBucket:"mingwon-hub.firebasestorage.app",messagingSenderId:"108345228898",appId:"1:108345228898:web:81aa09a240d48e54081b3b"});
   db=getFirestore(_app);stg=getStorage(_app);auth=getAuth(_app);
   memosCol=collection(db,'mk_app','data','memos');memoFoldersCol=collection(db,'mk_app','data','folders');
@@ -1527,30 +1528,34 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
   ytKeyDoc=doc(db,'mk_app','settings');masterSettingsDoc=doc(db,'mk_app','master_settings');
   playlistsCol=collection(db,'mk_app','data','playlists');playlistSongsCol=collection(db,'mk_app','data','playlist_songs');
   gallerCol=collection(db,'mk_app','data','gallery');
-  // Firebase 로드 완료 — 초기화 작업 실행
-  loadBgImages().then(()=>renderBgGrid());
-  loadTodos().then(function(){renderTodoHub();});
-  getDoc(masterSettingsDoc).then(function(snap){
-    if(!snap||!snap.exists())return;
-    var d=snap.data();
-    if(d.labels){localStorage.setItem('masterLabels',JSON.stringify(d.labels));applyMasterLabels();}
-    if(d.cardOrder){localStorage.setItem('hubCardOrder',JSON.stringify(d.cardOrder));applyHubCardOrder();}
-    if(d.memoFolderOrder){localStorage.setItem('memoFolderOrder',JSON.stringify(d.memoFolderOrder));}
-    if(d.musicModuleOrder){localStorage.setItem('musicModuleOrder',JSON.stringify(d.musicModuleOrder));applyMusicModuleOrder();}
-  }).catch(function(){});
-  updateHubStorage();
-  _initHubMemoSync();
-  // 현재 활성 탭 재렌더링 — Firebase 로드 전에 탭이 열려 있었던 경우 데이터 없이 빈 화면으로 렌더링됐을 수 있음
-  if(curPage==='files')renderFileFolders();
-  if(curPage==='memo')renderMemoFolders();
-  if(curPage==='gallery')renderGallery();
-  // 복구 이메일 Firestore → 로컬 동기화
-  getDoc(doc(db,'mk_app','recovery')).then(snap=>{
-    if(snap&&snap.exists()&&snap.data().email){
-      localStorage.setItem(RECOVERY_EMAIL_KEY,snap.data().email);
-      updateRecoveryEmailDisplay();
-    }
-  }).catch(()=>{});
+  // Firebase Auth — 인증 후 데이터 로드 (Firestore Rules: request.auth != null)
+  let _dataLoaded=false;
+  onAuthStateChanged(auth,async function(user){
+    if(!user){try{await signInAnonymously(auth);}catch(e){console.error('Anonymous auth failed:',e);}return;}
+    if(_dataLoaded)return;_dataLoaded=true;
+    // 인증 완료 — 데이터 로드 시작
+    loadBgImages().then(()=>renderBgGrid());
+    loadTodos().then(function(){renderTodoHub();});
+    getDoc(masterSettingsDoc).then(function(snap){
+      if(!snap||!snap.exists())return;
+      var d=snap.data();
+      if(d.labels){localStorage.setItem('masterLabels',JSON.stringify(d.labels));applyMasterLabels();}
+      if(d.cardOrder){localStorage.setItem('hubCardOrder',JSON.stringify(d.cardOrder));applyHubCardOrder();}
+      if(d.memoFolderOrder){localStorage.setItem('memoFolderOrder',JSON.stringify(d.memoFolderOrder));}
+      if(d.musicModuleOrder){localStorage.setItem('musicModuleOrder',JSON.stringify(d.musicModuleOrder));applyMusicModuleOrder();}
+    }).catch(function(){});
+    updateHubStorage();
+    _initHubMemoSync();
+    if(curPage==='files')renderFileFolders();
+    if(curPage==='memo')renderMemoFolders();
+    if(curPage==='gallery')renderGallery();
+    getDoc(doc(db,'mk_app','recovery')).then(snap=>{
+      if(snap&&snap.exists()&&snap.data().email){
+        localStorage.setItem(RECOVERY_EMAIL_KEY,snap.data().email);
+        updateRecoveryEmailDisplay();
+      }
+    }).catch(()=>{});
+  });
   // 이메일 링크 귀환 감지 — 비밀번호 재설정
   if(isSignInWithEmailLink&&isSignInWithEmailLink(auth,window.location.href)){
     checkEmailLinkReturn();

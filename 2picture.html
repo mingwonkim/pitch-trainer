@@ -3,6 +3,8 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>lowtheory® | Editorial Editable</title>
+<script>(function(){document.addEventListener('contextmenu',function(e){e.preventDefault();},true);document.addEventListener('dragstart',function(e){e.preventDefault();},true);['copy','cut'].forEach(function(ev){document.addEventListener(ev,function(e){var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)return;e.preventDefault();},true);});document.addEventListener('keydown',function(e){if(e.key==='F12')e.preventDefault();if(e.ctrlKey&&e.shiftKey&&/^[IJCijc]$/.test(e.key))e.preventDefault();if(e.ctrlKey&&/^[uUsSpP]$/.test(e.key))e.preventDefault();},true);})();</script>
+<style>*{-webkit-user-select:none;-moz-user-select:none;user-select:none;}input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;}img{-webkit-user-drag:none;user-drag:none;pointer-events:none;-webkit-touch-callout:none;}</style>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Inter:wght@400;500&amp;family=Work+Sans:wght@400;500&amp;display=swap" rel="stylesheet">
 <script id="tailwind-config">
@@ -599,6 +601,7 @@ const imageNodes=[...document.querySelectorAll('[data-image]')];
 let editMode=false,unlocked=false;
 
 window.addEventListener('message',e=>{
+  if(e.origin!==window.location.origin)return;
   if(e.data&&e.data.type==='mk_unlock'){
     unlocked=e.data.value;
     const btn=document.getElementById('lt-edit-btn');
@@ -653,7 +656,7 @@ function sendHeight(){
   const h=document.documentElement.scrollHeight||document.body.scrollHeight;
   const isMobile=window.matchMedia('(max-width:767px)').matches;
   const val=isMobile?Math.ceil(h*0.26):h;
-  window.parent.postMessage({type:'lt_height',value:val},'*');
+  window.parent.postMessage({type:'lt_height',value:val},location.origin);
 }
 if(window.ResizeObserver){
   new ResizeObserver(sendHeight).observe(document.body);
@@ -667,7 +670,7 @@ window.addEventListener('load',sendHeight);
     var h = document.documentElement.scrollHeight;
     var isMobile = window.matchMedia('(max-width:767px)').matches;
     var val = isMobile ? Math.ceil(h * 0.26) : h - 40;
-    window.parent.postMessage({type:'iframe_height',id:'ltScaleFrame',value:val},'*');
+    window.parent.postMessage({type:'iframe_height',id:'ltScaleFrame',value:val},location.origin);
   }
   if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
   window.addEventListener('load', sendH);

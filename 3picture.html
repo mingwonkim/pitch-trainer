@@ -7,7 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Inter:wght@300;400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script>(function(){document.addEventListener('contextmenu',function(e){e.preventDefault();},true);document.addEventListener('dragstart',function(e){e.preventDefault();},true);['copy','cut'].forEach(function(ev){document.addEventListener(ev,function(e){var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)return;e.preventDefault();},true);});document.addEventListener('keydown',function(e){if(e.key==='F12')e.preventDefault();if(e.ctrlKey&&e.shiftKey&&/^[IJCijc]$/.test(e.key))e.preventDefault();if(e.ctrlKey&&/^[uUsSpP]$/.test(e.key))e.preventDefault();},true);})();</script>
   <style>
+    *{-webkit-user-select:none;-moz-user-select:none;user-select:none;}
+    input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;}
+    img{-webkit-user-drag:none;user-drag:none;pointer-events:none;-webkit-touch-callout:none;}
     :root {
       --bg: #120c0c;
       --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
@@ -706,6 +710,7 @@ CMYK: 0 83 62 72</div>
   let mbEditMode = false;
 
   window.addEventListener('message', e => {
+    if(e.origin!==window.location.origin)return;
     if (e.data && e.data.type === 'mk_unlock') {
       mbUnlocked = e.data.value;
       const btn = document.getElementById('mb-edit-btn');
@@ -750,7 +755,7 @@ CMYK: 0 83 62 72</div>
     var h = document.documentElement.scrollHeight;
     var isMobile = window.matchMedia('(max-width:767px)').matches;
     var val = isMobile ? Math.ceil(h * 0.31) : h - 30;
-    window.parent.postMessage({type:'iframe_height',id:'mbFrame',value:val},'*');
+    window.parent.postMessage({type:'iframe_height',id:'mbFrame',value:val},location.origin);
   }
   if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
   window.addEventListener('load', sendH);
