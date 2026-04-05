@@ -3406,6 +3406,18 @@ renderGallery();
   onScroll();
 })();
 </script>
+<script>
+// Firebase 모듈 로드 실패 감지 — 5초 후에도 openApp 미정의 시 안내
+setTimeout(function(){
+  if(typeof window.openApp==='undefined'){
+    var t=document.getElementById('toast');
+    if(t){t.textContent='로딩 실패 — 페이지를 새로고침해주세요 (Ctrl+Shift+R)';t.classList.add('show');setTimeout(function(){t.classList.remove('show');},5000);}
+    // 카드 클릭 기본 fallback
+    window.openApp=function(a){alert('로딩 중 오류가 발생했습니다. 페이지를 새로고침해주세요.');};
+    window.goHub=function(){};window.goBack=function(){};
+  }
+},5000);
+</script>
 <!-- Music iframe — body 직속 전체화면 overlay -->
 <div id="musicAppView" style="display:none;">
   <button class="music-app-back" onclick="closeMusicApp()">← 목록</button>
