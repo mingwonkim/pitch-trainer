@@ -1468,7 +1468,7 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
       import('./firebase/firebase-app.js'),
       import('./firebase/firebase-firestore.js'),
       import('./firebase/firebase-storage.js'),
-      import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-auth.js'),
+      import('./firebase/firebase-auth.js'),
     ]);
   }catch(localErr){
     console.warn('Firebase 로컬 로드 실패, CDN 폴백:',localErr.message||localErr);
@@ -1476,7 +1476,7 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
       import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-app.js'),
       import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-firestore.js'),
       import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-storage.js'),
-      import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-auth.js'),
+      import('./firebase/firebase-auth.js'),
     ]);
   }
   const{initializeApp}=appMod;
