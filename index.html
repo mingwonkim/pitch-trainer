@@ -598,8 +598,6 @@
     filter:drop-shadow(0 6px 20px rgba(0,0,0,0.45))!important;
     background-position:30px 68px,30px 100px,30px 132px,30px 164px!important;
     background-size:calc(100% - 60px) 1px,calc(100% - 60px) 1px,calc(100% - 60px) 1px,calc(100% - 60px) 1px!important;
-    background-image:linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px)!important;
-    background-repeat:no-repeat,no-repeat,no-repeat,no-repeat!important;
   }
   .hub-quote-text{font-size:18px!important;min-height:56px!important;}
   .hub-nav-btn{font-size:24px!important;}
@@ -2809,6 +2807,9 @@ function saveReorderModal(){
   if(_reorderModalData.key==='musicListOrder')renderPlaylists();
 }
 window.shiftReorderItem=shiftReorderItem;window.saveReorderModal=saveReorderModal;
+window.toggleMasterMode=toggleMasterMode;
+window.saveMasterLabels=saveMasterLabels;window.resetMasterLabels=resetMasterLabels;
+window.openReorderMemo=openReorderMemo;window.openReorderMusic=openReorderMusic;
 function saveMasterQuote(){
   var inp=document.getElementById('masterQuoteInput');
   if(!inp)return;
