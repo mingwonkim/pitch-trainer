@@ -1,0 +1,7 @@
+*.backup
+*.working
+index_test.html
+test_*.html
+.claude/
+.gstack/
+CNAME.txt

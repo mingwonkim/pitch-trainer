@@ -125,8 +125,7 @@
 .icon-picker h3{font-size:16px;font-weight:700;margin-bottom:10px;color:#e5e2e1;}
 .icon-picker .icon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:14px;max-height:240px;overflow-y:auto;}
 .icon-picker .icon-opt{padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;transition:.15s;border:1.5px solid transparent;}.icon-picker .icon-opt:hover{background:#252525;border-color:rgba(255,180,162,.2);}.icon-picker .icon-opt.sel{border-color:#ffb4a2;background:rgba(255,180,162,.08);}
-#musicAppView{position:fixed;inset:0;z-index:200;background:#08080e;pointer-events:auto;}
-.music-frame{position:absolute;top:var(--nav-h,64px);left:0;right:0;bottom:0;width:100%;height:calc(100% - var(--nav-h,64px));border:none;background:#08080e;}
+.music-frame{position:fixed;top:var(--nav-h,64px);left:0;right:0;bottom:0;width:100%;height:calc(100dvh - var(--nav-h,64px));border:none;background:#08080e;z-index:200;}
 .music-app-back{position:fixed;top:calc(var(--nav-h,64px) + 12px);left:16px;z-index:201;display:flex;align-items:center;gap:7px;padding:7px 16px;background:rgba(14,14,14,.88);backdrop-filter:blur(12px);border:1px solid #353535;border-radius:9999px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.2s;}
 .music-app-back:hover{border-color:#ffb4a2;}
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#FF3B00;color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}.toast.show{opacity:1;}
@@ -1468,7 +1467,7 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
       import('./firebase/firebase-app.js'),
       import('./firebase/firebase-firestore.js'),
       import('./firebase/firebase-storage.js'),
-      import('./firebase/firebase-auth.js'),
+      import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-auth.js'),
     ]);
   }catch(localErr){
     console.warn('Firebase 로컬 로드 실패, CDN 폴백:',localErr.message||localErr);
@@ -1476,7 +1475,7 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
       import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-app.js'),
       import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-firestore.js'),
       import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-storage.js'),
-      import('./firebase/firebase-auth.js'),
+      import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-auth.js'),
     ]);
   }
   const{initializeApp}=appMod;
@@ -1507,6 +1506,7 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
     if(d.musicModuleOrder){localStorage.setItem('musicModuleOrder',JSON.stringify(d.musicModuleOrder));applyMusicModuleOrder();}
   }).catch(function(){});
   updateHubStorage();
+  _initHubMemoSync();
   // 현재 활성 탭 재렌더링 — Firebase 로드 전에 탭이 열려 있었던 경우 데이터 없이 빈 화면으로 렌더링됐을 수 있음
   if(curPage==='files')renderFileFolders();
   if(curPage==='memo')renderMemoFolders();
@@ -1558,13 +1558,15 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
   if(prevBtn)prevBtn.addEventListener('click',function(){_showPage((_pg+2)%3);});
   if(nextBtn)nextBtn.addEventListener('click',function(){_showPage((_pg+1)%3);});
   _showPage(1);
+})();
 
-  // 메모 1 — Firestore 실시간 동기화
+// 말풍선 메모 Firestore 동기화 — Firebase 초기화 완료 후 호출됨
+async function _initHubMemoSync(){
   var el=document.getElementById('hubBubbleMemo');
   var savedEl=document.getElementById('hubBubbleSaved');
-  if(el){
+  if(el&&hubMemoDoc){
     try{var snap=await getDoc(hubMemoDoc);if(snap&&snap.exists()&&snap.data().text!==undefined)el.textContent=snap.data().text;}catch(e){}
-    if(typeof onSnapshot==='function'&&hubMemoDoc)onSnapshot(hubMemoDoc,function(snap){if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el)el.textContent=snap.data().text;});
+    onSnapshot(hubMemoDoc,function(snap){if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el)el.textContent=snap.data().text;});
     var t1;
     el.addEventListener('input',function(){
       clearTimeout(t1);
@@ -1573,12 +1575,10 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
       },600);
     });
   }
-
-  // 메모 2 — Firestore 실시간 동기화
   var el2=document.getElementById('hubBubbleMemo2');
-  if(el2){
+  if(el2&&hubMemo2Doc){
     try{var snap2=await getDoc(hubMemo2Doc);if(snap2&&snap2.exists()&&snap2.data().text!==undefined)el2.textContent=snap2.data().text;}catch(e){}
-    if(typeof onSnapshot==='function'&&hubMemo2Doc)onSnapshot(hubMemo2Doc,function(snap){if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el2)el2.textContent=snap.data().text;});
+    onSnapshot(hubMemo2Doc,function(snap){if(snap.exists()&&snap.data().text!==undefined&&document.activeElement!==el2)el2.textContent=snap.data().text;});
     var t2;
     el2.addEventListener('input',function(){
       clearTimeout(t2);
@@ -1587,7 +1587,7 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
       },600);
     });
   }
-})();
+}
 
 
 /* ===== Passwords ===== */
