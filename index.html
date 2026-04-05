@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/>
+<meta name="referrer" content="strict-origin-when-cross-origin"/>
 <title>MK.HUB</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
@@ -276,9 +278,9 @@
 .fav-list-reason-preview{font-family:'Inter',sans-serif;font-size:11px;color:#524340;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;}
 .fav-list-del{font-size:12px;color:#353535;cursor:pointer;transition:color .2s;flex-shrink:0;padding:4px;}.fav-list-del:hover{color:#FF3B00;}
 /* Fav song detail YouTube embed */
-.fav-yt-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;}
+.fav-yt-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;flex-shrink:0;min-height:0;}
 .fav-yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
-.fav-song-reason{padding:16px 20px;background:#1c1b1b;border:1px solid #252525;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;color:#a08d88;line-height:1.75;min-height:80px;max-height:120px;overflow-y:auto;}
+.fav-song-reason{padding:16px 20px;background:#1c1b1b;border:1px solid #252525;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;color:#a08d88;line-height:1.75;min-height:80px;max-height:120px;overflow-y:auto;overflow-x:hidden;word-break:break-word;overflow-wrap:break-word;}
 .fav-reason-label{display:inline-block;font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FF3B00;margin-right:8px;vertical-align:middle;}
 /* Music cards (old — keep for safety) */
 .music-card{background:#1c1b1b;border:1px solid #252525;border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:14px;cursor:pointer;transition:all .25s;}
@@ -705,6 +707,8 @@
     overflow-x:hidden!important;
   }
 }
+/* Flex column page: mx-auto child collapses width without explicit width:100% */
+.page.active > .max-w-4xl,.page.active > .w-full{width:100%;}
 </style>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
@@ -1199,11 +1203,11 @@
         <div id="favSongList" class="space-y-3"></div>
       </div>
 
-      <div id="favWhyDetailView" style="display:none;">
+      <div id="favWhyDetailView" style="display:none;overflow-x:hidden;">
         <div class="flex items-center gap-4 mb-6">
-          <div>
-            <div class="font-headline text-xl font-bold tracking-tight" id="favDetailTitle"></div>
-            <div class="text-sm text-outline mt-0.5" id="favDetailArtist"></div>
+          <div style="min-width:0;overflow:hidden;">
+            <div class="font-headline text-xl font-bold tracking-tight" id="favDetailTitle" style="word-break:break-word;"></div>
+            <div class="text-sm text-outline mt-0.5" id="favDetailArtist" style="word-break:break-word;"></div>
           </div>
         </div>
         <div class="fav-yt-wrap mb-5">
