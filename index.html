@@ -438,7 +438,7 @@
   position:relative;
   background-color:#faf9f6;
   background-image:linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px),linear-gradient(rgba(20,15,15,0.06) 1px,transparent 1px);
-  background-position:44px 56px,44px 96px,44px 148px;
+  background-position:44px 80px,44px 115px,44px 150px;
   background-size:calc(100% - 88px) 1px,calc(100% - 88px) 1px,calc(100% - 88px) 1px;
   background-repeat:no-repeat,no-repeat,no-repeat;
   border-radius:96px;
@@ -451,7 +451,7 @@
 /* 구름 꼬리 — 큰 원 */
 .hub-bubble::before{
   content:'';position:absolute;
-  bottom:-30px;left:60px;
+  bottom:-14px;left:60px;
   width:28px;height:28px;
   background:#faf9f6;
   border-radius:50%;
@@ -460,7 +460,7 @@
 /* 구름 꼬리 — 작은 원 */
 .hub-bubble::after{
   content:'';position:absolute;
-  bottom:-50px;left:46px;
+  bottom:-30px;left:46px;
   width:16px;height:16px;
   background:#faf9f6;
   border-radius:50%;
@@ -490,12 +490,12 @@
   letter-spacing:.12em;text-transform:uppercase;
   color:rgba(0,0,0,0.30);opacity:0;transition:opacity .4s;
 }
-.hub-bubble-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 2px;}
-.hub-nav-btn{background:none;border:none;color:rgba(255,255,255,0.28);font-size:28px;line-height:1;cursor:pointer;padding:0 6px;border-radius:50%;transition:color .2s;font-family:'Nunito',sans-serif;}
-.hub-nav-btn:hover{color:rgba(255,255,255,0.68);}
+.hub-bubble-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding:0 2px;}
+.hub-nav-btn{background:none;border:none;color:rgba(20,15,15,0.20);font-size:28px;line-height:1;cursor:pointer;padding:0 6px;border-radius:50%;transition:color .2s;font-family:'Nunito',sans-serif;}
+.hub-nav-btn:hover{color:rgba(20,15,15,0.55);}
 .hub-page-dots{display:flex;gap:6px;align-items:center;}
-.hub-pdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.18);transition:background .25s,transform .25s;display:inline-block;}
-.hub-pdot.active{background:rgba(255,255,255,0.62);transform:scale(1.3);}
+.hub-pdot{width:6px;height:6px;border-radius:50%;background:rgba(20,15,15,0.14);transition:background .25s,transform .25s;display:inline-block;}
+.hub-pdot.active{background:rgba(20,15,15,0.48);transform:scale(1.3);}
 .hub-quote-text{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:600;line-height:1.75;color:rgba(28,18,18,0.74);margin-bottom:10px;min-height:72px;}
 .hub-quote-author{font-family:'Fredoka',sans-serif;font-size:14px;font-weight:500;color:rgba(28,18,18,0.45);text-align:right;}
 .hub-bubble.hub-no-lines{background-image:none;}
@@ -590,24 +590,24 @@
   /* ══ 4. 말풍선 (모바일 축소) ══ */
   .hub-bubble-wrap{max-width:100%!important;padding-bottom:44px!important;}
   .hub-bubble{
-    border-radius:64px!important;
-    padding:20px 24px 16px!important;
-    min-height:84px!important;
+    border-radius:72px!important;
+    padding:26px 30px 20px!important;
+    min-height:130px!important;
     filter:drop-shadow(0 6px 20px rgba(0,0,0,0.45))!important;
-    background-position:24px 40px,24px 72px,24px 112px!important;
-    background-size:calc(100% - 48px) 1px,calc(100% - 48px) 1px,calc(100% - 48px) 1px!important;
+    background-position:30px 68px,30px 100px,30px 132px!important;
+    background-size:calc(100% - 60px) 1px,calc(100% - 60px) 1px,calc(100% - 60px) 1px!important;
   }
-  .hub-quote-text{font-size:16px!important;min-height:48px!important;}
-  .hub-nav-btn{font-size:22px!important;}
+  .hub-quote-text{font-size:18px!important;min-height:56px!important;}
+  .hub-nav-btn{font-size:24px!important;}
   .hub-bubble::before{
-    width:18px!important;height:18px!important;
-    bottom:-20px!important;left:44px!important;
+    width:22px!important;height:22px!important;
+    bottom:-11px!important;left:48px!important;
   }
   .hub-bubble::after{
-    width:11px!important;height:11px!important;
-    bottom:-34px!important;left:34px!important;
+    width:13px!important;height:13px!important;
+    bottom:-24px!important;left:38px!important;
   }
-  .hub-bubble-memo{font-size:16px!important;min-height:40px!important;}
+  .hub-bubble-memo{font-size:18px!important;min-height:56px!important;}
 
   /* ══ 5. 앱 카드 세로 스택 ══ */
   #hubCardGrid{
@@ -719,12 +719,12 @@
 
 <!-- Top Nav -->
 <nav class="fixed top-0 w-full z-50 bg-[#131313]/85 backdrop-blur-2xl flex justify-between items-center px-6 md:px-8 py-5 border-b border-white/[.03]" style="will-change:transform;">
-  <div class="text-sm font-bold tracking-[.2em] text-[#ffb4a2] font-['Space_Grotesk'] uppercase cursor-pointer" onclick="goHub()">MONOLITH_OS</div>
+  <div class="text-sm font-bold tracking-[.2em] text-[#ffb4a2] font-['Space_Grotesk'] uppercase cursor-pointer" data-elabel="brand" onclick="goHub()">MONOLITH_OS</div>
   <div class="hidden md:flex gap-8 items-center">
-    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="hub" onclick="goHub()">Hub</a>
-    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="memo" onclick="openApp('memo')">Notepad</a>
-    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="files" onclick="openApp('files')">Vault</a>
-    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="music" onclick="openApp('music')">Music</a>
+    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="hub" data-elabel="nav_hub" onclick="goHub()">Hub</a>
+    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="memo" data-elabel="nav_notepad" onclick="openApp('memo')">Notepad</a>
+    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="files" data-elabel="nav_vault" onclick="openApp('files')">Vault</a>
+    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="music" data-elabel="nav_music" onclick="openApp('music')">Music</a>
   </div>
   <div class="flex gap-5 items-center">
     <span class="material-symbols-outlined text-[20px] text-[#ffb4a2]/50 cursor-pointer hover:text-[#FF3B00] transition-colors duration-300" onclick="openApp('settings')">settings</span>
@@ -734,10 +734,10 @@
 <!-- Bottom Nav -->
 <nav class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
   <div class="bg-[#131313]/60 backdrop-blur-3xl rounded-2xl px-5 py-2.5 shadow-2xl shadow-black/30 flex gap-7 md:gap-10 items-center justify-center border border-[#252525]" style="will-change:transform;">
-    <a class="bnav flex flex-col items-center justify-center transition-all duration-400 cursor-pointer py-1 px-2 text-[#ffb4a2]" data-page="hub" onclick="goHub()"><span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1;">grid_view</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Hub</span></a>
-    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="memo" onclick="openApp('memo')"><span class="material-symbols-outlined text-[20px]">edit_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Note</span></a>
-    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="files" onclick="openApp('files')"><span class="material-symbols-outlined text-[20px]">folder</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Vault</span></a>
-    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="music" onclick="openApp('music')"><span class="material-symbols-outlined text-[20px]">music_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5">Music</span></a>
+    <a class="bnav flex flex-col items-center justify-center transition-all duration-400 cursor-pointer py-1 px-2 text-[#ffb4a2]" data-page="hub" onclick="goHub()"><span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1;">grid_view</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_hub">Hub</span></a>
+    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="memo" onclick="openApp('memo')"><span class="material-symbols-outlined text-[20px]">edit_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_notepad">Note</span></a>
+    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="files" onclick="openApp('files')"><span class="material-symbols-outlined text-[20px]">folder</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_vault">Vault</span></a>
+    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="music" onclick="openApp('music')"><span class="material-symbols-outlined text-[20px]">music_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_music">Music</span></a>
   </div>
 </nav>
 
@@ -797,16 +797,16 @@
       </div>
       <div class="md:col-span-4 pb-4">
         <div class="hub-bubble-wrap">
-          <div class="hub-bubble-nav-row">
-            <button class="hub-nav-btn" id="hubBubblePrev">&#8249;</button>
-            <div class="hub-page-dots">
-              <span class="hub-pdot active" data-pg="0"></span>
-              <span class="hub-pdot" data-pg="1"></span>
-              <span class="hub-pdot" data-pg="2"></span>
-            </div>
-            <button class="hub-nav-btn" id="hubBubbleNext">&#8250;</button>
-          </div>
           <div class="hub-bubble">
+            <div class="hub-bubble-nav-row">
+              <button class="hub-nav-btn" id="hubBubblePrev">&#8249;</button>
+              <div class="hub-page-dots">
+                <span class="hub-pdot active" data-pg="0"></span>
+                <span class="hub-pdot" data-pg="1"></span>
+                <span class="hub-pdot" data-pg="2"></span>
+              </div>
+              <button class="hub-nav-btn" id="hubBubbleNext">&#8250;</button>
+            </div>
             <div class="hub-page" id="hubPage0">
               <div class="hub-quote-text" id="hubQuoteText"></div>
               <div class="hub-quote-author" id="hubQuoteAuthor"></div>
@@ -830,7 +830,7 @@
       <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('memo')">
         <div>
           <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]">edit_note</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">01</span></div>
-          <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter">Notepad</h2>
+          <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter" data-elabel="card_notepad">Notepad</h2>
           <div class="space-y-0 mb-1" style="position:relative;">
             <div class="writing-line" style="animation-delay:0s;">
               <span class="writing-dot" style="background:#FF3B00;"></span>
@@ -857,7 +857,7 @@
       <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] md:-translate-y-8 shadow-2xl shadow-black/30 hover:translate-y-[-16px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('files')">
         <div>
           <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]" style="font-variation-settings:'FILL' 1;">inventory_2</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">02</span></div>
-          <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter">Vault</h2>
+          <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter" data-elabel="card_vault">Vault</h2>
           <div class="vault-storage-block mb-8">
             <div class="flex justify-between items-center mb-2">
               <span class="font-label text-[10px] uppercase tracking-[.15em] text-outline/60">Storage Used</span>
@@ -884,7 +884,7 @@
       <section class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('music')">
         <div>
           <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]">music_note</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">03</span></div>
-          <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter">Music</h2>
+          <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter" data-elabel="card_music">Music</h2>
           <div class="flex items-end gap-[4px] mb-10" style="height:56px;" id="hubVizBars">
             <div class="viz-bar" style="--h:35%;--d:0s;"></div><div class="viz-bar" style="--h:65%;--d:.07s;"></div><div class="viz-bar" style="--h:50%;--d:.14s;"></div><div class="viz-bar" style="--h:85%;--d:.21s;"></div><div class="viz-bar" style="--h:40%;--d:.28s;"></div><div class="viz-bar" style="--h:70%;--d:.10s;"></div><div class="viz-bar" style="--h:55%;--d:.17s;"></div><div class="viz-bar" style="--h:90%;--d:.04s;"></div><div class="viz-bar" style="--h:45%;--d:.24s;"></div><div class="viz-bar" style="--h:60%;--d:.12s;"></div><div class="viz-bar" style="--h:75%;--d:.32s;"></div><div class="viz-bar" style="--h:30%;--d:.08s;"></div><div class="viz-bar" style="--h:80%;--d:.19s;"></div><div class="viz-bar" style="--h:55%;--d:.26s;"></div><div class="viz-bar" style="--h:42%;--d:.05s;"></div><div class="viz-bar" style="--h:68%;--d:.15s;"></div>
           </div>
@@ -1279,6 +1279,36 @@
     </div>
 
     <div class="app-settings-section">
+      <div class="app-settings-tag">Master Mode</div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">마스터 모드</div>
+          <div class="setting-sub">레이블 편집 및 파일 순서 변경</div>
+        </div>
+        <button class="app-action-btn !py-2 !px-5 !text-xs" id="masterModeToggle" onclick="toggleMasterMode()">켜기</button>
+      </div>
+      <div id="masterModePanel" style="display:none;margin-top:20px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#a08d88;margin-bottom:14px;">텍스트 레이블</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">브랜드</div><input class="mk-input w-full" data-master-field="brand" placeholder="MONOLITH_OS"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Hub</div><input class="mk-input w-full" data-master-field="nav_hub" placeholder="Hub"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Notepad</div><input class="mk-input w-full" data-master-field="nav_notepad" placeholder="Notepad"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Vault</div><input class="mk-input w-full" data-master-field="nav_vault" placeholder="Vault"></div>
+          <div><div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Music</div><input class="mk-input w-full" data-master-field="nav_music" placeholder="Music"></div>
+        </div>
+        <div class="flex gap-2 mb-6">
+          <button class="app-action-btn !py-2 !px-5 !text-xs flex-1" onclick="saveMasterLabels()">저장</button>
+          <button class="app-ghost-btn !py-2 !px-4 !text-xs" onclick="resetMasterLabels()">초기화</button>
+        </div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#a08d88;margin-bottom:12px;">파일 순서 변경</div>
+        <div class="flex gap-3">
+          <button class="app-action-btn !py-2.5 !text-xs flex-1" onclick="openReorderMemo()">메모 폴더</button>
+          <button class="app-action-btn !py-2.5 !text-xs flex-1" onclick="openReorderMusic()">음악 목록</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-settings-section">
       <div class="app-settings-tag">Background</div>
       <p class="text-xs text-outline mb-5 leading-relaxed">왼쪽·중앙·오른쪽 슬롯에 각각 사진을 지정합니다. 슬롯을 클릭해서 교체하세요.</p>
       <div class="grid grid-cols-3 gap-3 mb-2" id="bgSlotGrid">
@@ -1390,21 +1420,30 @@ const hubMemo2Doc=doc(db,'mk_app','hub_memo2');
 
 /* ===== Hub Bubble 3-page (명언 + 메모1 + 메모2) ===== */
 (async function(){
-  // 명언 — GitHub에서 fetch
-  fetch('https://raw.githubusercontent.com/mingwonkim/pitch-trainer/main/quotes.html')
-    .then(function(r){return r.text();})
-    .then(function(html){
-      var p=new DOMParser(),doc=p.parseFromString(html,'text/html'),q=[];
-      doc.querySelectorAll('.card').forEach(function(c){
-        var t=c.querySelector('.text'),a=c.querySelector('.author');
-        if(t){var tx=t.textContent.trim().replace(/^"|"$/g,'');q.push({t:tx,a:a?a.textContent.trim().replace(/^— /,''):''});}
-      });
-      if(!q.length)return;
-      var i=Math.floor(Date.now()/86400000)%q.length;
-      var qtEl=document.getElementById('hubQuoteText'),qaEl=document.getElementById('hubQuoteAuthor');
-      if(qtEl)qtEl.textContent='“'+q[i].t+'”';
-      if(qaEl)qaEl.textContent=q[i].a?'— '+q[i].a:'';
-    }).catch(function(){});
+  // 명언 — GitHub fetch or master mode override
+  window._reloadHubQuote=function(){
+    var qtEl=document.getElementById('hubQuoteText'),qaEl=document.getElementById('hubQuoteAuthor');
+    if(localStorage.getItem('masterModeActive')==='1'){
+      var custom=localStorage.getItem('masterQuoteText')||'';
+      if(qtEl)qtEl.textContent=custom?'\u201c'+custom+'\u201d':'';
+      if(qaEl)qaEl.textContent='';
+      return;
+    }
+    fetch('https://raw.githubusercontent.com/mingwonkim/pitch-trainer/main/quotes.html')
+      .then(function(r){return r.text();})
+      .then(function(html){
+        var p=new DOMParser(),doc=p.parseFromString(html,'text/html'),q=[];
+        doc.querySelectorAll('.card').forEach(function(c){
+          var t=c.querySelector('.text'),a=c.querySelector('.author');
+          if(t){var tx=t.textContent.trim().replace(/^”|”$/g,'');q.push({t:tx,a:a?a.textContent.trim().replace(/^— /,''):''});}
+        });
+        if(!q.length)return;
+        var i=Math.floor(Date.now()/86400000)%q.length;
+        if(qtEl)qtEl.textContent='\u201c'+q[i].t+'\u201d';
+        if(qaEl)qaEl.textContent=q[i].a?'— '+q[i].a:'';
+      }).catch(function(){});
+  };
+  window._reloadHubQuote();
 
   // 페이지 네비게이션
   var _pg=0;
@@ -1838,6 +1877,7 @@ function doOpenApp(a){
   if(a==='music'){document.getElementById('musicHome').style.display='';document.getElementById('musicAppView').style.display='none';}
   if(a==='settings'){
     updateSettingsStorage();
+    updateMasterModeUI();
     renderBgImages(); // full load from Firestore on open
     const keyEl=document.getElementById('ytApiKeyInput');
     const statusEl=document.getElementById('ytKeyStatus');
@@ -2621,7 +2661,36 @@ window.dlFile=dlFile;window.rmFile=rmFile;
 function notifyLtFrame(val){const f=document.getElementById('ltScaleFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyEdFrame(val){const f=document.getElementById('edLayoutFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyMbFrame(val){const f=document.getElementById('mbFrame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
-// ── 말풍선 메모: Firestore 모듈에서 처리 ──
+// ── Master Mode ──
+function toggleMasterMode(){
+  var on=localStorage.getItem('masterModeActive')==='1';
+  on=!on;
+  localStorage.setItem('masterModeActive',on?'1':'0');
+  updateMasterModeUI();
+  if(window._reloadHubQuote)window._reloadHubQuote();
+}
+function updateMasterModeUI(){
+  var on=localStorage.getItem('masterModeActive')==='1';
+  var btn=document.getElementById('masterModeToggle');
+  var panel=document.getElementById('masterModePanel');
+  if(btn)btn.textContent=on?'끄기':'켜기';
+  if(panel)panel.style.display=on?'':'none';
+  var inp=document.getElementById('masterQuoteInput');
+  if(inp)inp.value=localStorage.getItem('masterQuoteText')||'';
+}
+function saveMasterQuote(){
+  var inp=document.getElementById('masterQuoteInput');
+  if(!inp)return;
+  localStorage.setItem('masterQuoteText',inp.value.trim());
+  if(window._reloadHubQuote)window._reloadHubQuote();
+  toast('저장됨');
+}
+function clearMasterQuote(){
+  localStorage.removeItem('masterQuoteText');
+  localStorage.setItem('masterModeActive','0');
+  updateMasterModeUI();
+  if(window._reloadHubQuote)window._reloadHubQuote();
+}
 function notifyP4Frame(val){const f=document.getElementById('p4Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyP5Frame(val){const f=document.getElementById('p5Frame');if(f&&f.contentWindow)f.contentWindow.postMessage({type:'mk_unlock',value:val},'*');}
 function notifyAllFrames(val){notifyLtFrame(val);notifyEdFrame(val);notifyMbFrame(val);notifyP4Frame(val);notifyP5Frame(val);}
