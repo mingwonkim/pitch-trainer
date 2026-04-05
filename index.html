@@ -1446,18 +1446,14 @@ let bgImagesDoc=null,todosCol=null,hubMemoDoc=null,hubMemo2Doc=null;
   const FB_VER='10.12.0';
   let appMod,fsMod,stgMod;
   try{
-    [appMod,fsMod,stgMod]=await Promise.all([
-      import('./firebase/firebase-app.js'),
-      import('./firebase/firebase-firestore.js'),
-      import('./firebase/firebase-storage.js'),
-    ]);
+    appMod=await import('./firebase/firebase-app.js');
+    fsMod=await import('./firebase/firebase-firestore.js');
+    stgMod=await import('./firebase/firebase-storage.js');
   }catch(localErr){
     console.warn('Firebase 로컬 로드 실패, CDN 폴백:',localErr.message||localErr);
-    [appMod,fsMod,stgMod]=await Promise.all([
-      import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-app.js'),
-      import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-firestore.js'),
-      import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-storage.js'),
-    ]);
+    appMod=await import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-app.js');
+    fsMod=await import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-firestore.js');
+    stgMod=await import('https://www.gstatic.com/firebasejs/'+FB_VER+'/firebase-storage.js');
   }
   const{initializeApp}=appMod;
   let getFirestore,getStorage;
