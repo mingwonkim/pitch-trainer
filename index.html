@@ -52,6 +52,35 @@
 /* ===== Content Protection ===== */
 *{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
 input,textarea,[contenteditable="true"]{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}
+/* ===== Color tokens ===== */
+:root{
+  --mk-bg:#131313;
+  --mk-surface:#1c1b1b;
+  --mk-border:#252525;
+  --mk-border-hi:#353535;
+  --mk-surface-lo:#0e0e12;
+  --mk-on-surf:#e5e2e1;
+  --mk-outline:#a08d88;
+  --mk-outline-var:#524340;
+  --mk-card:rgba(255,255,255,.025);
+  --mk-input:rgba(255,255,255,.03);
+}
+html.light{
+  --mk-bg:#f5f2f0;
+  --mk-surface:#ffffff;
+  --mk-border:#e2d8d4;
+  --mk-border-hi:#d0c6c2;
+  --mk-surface-lo:#ede6e3;
+  --mk-on-surf:#1c1110;
+  --mk-outline:#6d5a56;
+  --mk-outline-var:#9b8480;
+  --mk-card:rgba(0,0,0,.025);
+  --mk-input:rgba(0,0,0,.03);
+}
+body{background:var(--mk-bg);transition:background .3s,color .3s;}
+/* Light mode nav overrides */
+html.light nav.fixed.top-0{background:rgba(245,242,240,.92) !important;border-bottom-color:rgba(0,0,0,.06) !important;}
+html.light nav .bg-\[#131313\]\/60{background:rgba(245,242,240,.85) !important;border-color:var(--mk-border) !important;}
 img,video,canvas{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;-o-user-drag:none;user-drag:none;pointer-events:none;}
 img{-webkit-touch-callout:none;}
 
@@ -59,16 +88,16 @@ img{-webkit-touch-callout:none;}
 #pwChangeInputKorean,#tpInputKorean{outline:none !important;box-shadow:none !important;border:none !important;-webkit-appearance:none;}
 .hide-scrollbar::-webkit-scrollbar{display:none;}.hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}
 .page{display:none;opacity:0;transition:opacity .35s ease;}.page.active{display:flex;flex-direction:column;opacity:1;}
-.mk-input{width:100%;padding:13px 18px;background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:10px;color:#e5e2e1;font-size:14px;outline:none;font-family:'Inter',sans-serif;transition:border-color .2s;}.mk-input:focus{border-color:rgba(255,180,162,.5);background:rgba(255,180,162,.03);}
-.mk-textarea{width:100%;min-height:300px;padding:16px 18px;background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:10px;color:#e5e2e1;font-size:14px;line-height:1.8;outline:none;resize:none;font-family:'Inter',sans-serif;transition:border-color .2s;}.mk-textarea:focus{border-color:rgba(255,180,162,.5);}
+.mk-input{width:100%;padding:13px 18px;background:var(--mk-input);border:1px solid var(--mk-border);border-radius:10px;color:var(--mk-on-surf);font-size:14px;outline:none;font-family:'Inter',sans-serif;transition:border-color .2s,background .3s,color .3s;}.mk-input:focus{border-color:rgba(255,180,162,.5);background:rgba(255,180,162,.03);}
+.mk-textarea{width:100%;min-height:300px;padding:16px 18px;background:var(--mk-input);border:1px solid var(--mk-border);border-radius:10px;color:var(--mk-on-surf);font-size:14px;line-height:1.8;outline:none;resize:none;font-family:'Inter',sans-serif;transition:border-color .2s,background .3s,color .3s;}.mk-textarea:focus{border-color:rgba(255,180,162,.5);}
 .mk-btn{padding:10px 24px;border:none;border-radius:9999px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .2s;letter-spacing:.08em;text-transform:uppercase;}
 .mk-btn-primary{background:#ffb4a2;color:#360e05;}.mk-btn-primary:hover{filter:brightness(1.08);}
-.mk-btn-outline{background:transparent;color:#ffb4a2;border:1px solid #353535;}.mk-btn-outline:hover{border-color:#ffb4a2;}
-.mk-btn-danger{background:transparent;color:#ffb4ab;border:1px solid #353535;}.mk-btn-danger:hover{border-color:#ffb4ab;}
+.mk-btn-outline{background:transparent;color:#ffb4a2;border:1px solid var(--mk-border-hi);}.mk-btn-outline:hover{border-color:#ffb4a2;}
+.mk-btn-danger{background:transparent;color:#ffb4ab;border:1px solid var(--mk-border-hi);}.mk-btn-danger:hover{border-color:#ffb4ab;}
 /* ===== Folder cards — complete redesign ===== */
 .folder-card{
-  background:#0e0e12;
-  border:1px solid #1e1e26;
+  background:var(--mk-surface-lo);
+  border:1px solid var(--mk-border);
   border-radius:16px;
   padding:20px 16px 16px;
   text-align:left;
@@ -120,7 +149,7 @@ img{-webkit-touch-callout:none;}
 .folder-card .fc-name{
   font-family:'Space Grotesk',sans-serif;
   font-size:13px;font-weight:700;
-  color:#e5e2e1;
+  color:var(--mk-on-surf);
   letter-spacing:-.2px;
   margin-bottom:4px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -133,7 +162,7 @@ img{-webkit-touch-callout:none;}
 }
 .folder-card.add-card{
   background:transparent;
-  border-style:dashed;border-color:#1e1e26;
+  border-style:dashed;border-color:var(--mk-border);
   align-items:center;justify-content:center;gap:6px;
 }
 .folder-card.add-card:hover{border-color:rgba(255,180,162,.3);}
@@ -149,7 +178,7 @@ img{-webkit-touch-callout:none;}
 .draw-color.active{border-color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.4);}
 /* 그림 노트 카드 썸네일 */
 .memo-draw-thumb{width:100%;height:80px;object-fit:cover;border-radius:6px;margin-bottom:6px;background:#1a1818;display:block;border:1px solid #252525;}
-.mk-card{background:rgba(255,255,255,.025);border:1px solid #252525;border-radius:14px;padding:20px 22px;transition:all .25s;cursor:pointer;}
+.mk-card{background:var(--mk-card);border:1px solid var(--mk-border);border-radius:14px;padding:20px 22px;transition:all .25s;cursor:pointer;}
 .mk-card:hover{border-color:rgba(255,180,162,.25);transform:translateX(4px);background:rgba(255,180,162,.03);}
 /* Drop zone */
 .drop-zone{border:1.5px dashed #2a2a2a;border-radius:16px;padding:44px;text-align:center;color:#a08d88;font-size:14px;transition:.2s;cursor:pointer;background:rgba(255,255,255,.015);}.drop-zone:hover,.drop-zone.over{border-color:rgba(255,180,162,.35);color:#ffb4a2;background:rgba(255,180,162,.03);}.drop-zone input{display:none;}
@@ -226,8 +255,8 @@ img{-webkit-touch-callout:none;}
   .pin-center{border:none;padding:32px 20px;}
 }
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}.shake{animation:shake .3s ease-in-out;}
-.setting-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #353535;}.setting-row:last-child{border-bottom:none;}
-.setting-label{font-size:14px;font-weight:500;color:#e5e2e1;}.setting-sub{font-size:11px;color:#a08d88;margin-top:2px;}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--mk-border-hi);}.setting-row:last-child{border-bottom:none;}
+.setting-label{font-size:14px;font-weight:500;color:var(--mk-on-surf);}.setting-sub{font-size:11px;color:var(--mk-outline);margin-top:2px;}
 .setting-btn{padding:8px 20px;border:1px solid #524340;border-radius:10px;background:transparent;color:#ffb4a2;font-size:12px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:.2s;}.setting-btn:hover{border-color:#ffb4a2;background:rgba(255,180,162,.06);}
 /* Writing lines (Notepad card) */
 .writing-line{display:flex;align-items:center;gap:8px;padding:15px 0;border-bottom:1px solid rgba(255,255,255,.04);position:relative;}
@@ -266,55 +295,57 @@ img{-webkit-touch-callout:none;}
 .app-back-btn:hover{border-color:#ffb4a2;color:#ffb4a2;}
 /* Page heading */
 .app-page-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#FF3B00;margin-bottom:2px;}
-.app-page-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:-.04em;text-transform:uppercase;color:#e5e2e1;line-height:1;}
+.app-page-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:-.04em;text-transform:uppercase;color:var(--mk-on-surf);line-height:1;}
 /* Action button */
 .app-action-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;background:#ffb4a2;color:#360e05;border:none;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
 .app-action-btn:hover{filter:brightness(1.08);}
 /* Ghost button */
-.app-ghost-btn{display:inline-flex;align-items:center;gap:5px;padding:10px 20px;background:transparent;color:#a08d88;border:1px solid #252525;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.app-ghost-btn{display:inline-flex;align-items:center;gap:5px;padding:10px 20px;background:transparent;color:var(--mk-outline);border:1px solid var(--mk-border);border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
 .app-ghost-btn:hover{border-color:#ffb4a2;color:#ffb4a2;}
 /* Search */
-.app-search-wrap{display:flex;align-items:center;gap:8px;background:#1c1b1b;border:1px solid #252525;border-radius:10px;padding:8px 14px;transition:border-color .2s;}.app-search-wrap:focus-within{border-color:rgba(255,180,162,.4);}
-.app-search{background:none;border:none;outline:none;color:#e5e2e1;font-family:'Inter',sans-serif;font-size:13px;width:180px;}
+.app-search-wrap{display:flex;align-items:center;gap:8px;background:var(--mk-surface);border:1px solid var(--mk-border);border-radius:10px;padding:8px 14px;transition:border-color .2s,background .3s;}.app-search-wrap:focus-within{border-color:rgba(255,180,162,.4);}
+.app-search{background:none;border:none;outline:none;color:var(--mk-on-surf);font-family:'Inter',sans-serif;font-size:13px;width:180px;}
 .app-search::placeholder{color:#524340;}
 /* Drop zone */
 .app-dropzone{border:1.5px dashed #353535;border-radius:16px;padding:40px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.015);}
 .app-dropzone:hover,.app-dropzone.over{border-color:rgba(255,180,162,.4);background:rgba(255,180,162,.03);}
 .app-dropzone input[type="file"]{display:none !important;}
 /* Music module cards */
-.app-module-card{background:#1c1b1b;border:1px solid #252525;border-radius:20px;padding:28px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+.app-module-card{background:var(--mk-surface);border:1px solid var(--mk-border);border-radius:20px;padding:28px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
 .app-module-card:hover{border-color:rgba(255,180,162,.25);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.4);}
 .app-module-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,180,162,.04),transparent);opacity:0;transition:opacity .3s;}
 .app-module-card:hover::before{opacity:1;}
 .app-module-dim{opacity:.3;pointer-events:none;}
 .amc-num{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.2em;color:#FF3B00;margin-bottom:14px;}
 .amc-icon{font-size:28px;margin-bottom:12px;line-height:1;color:#ffb4a2;}
-.amc-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:-.3px;color:#e5e2e1;margin-bottom:8px;}
-.amc-desc{font-family:'Inter',sans-serif;font-size:13px;color:#a08d88;line-height:1.6;margin-bottom:16px;}
+.amc-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:-.3px;color:var(--mk-on-surf);margin-bottom:8px;}
+.amc-desc{font-family:'Inter',sans-serif;font-size:13px;color:var(--mk-outline);line-height:1.6;margin-bottom:16px;}
 .amc-arrow{font-family:'Space Grotesk',sans-serif;font-size:18px;color:#ffb4a2;font-weight:700;}
 .amc-badge{display:inline-block;padding:4px 12px;background:#252525;color:#524340;border-radius:9999px;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
 /* Subpage headers */
 .app-subpage-header{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
 .app-subpage-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:-.3px;}
 /* Editor card */
-.app-editor-card{background:#1c1b1b;border:1px solid #252525;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px;}
+.app-editor-card{background:var(--mk-surface);border:1px solid var(--mk-border);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px;}
 .app-editor-label{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#FF3B00;}
 /* Settings sections */
-.app-settings-section{background:#1c1b1b;border:1px solid #252525;border-radius:20px;padding:24px;margin-bottom:16px;}
+.app-settings-section{background:var(--mk-surface);border:1px solid var(--mk-border);border-radius:20px;padding:24px;margin-bottom:16px;}
 .app-settings-tag{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#FF3B00;margin-bottom:16px;}
 /* Fav song list items */
-.fav-list-item{display:flex;align-items:center;gap:14px;padding:16px 20px;background:#1c1b1b;border:1px solid #252525;border-radius:14px;cursor:pointer;transition:all .2s;}
+.fav-list-item{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--mk-surface);border:1px solid var(--mk-border);border-radius:14px;cursor:pointer;transition:all .2s;}
 .fav-list-item:hover{border-color:rgba(255,180,162,.3);transform:translateX(4px);}
 .fav-list-num{font-family:'Space Grotesk',sans-serif;font-size:16px;color:#FF3B00;flex-shrink:0;width:20px;}
 .fav-list-info{flex:1;min-width:0;}
-.fav-list-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#e5e2e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.fav-list-artist{font-family:'Inter',sans-serif;font-size:12px;color:#a08d88;margin-top:2px;}
+.fav-list-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--mk-on-surf);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fav-list-artist{font-family:'Inter',sans-serif;font-size:12px;color:var(--mk-outline);margin-top:2px;}
 .fav-list-reason-preview{font-family:'Inter',sans-serif;font-size:11px;color:#524340;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;}
 .fav-list-del{font-size:12px;color:#353535;cursor:pointer;transition:color .2s;flex-shrink:0;padding:4px;}.fav-list-del:hover{color:#FF3B00;}
 /* Fav song detail YouTube embed */
 .fav-yt-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;flex-shrink:0;min-height:0;}
 .fav-yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
-.fav-song-reason{padding:16px 20px;background:#1c1b1b;border:1px solid #252525;border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;color:#a08d88;line-height:1.75;min-height:80px;max-height:120px;overflow-y:auto;overflow-x:hidden;word-break:break-word;overflow-wrap:break-word;}
+.int-yt-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;flex-shrink:0;min-height:0;}
+.int-yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+.fav-song-reason{padding:16px 20px;background:var(--mk-surface);border:1px solid var(--mk-border);border-radius:14px;font-family:'Inter',sans-serif;font-size:13px;color:var(--mk-outline);line-height:1.75;min-height:80px;max-height:120px;overflow-y:auto;overflow-x:hidden;word-break:break-word;overflow-wrap:break-word;}
 .fav-reason-label{display:inline-block;font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FF3B00;margin-right:8px;vertical-align:middle;}
 /* Music cards (old — keep for safety) */
 .music-card{background:#1c1b1b;border:1px solid #252525;border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:14px;cursor:pointer;transition:all .25s;}
@@ -1207,6 +1238,13 @@ img{-webkit-touch-callout:none;}
           <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">좋아하는 노래 모음<br>플레이리스트 생성 · 관리</p>
           <div class="amc-arrow">→</div>
         </div>
+        <div class="app-module-card" data-module="interesting" onclick="openMusicApp('interesting')">
+          <div class="amc-num">07</div>
+          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">star</span></div>
+          <h3 class="amc-title">Interesting Songs</h3>
+          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">흥미로운 곡과<br>그 이유를 기록하는 공간</p>
+          <div class="amc-arrow">→</div>
+        </div>
       </div>
     </div>
 
@@ -1264,6 +1302,43 @@ img{-webkit-touch-callout:none;}
       </div>
     </div>
 
+    <!-- Interesting Songs -->
+    <div id="musicInterestingView" style="display:none;">
+      <div class="app-subpage-header">
+        <h2 class="app-subpage-title mb-6">흥미로운 노래</h2>
+      </div>
+
+      <div id="intListView">
+        <div class="mb-6"><button class="app-action-btn" onclick="newIntSong()"><span class="material-symbols-outlined text-base">add</span> Add Song</button></div>
+        <div id="intSongList" class="space-y-3"></div>
+      </div>
+
+      <div id="intDetailView" style="display:none;overflow-x:hidden;">
+        <div class="flex items-center gap-4 mb-6">
+          <div style="min-width:0;overflow:hidden;">
+            <div class="font-headline text-xl font-bold tracking-tight" id="intDetailTitle" style="word-break:break-word;"></div>
+            <div class="text-sm text-outline mt-0.5" id="intDetailArtist" style="word-break:break-word;"></div>
+          </div>
+        </div>
+        <div class="int-yt-wrap mb-5">
+          <iframe id="intDetailFrame" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+        <div id="intDetailReason" class="fav-song-reason"></div>
+      </div>
+
+      <div id="intSongEditor" style="display:none;" class="app-editor-card mt-4">
+        <div class="app-editor-label">New Song</div>
+        <input type="text" class="mk-input" id="intSongTitle" placeholder="노래 제목">
+        <input type="text" class="mk-input" id="intSongArtist" placeholder="가수 / 아티스트">
+        <input type="url" class="mk-input" id="intSongYtUrl" placeholder="YouTube URL" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+        <textarea class="mk-textarea !min-h-[110px]" id="intSongReason" placeholder="이 노래가 흥미로운 이유…"></textarea>
+        <div class="flex gap-3">
+          <button class="app-action-btn" onclick="saveIntSong()"><span class="material-symbols-outlined text-base">save</span> Save</button>
+          <button class="app-ghost-btn" onclick="cancelIntSong()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Playlist -->
     <div id="musicPlaylistView" style="display:none;">
       <div class="app-subpage-header">
@@ -1299,6 +1374,17 @@ img{-webkit-touch-callout:none;}
       <button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button>
       <div class="app-page-label">System</div>
       <h1 class="app-page-title">Settings</h1>
+    </div>
+
+    <div class="app-settings-section">
+      <div class="app-settings-tag">Appearance</div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">테마</div>
+          <div class="setting-sub">밝은 모드 / 어두운 모드</div>
+        </div>
+        <button class="app-action-btn !py-2 !px-5 !text-xs" id="themeToggleBtn" onclick="toggleTheme()">☀ Light</button>
+      </div>
     </div>
 
     <div class="app-settings-section">
@@ -1525,6 +1611,7 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
   hubMemoDoc=doc(db,'mk_app','hub_memo');hubMemo2Doc=doc(db,'mk_app','hub_memo2');
   musicNotesCol=collection(db,'mk_app','data','music_notes');
   favSongsCol=collection(db,'mk_app','data','fav_songs');
+  intSongsCol=collection(db,'mk_app','data','interesting_songs');
   ytKeyDoc=doc(db,'mk_app','settings');masterSettingsDoc=doc(db,'mk_app','master_settings');
   playlistsCol=collection(db,'mk_app','data','playlists');playlistSongsCol=collection(db,'mk_app','data','playlist_songs');
   gallerCol=collection(db,'mk_app','data','gallery');
@@ -2341,6 +2428,26 @@ function doOpenApp(a){
 window.goHub=goHub;window.goBack=goBack;window.memoSmartBack=memoSmartBack;window.fileSmartBack=fileSmartBack;window.openApp=openApp;
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+
+// ---- Theme (Light / Dark) ----
+function applyTheme(mode){
+  const html=document.documentElement;
+  const btn=document.getElementById('themeToggleBtn');
+  if(mode==='light'){
+    html.classList.add('light');html.classList.remove('dark');
+    if(btn)btn.textContent='🌙 Dark';
+  }else{
+    html.classList.remove('light');html.classList.add('dark');
+    if(btn)btn.textContent='☀ Light';
+  }
+}
+function toggleTheme(){
+  const next=document.documentElement.classList.contains('light')?'dark':'light';
+  localStorage.setItem('mk_theme',next);
+  applyTheme(next);
+}
+window.toggleTheme=toggleTheme;
+(function(){applyTheme(localStorage.getItem('mk_theme')||'dark');})();
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 /* ===== Storage ===== */
@@ -2465,7 +2572,7 @@ async function renderBgImages(){
 
 /* ===== Music ===== */
 function openMusicApp(a){
-  ['musicHome','musicAppView','musicNotesView','musicFavWhyView','musicPlaylistView'].forEach(id=>{
+  ['musicHome','musicAppView','musicNotesView','musicFavWhyView','musicInterestingView','musicPlaylistView'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
   if(a==='pitch'){
@@ -2482,6 +2589,9 @@ function openMusicApp(a){
   }else if(a==='favwhy'){
     document.getElementById('musicFavWhyView').style.display='';
     renderFavSongs();
+  }else if(a==='interesting'){
+    document.getElementById('musicInterestingView').style.display='';
+    renderIntSongs();
   }else if(a==='playlist'){
     document.getElementById('musicPlaylistView').style.display='';
     renderPlaylists();
@@ -2494,7 +2604,7 @@ function closeMusicApp(){
   document.getElementById('bgGrid').style.display='';
 }
 function closeMusicSubView(){
-  ['musicNotesView','musicFavWhyView','musicPlaylistView'].forEach(id=>{
+  ['musicNotesView','musicFavWhyView','musicInterestingView','musicPlaylistView'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
   document.getElementById('musicHome').style.display='';
@@ -2509,7 +2619,7 @@ function favWhyBack(){
   }
 }
 // 상단 뒤로가기(←)는 항상 Hub
-function musicSmartBack(){var nv=document.getElementById('musicNotesView');var fv=document.getElementById('musicFavWhyView');var pv=document.getElementById('musicPlaylistView');if(nv&&nv.style.display!=='none'){closeMusicSubView();return;}if(fv&&fv.style.display!=='none'){favWhyBack();return;}if(pv&&pv.style.display!=='none'){closeMusicSubView();return;}goBack();}
+function musicSmartBack(){var nv=document.getElementById('musicNotesView');var fv=document.getElementById('musicFavWhyView');var iv=document.getElementById('musicInterestingView');var pv=document.getElementById('musicPlaylistView');if(nv&&nv.style.display!=='none'){closeMusicSubView();return;}if(fv&&fv.style.display!=='none'){favWhyBack();return;}if(iv&&iv.style.display!=='none'){intBack();return;}if(pv&&pv.style.display!=='none'){closeMusicSubView();return;}goBack();}
 window.openMusicApp=openMusicApp;window.closeMusicApp=closeMusicApp;window.closeMusicSubView=closeMusicSubView;window.musicSmartBack=musicSmartBack;window.favWhyBack=favWhyBack;
 
 // ---- Music Notes ----
@@ -2674,6 +2784,93 @@ function cancelFavSong(){
 
 async function delFavSong(id){if(!confirm('Delete?'))return;try{await deleteDoc(doc(db,'mk_app','data','fav_songs',id));}catch(e){}renderFavSongs();}
 window.newFavSong=newFavSong;window.saveFavSong=saveFavSong;window.cancelFavSong=cancelFavSong;window.delFavSong=delFavSong;window.openFavDetail=openFavDetail;window.closeFavDetail=closeFavDetail;
+
+// ---- Interesting Songs ----
+let intSongsCol=null;
+let cachedIntSongs=[],editIntSongId=null;
+
+async function renderIntSongs(){
+  document.getElementById('intListView').style.display='';
+  document.getElementById('intDetailView').style.display='none';
+  document.getElementById('intSongEditor').style.display='none';
+  const el=document.getElementById('intSongList');
+  el.innerHTML='<div class="text-center py-8 text-outline text-sm">Loading...</div>';
+  try{const s=await getDocs(query(intSongsCol,orderBy('c','desc')));cachedIntSongs=[];s.forEach(d=>cachedIntSongs.push({id:d.id,...d.data()}));}catch(e){cachedIntSongs=[];}
+  if(!cachedIntSongs.length){el.innerHTML='<div class="text-center py-12 text-outline text-sm">아직 없어요. 추가해보세요!</div>';return;}
+  el.innerHTML=cachedIntSongs.map(s=>`
+    <div class="fav-list-item" onclick="openIntDetail('${s.id}')">
+      <div class="fav-list-num">★</div>
+      <div class="fav-list-info">
+        <div class="fav-list-title">${escHtml(s.title)||'Untitled'}</div>
+        <div class="fav-list-artist">${escHtml(s.artist)||''}</div>
+      </div>
+      ${s.reason?`<div class="fav-list-reason-preview">${escHtml(s.reason.substring(0,28))}${s.reason.length>28?'…':''}</div>`:''}
+      <span class="fav-list-del" onclick="event.stopPropagation();delIntSong('${s.id}')">✕</span>
+    </div>`).join('');
+}
+
+async function openIntDetail(id){
+  const s=cachedIntSongs.find(x=>x.id===id);if(!s)return;
+  document.getElementById('intListView').style.display='none';
+  document.getElementById('intDetailView').style.display='';
+  document.getElementById('intDetailTitle').textContent=s.title||'Untitled';
+  document.getElementById('intDetailArtist').textContent=s.artist||'';
+  const wrap=document.querySelector('.int-yt-wrap');
+  if(!wrap)return;
+  if(s.videoId&&sanitizeVideoId(s.videoId)){
+    wrap.innerHTML=`<iframe id="intDetailFrame" src="https://www.youtube-nocookie.com/embed/${sanitizeVideoId(s.videoId)}?rel=0&modestbranding=1&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+  }else{
+    const q=encodeURIComponent((s.artist?s.artist+' ':'')+s.title+' official MV');
+    wrap.innerHTML=`<iframe id="intDetailFrame" src="https://www.youtube.com/embed?listType=search&list=${q}&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+  }
+  const reasonEl=document.getElementById('intDetailReason');
+  if(s.reason){reasonEl.style.display='';const lbl=document.createElement('span');lbl.className='fav-reason-label';lbl.textContent='이유';reasonEl.textContent='';reasonEl.appendChild(lbl);reasonEl.appendChild(document.createTextNode(s.reason));}
+  else{reasonEl.style.display='none';}
+}
+
+function closeIntDetail(){
+  const wrap=document.querySelector('.int-yt-wrap');
+  if(wrap)wrap.innerHTML=`<iframe id="intDetailFrame" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  document.getElementById('intDetailView').style.display='none';
+  document.getElementById('intListView').style.display='';
+}
+
+function intBack(){
+  const detailView=document.getElementById('intDetailView');
+  if(detailView&&detailView.style.display!=='none'){closeIntDetail();}
+  else{closeMusicSubView();}
+}
+
+function newIntSong(){
+  if(!isUnlocked){showTextPin(()=>newIntSong());return;}
+  editIntSongId=null;
+  ['intSongTitle','intSongArtist','intSongYtUrl','intSongReason'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('intListView').style.display='none';
+  document.getElementById('intSongEditor').style.display='flex';
+}
+
+async function saveIntSong(){
+  const title=document.getElementById('intSongTitle').value.trim();
+  const artist=document.getElementById('intSongArtist').value.trim();
+  const reason=document.getElementById('intSongReason').value.trim();
+  const ytRaw=document.getElementById('intSongYtUrl')?.value.trim()||'';
+  const videoId=parseVideoId(ytRaw)||null;
+  if(!title){toast('노래 제목을 입력하세요');return;}
+  if(!artist){toast('가수를 입력하세요');return;}
+  if(!ytRaw||!videoId){toast('YouTube URL을 입력하세요');return;}
+  if(!reason){toast('이유를 입력하세요');return;}
+  try{await addDoc(intSongsCol,{title,artist,reason,videoId,c:Date.now()});}catch(e){toast('Save failed');return;}
+  toast('Saved');cancelIntSong();
+}
+
+function cancelIntSong(){
+  document.getElementById('intSongEditor').style.display='none';
+  document.getElementById('intListView').style.display='';
+  renderIntSongs();
+}
+
+async function delIntSong(id){if(!confirm('Delete?'))return;try{await deleteDoc(doc(db,'mk_app','data','interesting_songs',id));}catch(e){}renderIntSongs();}
+window.newIntSong=newIntSong;window.saveIntSong=saveIntSong;window.cancelIntSong=cancelIntSong;window.delIntSong=delIntSong;window.openIntDetail=openIntDetail;window.closeIntDetail=closeIntDetail;window.intBack=intBack;
 
 // ---- Playlists ----
 let playlistsCol=null;
