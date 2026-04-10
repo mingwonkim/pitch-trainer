@@ -77,10 +77,10 @@ html.light{
   --mk-card:rgba(0,0,0,.025);
   --mk-input:rgba(0,0,0,.03);
 }
-body{background:var(--mk-bg);transition:background .3s,color .3s;}
+body{background:var(--mk-bg);color:var(--mk-on-surf);transition:background .3s,color .3s;}
 /* Light mode nav overrides */
-html.light nav.fixed.top-0{background:rgba(245,242,240,.92) !important;border-bottom-color:rgba(0,0,0,.06) !important;}
-html.light nav .bg-\[#131313\]\/60{background:rgba(245,242,240,.85) !important;border-color:var(--mk-border) !important;}
+html.light nav.fixed.top-0{background:rgba(245,242,240,.93) !important;border-bottom-color:rgba(0,0,0,.07) !important;}
+html.light nav .bg-\[#131313\]\/60{background:rgba(245,242,240,.88) !important;border-color:var(--mk-border) !important;box-shadow:0 4px 20px rgba(0,0,0,.08) !important;}
 img,video,canvas{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;-o-user-drag:none;user-drag:none;pointer-events:none;}
 img{-webkit-touch-callout:none;}
 
@@ -187,8 +187,8 @@ img{-webkit-touch-callout:none;}
 .icon-picker h3{font-size:16px;font-weight:700;margin-bottom:10px;color:#e5e2e1;}
 .icon-picker .icon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:14px;max-height:240px;overflow-y:auto;}
 .icon-picker .icon-opt{padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;transition:.15s;border:1.5px solid transparent;}.icon-picker .icon-opt:hover{background:#252525;border-color:rgba(255,180,162,.2);}.icon-picker .icon-opt.sel{border-color:#ffb4a2;background:rgba(255,180,162,.08);}
-.music-frame{position:fixed;top:var(--nav-h,64px);left:0;right:0;bottom:0;width:100%;height:calc(100dvh - var(--nav-h,64px));border:none;background:#08080e;z-index:200;}
-.music-app-back{position:fixed;top:calc(var(--nav-h,64px) + 12px);left:16px;z-index:201;display:flex;align-items:center;gap:7px;padding:7px 16px;background:rgba(14,14,14,.88);backdrop-filter:blur(12px);border:1px solid #353535;border-radius:9999px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.2s;}
+.music-frame{position:absolute;top:var(--nav-h,64px);left:0;right:0;bottom:0;width:100%;height:calc(100% - var(--nav-h,64px));border:none;background:#08080e;}
+.music-app-back{position:absolute;top:calc(var(--nav-h,64px) + 12px);left:16px;z-index:10;display:flex;align-items:center;gap:7px;padding:7px 16px;background:rgba(14,14,14,.88);backdrop-filter:blur(12px);border:1px solid #353535;border-radius:9999px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.2s;}
 .music-app-back:hover{border-color:#ffb4a2;}
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#FF3B00;color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}.toast.show{opacity:1;}
 /* ===== NEW PIN OVERLAY ===== */
@@ -775,6 +775,52 @@ img{-webkit-touch-callout:none;}
 }
 /* Flex column page: mx-auto child collapses width without explicit width:100% */
 .page.active > .max-w-4xl,.page.active > .w-full{width:100%;}
+
+/* ===== LIGHT MODE OVERRIDES ===== */
+html.light body,html.light .bg-background,html.light #page-hub,html.light #page-memo,html.light #page-files,html.light #page-music,html.light #page-settings,html.light #page-todo{background:var(--mk-bg) !important;color:var(--mk-on-surf);}
+/* Tailwind text-on-surface/background */
+html.light .text-on-surface,html.light .text-on-background{color:var(--mk-on-surf) !important;}
+html.light .text-outline{color:var(--mk-outline) !important;}
+html.light .text-on-surface-variant{color:var(--mk-outline) !important;}
+/* Arbitrary bg values */
+html.light .bg-\[#1c1b1b\],html.light .bg-\[#1c1b1b\]\/80{background:var(--mk-surface) !important;}
+html.light .bg-\[#252525\]{background:var(--mk-border) !important;}
+html.light .bg-\[#131313\],html.light .bg-\[#0e0e0e\]{background:var(--mk-bg) !important;}
+html.light .bg-surface-container{background:var(--mk-surface) !important;}
+html.light .bg-surface-container-high{background:var(--mk-surface) !important;}
+/* Border overrides */
+html.light .border-\[#252525\]{border-color:var(--mk-border) !important;}
+html.light .border-\[#353535\]{border-color:var(--mk-border-hi) !important;}
+html.light .border-white\/\[\.03\]{border-color:var(--mk-border) !important;}
+/* Hub card backgrounds */
+html.light section[data-card]{background:rgba(255,255,255,.9) !important;border-color:var(--mk-border) !important;}
+/* Writing lines */
+html.light .writing-line{border-bottom-color:rgba(0,0,0,.06) !important;}
+/* folder-card additional */
+html.light .folder-card{background:var(--mk-surface) !important;border-color:var(--mk-border) !important;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+html.light .folder-card.add-card{background:transparent !important;border-color:var(--mk-border-hi) !important;}
+/* mk-card hover */
+html.light .mk-card:hover{background:rgba(0,0,0,.04) !important;}
+/* subpage title */
+html.light .app-subpage-title{color:var(--mk-on-surf);}
+/* pin overlay stays dark */
+html.light .pin-overlay{background:#0a0a0e !important;}
+/* icon picker */
+html.light .icon-picker{background:var(--mk-surface) !important;border-color:var(--mk-border) !important;}
+html.light .icon-picker h3{color:var(--mk-on-surf);}
+html.light .icon-picker .icon-opt:hover{background:var(--mk-surface-lo) !important;}
+/* drop zone */
+html.light .drop-zone{border-color:var(--mk-border) !important;color:var(--mk-outline);}
+html.light .app-dropzone{border-color:var(--mk-border) !important;}
+/* app search */
+html.light .app-search::placeholder{color:var(--mk-outline-var);}
+/* amc-badge */
+html.light .amc-badge{background:var(--mk-surface-lo);color:var(--mk-outline);}
+/* Hub card specific text */
+html.light section[data-card] h2,html.light section[data-card] h3{color:var(--mk-on-surf);}
+html.light section[data-card] li span.font-body{color:var(--mk-outline);}
+/* Music module app back button in light nav area */
+html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk-border);color:#FF3B00;}
 </style>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
@@ -4034,7 +4080,7 @@ setTimeout(function(){
 },5000);
 </script>
 <!-- Music iframe — body 직속 전체화면 overlay -->
-<div id="musicAppView" style="display:none;">
+<div id="musicAppView" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;overflow:hidden;">
   <button class="music-app-back" onclick="closeMusicApp()">← 목록</button>
   <iframe class="music-frame" id="musicFrame"></iframe>
 </div>
