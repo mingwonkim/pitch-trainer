@@ -606,8 +606,8 @@ img{-webkit-touch-callout:none;}
 }
 /* ── 픽처 확장 모달 ── */
 .mob-gal-label{display:none!important;}
-.pic-photo-slide{flex:none;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0a0a0a;overflow:hidden;}
-.pic-photo-slide img{width:100%;height:100%;object-fit:contain;display:block;-webkit-user-drag:none;user-select:none;}
+.pic-photo-slide{flex:none;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0a0a0a;overflow:hidden;touch-action:none;}
+.pic-photo-slide img{width:100%;height:100%;object-fit:contain;display:block;-webkit-user-drag:none;user-select:none;touch-action:none;}
 .pic-empty-slide{background:#0e0c0c;}
 @keyframes picSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}
 }
@@ -1176,7 +1176,7 @@ html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk
         <article class="mob-post" onclick="openPicExpand('1picture.html')">
           <div class="mob-post-header">
             <div class="mob-post-avatar">01</div>
-            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Editorial</div></div>
+            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Intro</div></div>
             <div class="mob-post-more">···</div>
           </div>
           <div class="mob-post-img"><iframe src="1picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe></div>
@@ -1189,7 +1189,7 @@ html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk
         <article class="mob-post" onclick="openPicExpand('2picture.html')">
           <div class="mob-post-header">
             <div class="mob-post-avatar">02</div>
-            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Lowtheory</div></div>
+            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Verse</div></div>
             <div class="mob-post-more">···</div>
           </div>
           <div class="mob-post-img"><iframe src="2picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe></div>
@@ -1202,7 +1202,7 @@ html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk
         <article class="mob-post" onclick="openPicExpand('3picture.html')">
           <div class="mob-post-header">
             <div class="mob-post-avatar">03</div>
-            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Moodboard</div></div>
+            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Prechorus</div></div>
             <div class="mob-post-more">···</div>
           </div>
           <div class="mob-post-img"><iframe src="3picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe></div>
@@ -1215,7 +1215,7 @@ html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk
         <article class="mob-post" onclick="openPicExpand('4picture.html')">
           <div class="mob-post-header">
             <div class="mob-post-avatar">04</div>
-            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Archive</div></div>
+            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Sabi</div></div>
             <div class="mob-post-more">···</div>
           </div>
           <div class="mob-post-img"><iframe src="4picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe></div>
@@ -1228,7 +1228,7 @@ html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk
         <article class="mob-post" onclick="openPicExpand('5picture.html')">
           <div class="mob-post-header">
             <div class="mob-post-avatar">05</div>
-            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Grid</div></div>
+            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Hook</div></div>
             <div class="mob-post-more">···</div>
           </div>
           <div class="mob-post-img"><iframe src="5picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe></div>
@@ -3774,11 +3774,11 @@ function renderTodoCal(){
    5picture: iframe 직접 스크롤, 오버레이 없음 (iOS 관성 스크롤) */
 
 var _carouselIdx=0,_carouselTotal=0,_carouselPic='',_picCache={};
-var _carouselLabelMap={
-  '1picture.html':['Intro','Verse','Pre-Chorus','Sabi','Hook'],
-  '2picture.html':['Main','I','II','III','IV','V'],
-  '3picture.html':['Intro','Verse','Pre-Chorus','Sabi','Hook'],
-  '4picture.html':['I','II','III','IV']
+var _galSectionLabel={
+  '1picture.html':'Intro',
+  '2picture.html':'Verse',
+  '3picture.html':'Prechorus',
+  '4picture.html':'Sabi'
 };
 
 /* 직접 localStorage에서 이미지 읽기 (iframe 없이 즉시 로드) */
@@ -3853,18 +3853,10 @@ function _updateCarousel(animate){
   track.style.transition=animate?'transform 0.32s cubic-bezier(0.25,0.46,0.45,0.94)':'none';
   track.style.transform='translateX(-'+(_carouselIdx*100)+'%)';
   var n=_carouselTotal;
-  var labels=_carouselLabelMap[_carouselPic]||[];
-  var curLabel=labels[_carouselIdx]||((_carouselIdx+1<10?'0':'')+(_carouselIdx+1));
-  document.getElementById('picExpandTitle').textContent=curLabel.toUpperCase();
-  document.getElementById('picCarouselDots').innerHTML=
-    Array.from({length:n},function(_,i){
-      var lbl=(labels[i]||(i+1<10?'0'+(i+1):''+(i+1))).toUpperCase();
-      var active=i===_carouselIdx;
-      return '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:8px;font-weight:700;letter-spacing:.1em;color:'
-        +(active?'#ffb4a2':'rgba(255,180,162,.22)')
-        +';transition:color .3s;padding-bottom:3px;border-bottom:1px solid '
-        +(active?'rgba(255,180,162,.5)':'transparent')+';">'+lbl+'</span>';
-    }).join('');
+  var secLabel=_galSectionLabel[_carouselPic]||'';
+  var numLabel=((_carouselIdx+1<10?'0':'')+(_carouselIdx+1))+' / '+(n<10?'0':'')+n;
+  document.getElementById('picExpandTitle').textContent=secLabel?secLabel.toUpperCase()+'  ·  '+numLabel:numLabel;
+  document.getElementById('picCarouselDots').innerHTML='';
 }
 
 /* 캐러셀 터치 — 수평 스와이프 전용 */
