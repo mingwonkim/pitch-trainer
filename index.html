@@ -3140,9 +3140,9 @@ async function renderMemoFolders(){
   el.innerHTML=fs.map(f=>`
     <div class="folder-card${f.locked?' locked':''}" onclick="openMemoFolder('${f.id}')">
       ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('memo','${f.id}',true)" title="잠금 해제">🔒</span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delMemoFolder('${f.id}')">✕</span>
-      <div class="fc-icon"><span class="material-symbols-outlined">${escHtml(f.icon)||'folder'}</span></div>
-      <div class="fc-name">${escHtml(f.name)}</div>
-      <div class="fc-meta">${counts[f.id]||0} notes</div>
+      <div class="fc-icon"><span class="material-symbols-outlined">${f.locked&&!isUnlocked?'lock':escHtml(f.icon)||'folder'}</span></div>
+      <div class="fc-name">${f.locked&&!isUnlocked?'· · ·':escHtml(f.name)}</div>
+      <div class="fc-meta">${f.locked&&!isUnlocked?'Locked':counts[f.id]||0+' notes'}</div>
     </div>`).join('')+`
     <div class="folder-card add-card" onclick="newMemoFolder()">
       <span class="material-symbols-outlined">add</span>
@@ -3426,9 +3426,9 @@ async function renderFileFolders(){
     const szStr=sz<1048576?(sz/1024).toFixed(0)+' KB':(sz/1048576).toFixed(1)+' MB';
     return`<div class="folder-card${f.locked?' locked':''}" onclick="openFileFolder('${f.id}')">
       ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('files','${f.id}',true)" title="잠금 해제">🔒</span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delFileFolder('${f.id}')">✕</span>
-      <div class="fc-icon"><span class="material-symbols-outlined">${escHtml(f.icon)||'folder'}</span></div>
-      <div class="fc-name">${escHtml(f.name)}</div>
-      <div class="fc-meta">${counts[f.id]||0} files · ${szStr}</div>
+      <div class="fc-icon"><span class="material-symbols-outlined">${f.locked&&!isUnlocked?'lock':escHtml(f.icon)||'folder'}</span></div>
+      <div class="fc-name">${f.locked&&!isUnlocked?'· · ·':escHtml(f.name)}</div>
+      <div class="fc-meta">${f.locked&&!isUnlocked?'Locked':counts[f.id]||0+' files · '+szStr}</div>
     </div>`;
   }).join('')+`<div class="folder-card add-card" onclick="newFileFolder()">
     <span class="material-symbols-outlined">add</span>
