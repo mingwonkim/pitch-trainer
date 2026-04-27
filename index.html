@@ -772,7 +772,37 @@ img{-webkit-touch-callout:none;}
     padding-left:16px!important;padding-right:16px!important;
     overflow-x:hidden!important;
   }
+
+  /* ══ 10. 모바일 폴리싱 ══ */
+  /* 히어로 섹션 gap 타이트하게 */
+  #page-hub section.grid{gap:14px!important;}
+  /* 버블 꼬리 공간 축소 */
+  .hub-bubble-wrap{padding-bottom:36px!important;}
+  /* 카드 그리드 gap·margin 최적화 */
+  #hubCardGrid{gap:8px!important;margin-top:24px!important;}
+  #hubCardGrid>section{padding:18px 16px!important;}
+  /* 카드 내 버튼 compact */
+  #hubCardGrid>section button{padding-top:11px!important;padding-bottom:11px!important;font-size:11px!important;}
+  /* writing lines 줄간격 */
+  .writing-line{padding:10px 0!important;}
+  /* vault/music list item 간격 */
+  #hubCardGrid .space-y-8>:not([hidden])~:not([hidden]){margin-top:12px!important;}
+  /* viz bars 높이 제한 */
+  #hubVizBars{height:40px!important;margin-bottom:14px!important;}
+  /* 갤러리 그리드 상단 여백 축소 */
+  #mobileGalleryGrid{margin-top:20px!important;}
+  /* 섹션 간 여백 compact */
+  .space-y-24>:not([hidden])~:not([hidden]){margin-top:36px!important;}
+  /* hub 하단 padding — bottom nav 여유분 */
+  #page-hub{padding-bottom:88px!important;}
+  /* weekly todo hub compact */
+  section.todo-hub{padding:18px 16px!important;}
+  #todoHubWeek{gap:2px!important;}
+  /* 서브 페이지 타이틀 */
+  .app-page-title{font-size:clamp(26px,8vw,40px)!important;}
 }
+/* Bottom Nav active pill */
+.bnav.is-active{background:rgba(255,180,162,.07);border-radius:12px;}
 /* Flex column page: mx-auto child collapses width without explicit width:100% */
 .page.active > .max-w-4xl,.page.active > .w-full{width:100%;}
 
@@ -845,7 +875,7 @@ html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk
 <!-- Bottom Nav -->
 <nav class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
   <div class="bg-[#131313]/60 backdrop-blur-3xl rounded-2xl px-5 py-2.5 shadow-2xl shadow-black/30 flex gap-7 md:gap-10 items-center justify-center border border-[#252525]" style="will-change:transform;">
-    <a class="bnav flex flex-col items-center justify-center transition-all duration-400 cursor-pointer py-1 px-2 text-[#ffb4a2]" data-page="hub" onclick="goHub()"><span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1;">grid_view</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_hub">Hub</span></a>
+    <a class="bnav is-active flex flex-col items-center justify-center transition-all duration-400 cursor-pointer py-1 px-2 text-[#ffb4a2]" data-page="hub" onclick="goHub()"><span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1;">grid_view</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_hub">Hub</span></a>
     <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="memo" onclick="openApp('memo')"><span class="material-symbols-outlined text-[20px]">edit_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_notepad">Note</span></a>
     <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="files" onclick="openApp('files')"><span class="material-symbols-outlined text-[20px]">folder</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_vault">Vault</span></a>
     <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="music" onclick="openApp('music')"><span class="material-symbols-outlined text-[20px]">music_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_music">Music</span></a>
@@ -2302,7 +2332,7 @@ function setPage(p){if(curPage&&curPage!==p)navHistory.push(curPage);
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   const pg=document.getElementById('page-'+p);if(pg)pg.classList.add('active');curPage=p;
   document.querySelectorAll('.nav-link').forEach(a=>{const act=a.dataset.page===p;a.className=`nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer ${act?'text-[#ffb4a2] font-bold':'text-[#ffb4a2]/40 hover:text-[#ffb4a2]'}`;});
-  document.querySelectorAll('.bnav').forEach(a=>{const act=a.dataset.page===p;a.classList.toggle('text-[#ffb4a2]',act);a.classList.toggle('text-[#ffb4a2]/30',!act);a.classList.remove('text-white/40','scale-110');if(act)a.classList.add('scale-105');const ic=a.querySelector('.material-symbols-outlined');if(ic)ic.style.fontVariationSettings=act?"'FILL' 1":"'FILL' 0";});
+  document.querySelectorAll('.bnav').forEach(a=>{const act=a.dataset.page===p;a.classList.toggle('text-[#ffb4a2]',act);a.classList.toggle('text-[#ffb4a2]/30',!act);a.classList.toggle('is-active',act);a.classList.remove('text-white/40','scale-110');if(act)a.classList.add('scale-105');const ic=a.querySelector('.material-symbols-outlined');if(ic)ic.style.fontVariationSettings=act?"'FILL' 1":"'FILL' 0";});
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function goHub(){setPage('hub');}
