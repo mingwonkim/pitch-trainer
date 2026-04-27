@@ -3768,18 +3768,6 @@ function renderTodoCal(){
    5picture: iframe 직접 스크롤, 오버레이 없음 (iOS 관성 스크롤) */
 
 var _carouselIdx=0,_carouselTotal=0,_carouselPic='',_picCache={};
-var _COLLECTIONS=['1picture.html','2picture.html','3picture.html','4picture.html','5picture.html'];
-var _currCollIdx=0;
-function navCollection(dir){
-  var ni=_currCollIdx+dir;
-  if(ni<0||ni>=_COLLECTIONS.length)return;
-  openPicExpand(_COLLECTIONS[ni]);
-}
-function _updateCollNav(){
-  var p=document.getElementById('picPrevColl'),n=document.getElementById('picNextColl');
-  if(p)p.style.opacity=_currCollIdx===0?'0.25':'1';
-  if(n)n.style.opacity=_currCollIdx===_COLLECTIONS.length-1?'0.25':'1';
-}
 
 /* 직접 localStorage에서 이미지 읽기 (iframe 없이 즉시 로드) */
 var _picExtractLS={
@@ -3889,9 +3877,6 @@ function openPicExpand(src){
   var cv=document.getElementById('picCarouselView');
   var fr=document.getElementById('picMainFrame');
   modal.style.display='block';
-  _currCollIdx=_COLLECTIONS.indexOf(src);
-  if(_currCollIdx<0)_currCollIdx=0;
-  _updateCollNav();
 
   if(src==='5picture.html'){
     /* 5picture: iframe 직접 스크롤 */
@@ -4248,13 +4233,9 @@ setTimeout(function(){
 
 <div id="picExpandModal" style="display:none;position:fixed;inset:0;z-index:10000;background:#0a0a0a;overflow:hidden;touch-action:none;overscroll-behavior:none;">
   <!-- 상단 바 -->
-  <div style="position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;padding:12px 16px;gap:8px;background:linear-gradient(180deg,rgba(10,8,8,.92) 60%,transparent);pointer-events:none;">
-    <button onclick="closePicExpand()" style="pointer-events:auto;background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;flex-shrink:0;">← Back</button>
-    <span id="picExpandTitle" style="flex:1;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(255,180,162,.5);"></span>
-    <div style="display:flex;gap:5px;pointer-events:auto;flex-shrink:0;">
-      <button id="picPrevColl" onclick="navCollection(-1)" style="background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;width:34px;height:34px;color:#ffb4a2;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;">‹</button>
-      <button id="picNextColl" onclick="navCollection(1)" style="background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;width:34px;height:34px;color:#ffb4a2;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;">›</button>
-    </div>
+  <div style="position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;padding:12px 16px;background:linear-gradient(180deg,rgba(10,8,8,.92) 60%,transparent);pointer-events:none;">
+    <button onclick="closePicExpand()" style="pointer-events:auto;background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;">← Back</button>
+    <span id="picExpandTitle" style="flex:1;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(255,180,162,.5);padding-right:80px;"></span>
   </div>
   <!-- 1-4picture: 네이티브 div 캐러셀 (iframe 터치 간섭 없음) -->
   <div id="picCarouselView" style="display:none;position:absolute;inset:0;overflow:hidden;touch-action:pan-y;">
