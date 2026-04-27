@@ -3336,18 +3336,21 @@ async function saveMemo(){
     memoType='note';
   }
   try{
+    const f=cachedMemoFolders.find(x=>x.id===curMemoFolder);
     if(editId){
       const upd={t,b,type:memoType,u:Date.now()};
       if(hasCanvas){upd.canvas_url=canvas_url;upd.canvas_path=canvas_path;}
       else{upd.canvas_url=null;upd.canvas_path=null;}
       await updateDoc(doc(db,'mk_app','data','memos',editId),upd);
+      if(_ghEnabled()){
+        const m=cachedMemos.find(x=>x.id===editId)||{};
+        _ghPush(f?f.name:'Uncategorized',{...m,...upd,id:editId,canvas_url:upd.canvas_url}).catch(()=>{});
+      }
     }else{
       const data={t,b,type:memoType,c:Date.now(),u:Date.now(),folder:curMemoFolder};
       if(hasCanvas){data.canvas_url=canvas_url;data.canvas_path=canvas_path;}
       const newDoc=await addDoc(memosCol,data);
-      // GitHub 자동 push
-      if(_ghEnabled()&&memoType==='text'){
-        const f=cachedMemoFolders.find(x=>x.id===curMemoFolder);
+      if(_ghEnabled()){
         _ghPush(f?f.name:'Uncategorized',{...data,id:newDoc.id}).catch(()=>{});
       }
     }
@@ -3457,9 +3460,14 @@ function _ghEnabled(){return !!(localStorage.getItem('mk_gh_pat')&&localStorage.
 function _ghHeaders(){return{Authorization:'token '+localStorage.getItem('mk_gh_pat'),'Content-Type':'application/json',Accept:'application/vnd.github.v3+json'};}
 function _ghSafe(s){return(s||'').replace(/[^a-zA-Z0-9가-힣\-_ ]/g,'').replace(/\s+/g,'-').slice(0,60);}
 function _ghFilePath(folderName,memo){const base=localStorage.getItem('mk_gh_path')||'';const dir=base?(base+'/'+_ghSafe(folderName)):_ghSafe(folderName);const file=_ghSafe(memo.t||'untitled')+'_'+String(memo.id).slice(0,6)+'.md';return dir+'/'+file;}
-function _ghFrontmatter(memo){return'---\ntitle: '+escHtml(memo.t||'Untitled')+'\nmk_id: '+memo.id+'\ncreated: '+new Date(memo.c||Date.now()).toISOString()+'\nupdated: '+new Date(memo.u||Date.now()).toISOString()+'\n---\n\n'+(memo.b||'');}
+function _ghFrontmatter(memo){
+  var fm='---\ntitle: '+(memo.t||'Untitled')+'\nmk_id: '+memo.id+'\ncreated: '+new Date(memo.c||Date.now()).toISOString()+'\nupdated: '+new Date(memo.u||Date.now()).toISOString()+'\n---\n\n'+(memo.b||'');
+  if(memo.canvas_url)fm+='\n\n![]('+(memo.canvas_url)+')';
+  return fm;
+}
 async function _ghPush(folderName,memo){
-  if(!_ghEnabled()||memo.type==='draw')return;
+  if(!_ghEnabled())return;
+  if(memo.type==='draw'&&!memo.b)return; // 순수 드로잉(텍스트 없음)은 제외
   const[owner,repo]=(localStorage.getItem('mk_gh_repo')||'/').split('/');
   if(!owner||!repo)return;
   const path=_ghFilePath(folderName,memo);
