@@ -609,7 +609,13 @@ img{-webkit-touch-callout:none;}
 .pic-photo-slide{flex:none;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0a0a0a;overflow:hidden;}
 .pic-photo-slide img{width:100%;height:100%;object-fit:contain;display:block;-webkit-user-drag:none;user-select:none;}
 .pic-empty-slide{background:#0e0c0c;}
-@keyframes picSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes picSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}
+}
+/* 캐러셀 스크롤바 완전 제거 */
+#picExpandModal::-webkit-scrollbar,
+#picCarouselView::-webkit-scrollbar,
+#picPhotoTrack::-webkit-scrollbar{display:none;}
+#picExpandModal,#picCarouselView,#picPhotoTrack{scrollbar-width:none;-ms-overflow-style:none;}
 
 /* ════════════════════════════════════════════
    MOBILE — mkhub2 전용 (max-width: 767px)
@@ -986,12 +992,12 @@ html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk
                 <span class="hub-pdot" data-pg="2"></span>
               </div>
             </div>
-            <div class="hub-page" id="hubPage0">
+            <div class="hub-page" id="hubPage0" style="display:none">
+              <div class="hub-bubble-memo" id="hubBubbleMemo" contenteditable="true"></div>
+            </div>
+            <div class="hub-page" id="hubPage1">
               <div class="hub-quote-text" id="hubQuoteText"></div>
               <div class="hub-quote-author" id="hubQuoteAuthor"></div>
-            </div>
-            <div class="hub-page" id="hubPage1" style="display:none">
-              <div class="hub-bubble-memo" id="hubBubbleMemo" contenteditable="true"></div>
             </div>
             <div class="hub-page" id="hubPage2" style="display:none">
               <div class="hub-bubble-memo" id="hubBubbleMemo2" contenteditable="true"></div>
@@ -1860,8 +1866,8 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
   function _showPage(n){
     _pages.forEach(function(p,i){if(p)p.style.display=i===n?'':'none';});
     _dots.forEach(function(d,i){d.classList.toggle('active',i===n);});
-    if(_footer)_footer.style.display=n>0?'':'none';
-    if(_bubble)_bubble.classList.toggle('hub-no-lines',n===0);
+    if(_footer)_footer.style.display=(n===0||n===2)?'':'none';
+    if(_bubble)_bubble.classList.toggle('hub-no-lines',n===1);
     _pg=n;
   }
   var prevBtn=document.getElementById('hubBubblePrev');
@@ -3768,6 +3774,12 @@ function renderTodoCal(){
    5picture: iframe 직접 스크롤, 오버레이 없음 (iOS 관성 스크롤) */
 
 var _carouselIdx=0,_carouselTotal=0,_carouselPic='',_picCache={};
+var _carouselLabelMap={
+  '1picture.html':['Intro','Verse','Pre-Chorus','Sabi','Hook'],
+  '2picture.html':['Main','I','II','III','IV','V'],
+  '3picture.html':['Intro','Verse','Pre-Chorus','Sabi','Hook'],
+  '4picture.html':['I','II','III','IV']
+};
 
 /* 직접 localStorage에서 이미지 읽기 (iframe 없이 즉시 로드) */
 var _picExtractLS={
@@ -3841,12 +3853,17 @@ function _updateCarousel(animate){
   track.style.transition=animate?'transform 0.32s cubic-bezier(0.25,0.46,0.45,0.94)':'none';
   track.style.transform='translateX(-'+(_carouselIdx*100)+'%)';
   var n=_carouselTotal;
-  document.getElementById('picExpandTitle').textContent=
-    (_carouselIdx+1<10?'0':'')+ (_carouselIdx+1)+' / '+(n<10?'0':'')+n;
+  var labels=_carouselLabelMap[_carouselPic]||[];
+  var curLabel=labels[_carouselIdx]||((_carouselIdx+1<10?'0':'')+(_carouselIdx+1));
+  document.getElementById('picExpandTitle').textContent=curLabel.toUpperCase();
   document.getElementById('picCarouselDots').innerHTML=
     Array.from({length:n},function(_,i){
-      return '<div style="width:'+(i===_carouselIdx?'18px':'6px')+';height:6px;border-radius:3px;background:'
-        +(i===_carouselIdx?'#ffb4a2':'rgba(255,180,162,.3)')+';transition:all .3s;flex-shrink:0;"></div>';
+      var lbl=(labels[i]||(i+1<10?'0'+(i+1):''+(i+1))).toUpperCase();
+      var active=i===_carouselIdx;
+      return '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:8px;font-weight:700;letter-spacing:.1em;color:'
+        +(active?'#ffb4a2':'rgba(255,180,162,.22)')
+        +';transition:color .3s;padding-bottom:3px;border-bottom:1px solid '
+        +(active?'rgba(255,180,162,.5)':'transparent')+';">'+lbl+'</span>';
     }).join('');
 }
 
@@ -3854,25 +3871,29 @@ function _updateCarousel(animate){
 (function(){
   var cv=document.getElementById('picCarouselView');
   if(!cv)return;
-  var tx=0,ty=0,startIdx=0,locked=false;
+  var tx=0,ty=0,locked=false;
   cv.addEventListener('touchstart',function(e){
-    tx=e.touches[0].clientX;ty=e.touches[0].clientY;
-    startIdx=_carouselIdx;locked=false;
+    tx=e.touches[0].clientX;ty=e.touches[0].clientY;locked=false;
   },{passive:true});
   cv.addEventListener('touchmove',function(e){
     var dx=e.touches[0].clientX-tx,dy=e.touches[0].clientY-ty;
-    if(!locked&&Math.abs(dx)>6){locked=true;}
+    if(!locked&&Math.abs(dx)>4&&Math.abs(dx)>Math.abs(dy)){locked=true;}
     if(locked){e.preventDefault();}
   },{passive:false});
   cv.addEventListener('touchend',function(e){
-    if(!locked)return;
     var dx=e.changedTouches[0].clientX-tx;
-    if(dx<-30&&_carouselIdx<_carouselTotal-1){_carouselIdx++;_updateCarousel(true);}
-    else if(dx>30&&_carouselIdx>0){_carouselIdx--;_updateCarousel(true);}
+    if(Math.abs(dx)>30){
+      if(dx<0&&_carouselIdx<_carouselTotal-1){_carouselIdx++;_updateCarousel(true);}
+      else if(dx>0&&_carouselIdx>0){_carouselIdx--;_updateCarousel(true);}
+    }
+    locked=false;
   });
+  cv.addEventListener('touchcancel',function(){locked=false;});
 })();
 
 function openPicExpand(src){
+  document.documentElement.style.overflow='hidden';
+  document.body.style.overflow='hidden';
   var modal=document.getElementById('picExpandModal');
   var cv=document.getElementById('picCarouselView');
   var fr=document.getElementById('picMainFrame');
@@ -3928,6 +3949,8 @@ function openPicExpand(src){
 }
 
 function closePicExpand(){
+  document.documentElement.style.overflow='';
+  document.body.style.overflow='';
   document.getElementById('picExpandModal').style.display='none';
   document.getElementById('picCarouselView').style.display='none';
   var fr=document.getElementById('picMainFrame');
@@ -4240,7 +4263,7 @@ setTimeout(function(){
   <!-- 1-4picture: 네이티브 div 캐러셀 (iframe 터치 간섭 없음) -->
   <div id="picCarouselView" style="display:none;position:absolute;inset:0;overflow:hidden;touch-action:none;">
     <div id="picPhotoTrack" style="display:flex;width:100%;height:100%;will-change:transform;touch-action:none;"></div>
-    <div id="picCarouselDots" style="position:absolute;bottom:24px;left:0;right:0;z-index:5;display:flex;justify-content:center;gap:6px;pointer-events:none;"></div>
+    <div id="picCarouselDots" style="position:absolute;bottom:24px;left:0;right:0;z-index:5;display:flex;justify-content:center;gap:14px;pointer-events:none;flex-wrap:nowrap;"></div>
   </div>
   <!-- 5picture: iframe 직접 스크롤 (오버레이 없음 → iOS 네이티브 관성 스크롤) -->
   <iframe id="picMainFrame" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;border:none;" allow="autoplay" scrolling="yes"></iframe>
