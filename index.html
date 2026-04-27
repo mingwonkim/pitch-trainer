@@ -1266,76 +1266,68 @@ html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk
     <div id="memoInsideFolder" style="display:none;">
       <div class="flex items-center gap-2 mb-6 text-sm text-outline font-label" id="memoBreadcrumb"></div>
       <div class="flex gap-3 mb-8 flex-wrap items-center">
-        <button class="app-action-btn" onclick="newMemo('text')"><span class="material-symbols-outlined text-base">edit_note</span> New Note</button>
-        <button class="app-action-btn" onclick="newMemo('draw')" style="background:rgba(255,180,162,.08);border-color:rgba(255,180,162,.2);"><span class="material-symbols-outlined text-base">brush</span> New Drawing</button>
+        <button class="app-action-btn" onclick="newMemo()"><span class="material-symbols-outlined text-base">edit_note</span> New Note</button>
         <div class="app-search-wrap"><span class="material-symbols-outlined text-[16px] text-outline/50">search</span><input class="app-search" id="memoSearch" placeholder="Search…" oninput="renderMemos()"></div>
       </div>
       <div class="space-y-3" id="memoList"></div>
     </div>
 
-    <!-- 텍스트 에디터 -->
+    <!-- 통합 에디터 (텍스트 + 선택적 드로잉) -->
     <div id="memoEditor" style="display:none;" class="flex flex-col gap-4 flex-1">
       <input type="text" class="mk-input text-lg font-bold" id="memoTitleInput" placeholder="Title">
-      <textarea class="mk-textarea flex-1" id="memoBodyInput" placeholder="Write something…"></textarea>
+      <textarea class="mk-textarea flex-1" id="memoBodyInput" placeholder="Write something…" style="min-height:180px;"></textarea>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="app-ghost-btn !py-2 !px-4 !text-xs" id="memoDrawToggle" onclick="toggleMemoCanvas()" style="display:flex;align-items:center;gap:6px;">
+          <span class="material-symbols-outlined" style="font-size:16px;">brush</span><span id="memoDrawToggleLabel">Drawing</span>
+        </button>
+      </div>
+      <!-- 드로잉 캔버스 패널 (접기/펼치기) -->
+      <div id="memoCanvasPanel" style="display:none;flex-direction:column;gap:8px;">
+        <!-- 툴바 -->
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:12px;">
+          <div style="display:flex;gap:4px;border-right:1px solid #2a2a2a;padding-right:10px;margin-right:2px;">
+            <button id="drawToolPen" onclick="setDrawTool('pen')" title="펜" style="width:34px;height:34px;border-radius:8px;border:1px solid #FF3B00;background:rgba(255,59,0,.15);color:#FF3B00;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+              <span class="material-symbols-outlined" style="font-size:18px;">edit</span>
+            </button>
+            <button id="drawToolEraser" onclick="setDrawTool('eraser')" title="지우개" style="width:34px;height:34px;border-radius:8px;border:1px solid #353535;background:transparent;color:#a08d88;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+              <span class="material-symbols-outlined" style="font-size:18px;">ink_eraser</span>
+            </button>
+          </div>
+          <div style="display:flex;gap:5px;align-items:center;border-right:1px solid #2a2a2a;padding-right:10px;margin-right:2px;">
+            <div class="draw-color" data-color="#ffffff" style="background:#ffffff;" onclick="setDrawColor('#ffffff')" title="흰색"></div>
+            <div class="draw-color" data-color="#FF3B00" style="background:#FF3B00;" onclick="setDrawColor('#FF3B00')" title="레드"></div>
+            <div class="draw-color" data-color="#ffb4a2" style="background:#ffb4a2;" onclick="setDrawColor('#ffb4a2')" title="살몬"></div>
+            <div class="draw-color" data-color="#60a5fa" style="background:#60a5fa;" onclick="setDrawColor('#60a5fa')" title="블루"></div>
+            <div class="draw-color" data-color="#4ade80" style="background:#4ade80;" onclick="setDrawColor('#4ade80')" title="그린"></div>
+            <div class="draw-color" data-color="#facc15" style="background:#facc15;" onclick="setDrawColor('#facc15')" title="옐로우"></div>
+            <div class="draw-color" data-color="#a78bfa" style="background:#a78bfa;" onclick="setDrawColor('#a78bfa')" title="퍼플"></div>
+            <div class="draw-color" data-color="#000000" style="background:#000000;border-color:#555;" onclick="setDrawColor('#000000')" title="검정"></div>
+            <input type="color" id="drawColorPicker" value="#ffffff" onchange="setDrawColor(this.value)" title="색상 선택" style="width:28px;height:28px;border:1px solid #353535;border-radius:6px;background:transparent;cursor:pointer;padding:2px;">
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;border-right:1px solid #2a2a2a;padding-right:10px;margin-right:2px;">
+            <button onclick="setDrawSize(2)"  title="얇게" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:2px;height:2px;border-radius:50%;background:#fff;"></div></button>
+            <button onclick="setDrawSize(5)"  title="보통" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:5px;height:5px;border-radius:50%;background:#fff;"></div></button>
+            <button onclick="setDrawSize(12)" title="굵게" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:10px;height:10px;border-radius:50%;background:#fff;"></div></button>
+            <button onclick="setDrawSize(24)" title="매우굵게" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:16px;height:16px;border-radius:50%;background:#fff;"></div></button>
+          </div>
+          <button onclick="drawUndo()" title="실행취소" style="width:34px;height:34px;border-radius:8px;border:1px solid #353535;background:transparent;color:#a08d88;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            <span class="material-symbols-outlined" style="font-size:18px;">undo</span>
+          </button>
+          <button onclick="drawClear()" title="전체지우기" style="width:34px;height:34px;border-radius:8px;border:1px solid #353535;background:transparent;color:#a08d88;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            <span class="material-symbols-outlined" style="font-size:18px;">delete_sweep</span>
+          </button>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+            <div id="drawCursorPreview" style="border-radius:50%;background:#ffffff;width:10px;height:10px;border:1px solid #353535;transition:.15s;flex-shrink:0;"></div>
+            <span style="font-size:11px;color:#524340;font-family:'Space Grotesk',sans-serif;">펜</span>
+          </div>
+        </div>
+        <!-- 캔버스 -->
+        <div style="position:relative;border-radius:12px;overflow:hidden;border:1px solid #252525;flex:1;min-height:360px;background:#1a1818;touch-action:none;">
+          <canvas id="memoDrawCanvas" style="display:block;width:100%;height:100%;cursor:crosshair;touch-action:none;"></canvas>
+        </div>
+      </div>
       <div class="flex gap-3">
         <button class="app-action-btn" onclick="saveMemo()"><span class="material-symbols-outlined text-base">save</span> Save</button>
-        <button class="app-ghost-btn" onclick="cancelMemo()">Cancel</button>
-      </div>
-    </div>
-
-    <!-- 그림판 에디터 -->
-    <div id="memoDrawEditor" style="display:none;" class="flex flex-col gap-3 flex-1">
-      <input type="text" class="mk-input text-lg font-bold" id="memoDrawTitle" placeholder="Title">
-      <!-- 툴바 -->
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:12px;">
-        <!-- 도구 선택 -->
-        <div style="display:flex;gap:4px;border-right:1px solid #2a2a2a;padding-right:10px;margin-right:2px;">
-          <button id="drawToolPen" onclick="setDrawTool('pen')" title="펜" style="width:34px;height:34px;border-radius:8px;border:1px solid #FF3B00;background:rgba(255,59,0,.15);color:#FF3B00;cursor:pointer;display:flex;align-items:center;justify-content:center;">
-            <span class="material-symbols-outlined" style="font-size:18px;">edit</span>
-          </button>
-          <button id="drawToolEraser" onclick="setDrawTool('eraser')" title="지우개" style="width:34px;height:34px;border-radius:8px;border:1px solid #353535;background:transparent;color:#a08d88;cursor:pointer;display:flex;align-items:center;justify-content:center;">
-            <span class="material-symbols-outlined" style="font-size:18px;">ink_eraser</span>
-          </button>
-        </div>
-        <!-- 색상 팔레트 -->
-        <div style="display:flex;gap:5px;align-items:center;border-right:1px solid #2a2a2a;padding-right:10px;margin-right:2px;">
-          <div class="draw-color" data-color="#ffffff" style="background:#ffffff;" onclick="setDrawColor('#ffffff')" title="흰색"></div>
-          <div class="draw-color" data-color="#FF3B00" style="background:#FF3B00;" onclick="setDrawColor('#FF3B00')" title="레드"></div>
-          <div class="draw-color" data-color="#ffb4a2" style="background:#ffb4a2;" onclick="setDrawColor('#ffb4a2')" title="살몬"></div>
-          <div class="draw-color" data-color="#60a5fa" style="background:#60a5fa;" onclick="setDrawColor('#60a5fa')" title="블루"></div>
-          <div class="draw-color" data-color="#4ade80" style="background:#4ade80;" onclick="setDrawColor('#4ade80')" title="그린"></div>
-          <div class="draw-color" data-color="#facc15" style="background:#facc15;" onclick="setDrawColor('#facc15')" title="옐로우"></div>
-          <div class="draw-color" data-color="#a78bfa" style="background:#a78bfa;" onclick="setDrawColor('#a78bfa')" title="퍼플"></div>
-          <div class="draw-color" data-color="#000000" style="background:#000000;border-color:#555;" onclick="setDrawColor('#000000')" title="검정"></div>
-          <!-- 커스텀 색상 -->
-          <input type="color" id="drawColorPicker" value="#ffffff" onchange="setDrawColor(this.value)" title="색상 선택" style="width:28px;height:28px;border:1px solid #353535;border-radius:6px;background:transparent;cursor:pointer;padding:2px;">
-        </div>
-        <!-- 굵기 -->
-        <div style="display:flex;gap:4px;align-items:center;border-right:1px solid #2a2a2a;padding-right:10px;margin-right:2px;">
-          <button onclick="setDrawSize(2)"  title="얇게" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:2px;height:2px;border-radius:50%;background:#fff;"></div></button>
-          <button onclick="setDrawSize(5)"  title="보통" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:5px;height:5px;border-radius:50%;background:#fff;"></div></button>
-          <button onclick="setDrawSize(12)" title="굵게" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:10px;height:10px;border-radius:50%;background:#fff;"></div></button>
-          <button onclick="setDrawSize(24)" title="매우굵게" style="width:28px;height:28px;border-radius:6px;border:1px solid #353535;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;"><div style="width:16px;height:16px;border-radius:50%;background:#fff;"></div></button>
-        </div>
-        <!-- 실행취소/전체지우기 -->
-        <button onclick="drawUndo()" title="실행취소" style="width:34px;height:34px;border-radius:8px;border:1px solid #353535;background:transparent;color:#a08d88;cursor:pointer;display:flex;align-items:center;justify-content:center;">
-          <span class="material-symbols-outlined" style="font-size:18px;">undo</span>
-        </button>
-        <button onclick="drawClear()" title="전체지우기" style="width:34px;height:34px;border-radius:8px;border:1px solid #353535;background:transparent;color:#a08d88;cursor:pointer;display:flex;align-items:center;justify-content:center;">
-          <span class="material-symbols-outlined" style="font-size:18px;">delete_sweep</span>
-        </button>
-        <!-- 현재 색상/크기 표시 -->
-        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
-          <div id="drawCursorPreview" style="border-radius:50%;background:#ffffff;width:10px;height:10px;border:1px solid #353535;transition:.15s;flex-shrink:0;"></div>
-          <span style="font-size:11px;color:#524340;font-family:'Space Grotesk',sans-serif;">펜</span>
-        </div>
-      </div>
-      <!-- 캔버스 -->
-      <div style="position:relative;border-radius:12px;overflow:hidden;border:1px solid #252525;flex:1;min-height:480px;background:#1a1818;touch-action:none;">
-        <canvas id="memoDrawCanvas" style="display:block;width:100%;height:100%;cursor:crosshair;touch-action:none;"></canvas>
-      </div>
-      <div class="flex gap-3">
-        <button class="app-action-btn" onclick="saveMemoDraw()"><span class="material-symbols-outlined text-base">save</span> Save</button>
         <button class="app-ghost-btn" onclick="cancelMemo()">Cancel</button>
       </div>
     </div>
@@ -1669,6 +1661,34 @@ html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk
         <!-- Slots rendered by JS -->
       </div>
       <input type="file" id="bgSlotInput" accept="image/*" style="display:none;" onchange="handleBgSlotUpload(this.files)">
+    </div>
+
+    <div class="app-settings-section">
+      <div class="app-settings-tag">Obsidian Sync</div>
+      <p class="text-xs text-outline mb-4 leading-relaxed">GitHub 저장소를 통해 Obsidian 볼트와 동기화합니다. Obsidian에 <b>Obsidian Git</b> 플러그인 설치 필요. 텍스트 노트만 동기화됩니다.</p>
+      <div class="flex flex-col gap-3">
+        <div>
+          <div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">GitHub Personal Access Token</div>
+          <input type="password" class="mk-input w-full" id="ghPatInput" placeholder="ghp_xxxxxxxxxxxx">
+        </div>
+        <div>
+          <div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Repository (owner/repo)</div>
+          <input type="text" class="mk-input w-full" id="ghRepoInput" placeholder="username/obsidian-vault">
+        </div>
+        <div>
+          <div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">Vault 폴더 경로 (선택)</div>
+          <input type="text" class="mk-input w-full" id="ghPathInput" placeholder="mk-notes">
+        </div>
+        <div class="flex gap-2">
+          <button class="app-action-btn !py-2 !px-5 !text-xs flex-1" onclick="saveGhSettings()">저장</button>
+          <button class="app-ghost-btn !py-2 !px-4 !text-xs" onclick="testGhConnection()">연결 테스트</button>
+        </div>
+        <div class="font-['Space_Grotesk'] text-[10px] text-outline/40 tracking-[.1em] uppercase" id="ghStatus"></div>
+        <div class="flex gap-2">
+          <button class="app-ghost-btn !py-2 !px-4 !text-xs flex-1" onclick="ghPullAll()">Pull from GitHub</button>
+          <button class="app-ghost-btn !py-2 !px-4 !text-xs flex-1" onclick="ghPushAll()">Push All to GitHub</button>
+        </div>
+      </div>
     </div>
 
     <div class="app-settings-section">
@@ -2453,7 +2473,7 @@ function setPage(p){if(curPage&&curPage!==p)navHistory.push(curPage);
 }
 function goHub(){setPage('hub');}
 function goBack(){if(navHistory.length>0){var prev=navHistory.pop();setPage(prev);navHistory.pop();}else setPage('hub');}
-function memoSmartBack(){var ed=document.getElementById('memoEditor');var de=document.getElementById('memoDrawEditor');var inf=document.getElementById('memoInsideFolder');if(ed&&ed.style.display!=='none'){cancelMemo();return;}if(de&&de.style.display!=='none'){cancelMemo();return;}if(inf&&inf.style.display!=='none'){backToMemoFolders();return;}goBack();}
+function memoSmartBack(){var ed=document.getElementById('memoEditor');var inf=document.getElementById('memoInsideFolder');if(ed&&ed.style.display!=='none'){cancelMemo();return;}if(inf&&inf.style.display!=='none'){backToMemoFolders();return;}goBack();}
 function fileSmartBack(){var inf=document.getElementById('fileInsideFolder');if(inf&&inf.style.display!=='none'){backToFileFolders();return;}goBack();}
 function openApp(a){
   if(a==='settings'&&!isUnlocked){toast('비밀번호 해제 후 이용 가능합니다');showTextPin(()=>doOpenApp(a));return;}
@@ -2605,6 +2625,7 @@ function doOpenApp(a){
     updateMasterModeUI();
     updateRecoveryEmailDisplay();
     renderBgImages(); // full load from Firestore on open
+    loadGhSettings();
     const keyEl=document.getElementById('ytApiKeyInput');
     const statusEl=document.getElementById('ytKeyStatus');
     if(keyEl&&statusEl){
@@ -3211,7 +3232,7 @@ function _doOpenMemoFolder(id){
   document.getElementById('memoBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToMemoFolders()">Notepad</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${escHtml(f?.name)||'폴더'}</span>${lockBtn}`;
   renderMemos();
 }
-function backToMemoFolders(){curMemoFolder=null;document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';document.getElementById('memoFolderView').style.display='';renderMemoFolders();}
+function backToMemoFolders(){curMemoFolder=null;_hideCanvas();document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';document.getElementById('memoFolderView').style.display='';renderMemoFolders();}
 // 폴더 잠금 토글
 async function toggleFolderLock(type, id, isLocked){if(!isUnlocked){showTextPin(()=>toggleFolderLock(type,id,isLocked));return;}
   const doToggle = async () => {
@@ -3237,89 +3258,111 @@ window.newMemoFolder=newMemoFolder;window.delMemoFolder=delMemoFolder;window.ope
 /* ===== Memos ===== */
 let editId=null;
 async function loadMemos(){try{const s=await getDocs(query(memosCol,orderBy('u','desc')));cachedMemos=[];s.forEach(d=>{cachedMemos.push({id:d.id,...d.data()});});}catch(e){cachedMemos=[];}}
-async function renderMemos(){const el=document.getElementById('memoList');el.innerHTML='<div class="text-center py-10 text-outline text-sm">Loading...</div>';await loadMemos();const q=(document.getElementById('memoSearch').value||'').toLowerCase();let ms=cachedMemos.filter(m=>(m.folder||'none')===curMemoFolder);if(q)ms=ms.filter(m=>(m.t||'').toLowerCase().includes(q)||(m.type!=='draw'&&(m.b||'').toLowerCase().includes(q)));if(!ms.length){el.innerHTML=`<div class="text-center py-16 text-outline"><span class="material-symbols-outlined text-3xl mb-2 block">note_add</span><p class="text-sm">${q?'No results':'Create a new note'}</p></div>`;return;}el.innerHTML=ms.map(m=>{const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});const isDraw=m.type==='draw';const thumb=isDraw&&m.b?`<img class="memo-draw-thumb" src="${m.b}" alt="drawing">` :'';const icon=isDraw?'<span class="material-symbols-outlined" style="font-size:13px;color:#ffb4a2;margin-right:4px;vertical-align:middle;">brush</span>':'';const preview=isDraw?'그림 파일':esc((m.b||'').substring(0,80).replace(/\n/g,' ')||'—');return`<div class="mk-card" onclick="editMemo('${m.id}')">${thumb}<div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-label font-bold text-sm mb-1 text-on-surface">${icon}${esc(m.t||'Untitled')}</div><div class="text-xs text-on-surface-variant truncate">${preview}</div><div class="text-[11px] text-outline mt-2 font-label">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMemo('${m.id}')">Delete</span></div></div>`;}).join('');}
-function newMemo(type){
-  if(!isUnlocked){showTextPin(()=>newMemo(type));return;}
-  editId=null;
-  if(type==='draw'){
-    document.getElementById('memoDrawTitle').value='';
-    showMemoDrawEditor(null);
-  }else{
-    document.getElementById('memoTitleInput').value='';
-    document.getElementById('memoBodyInput').value='';
-    showMemoEditor();
-  }
+async function renderMemos(){const el=document.getElementById('memoList');el.innerHTML='<div class="text-center py-10 text-outline text-sm">Loading...</div>';await loadMemos();const q=(document.getElementById('memoSearch').value||'').toLowerCase();let ms=cachedMemos.filter(m=>(m.folder||'none')===curMemoFolder);if(q)ms=ms.filter(m=>(m.t||'').toLowerCase().includes(q)||((m.type!=='draw')&&(m.b||'').toLowerCase().includes(q)));if(!ms.length){el.innerHTML=`<div class="text-center py-16 text-outline"><span class="material-symbols-outlined text-3xl mb-2 block">note_add</span><p class="text-sm">${q?'No results':'Create a new note'}</p></div>`;return;}el.innerHTML=ms.map(m=>{const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});const isDraw=m.type==='draw';const isNote=m.type==='note';const thumbUrl=isDraw?m.b:(isNote?m.canvas_url:null);const thumb=thumbUrl?`<img class="memo-draw-thumb" src="${thumbUrl}" alt="drawing">` :'';const brushIcon=isDraw||isNote||m.canvas_url?'<span class="material-symbols-outlined" style="font-size:13px;color:#ffb4a2;margin-right:4px;vertical-align:middle;">brush</span>':'';const preview=isDraw?'그림 파일':esc((m.b||'').substring(0,80).replace(/\n/g,' ')||'—');return`<div class="mk-card" onclick="editMemo('${m.id}')">${thumb}<div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-label font-bold text-sm mb-1 text-on-surface">${brushIcon}${esc(m.t||'Untitled')}</div><div class="text-xs text-on-surface-variant truncate">${preview}</div><div class="text-[11px] text-outline mt-2 font-label">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMemo('${m.id}')">Delete</span></div></div>`;}).join('');}
+var _pendingCanvasUrl=null; // 편집 중인 기존 드로잉 URL
+function newMemo(){
+  if(!isUnlocked){showTextPin(()=>newMemo());return;}
+  editId=null;_pendingCanvasUrl=null;
+  document.getElementById('memoTitleInput').value='';
+  document.getElementById('memoBodyInput').value='';
+  _hideCanvas();
+  showMemoEditor();
 }
 function editMemo(id){
   const m=cachedMemos.find(x=>x.id===id);
   if(!m)return;
   editId=id;
+  document.getElementById('memoTitleInput').value=m.t||'';
+  // 'note' 타입: 텍스트+드로잉, 'draw' 타입: 드로잉만(레거시), 'text' 타입: 텍스트만
   if(m.type==='draw'){
-    document.getElementById('memoDrawTitle').value=m.t||'';
-    showMemoDrawEditor(m.b||null);
-  }else{
-    document.getElementById('memoTitleInput').value=m.t||'';
-    document.getElementById('memoBodyInput').value=m.b||'';
+    document.getElementById('memoBodyInput').value='';
+    _pendingCanvasUrl=m.b||null;
     showMemoEditor();
+    _showCanvas(m.b||null);
+  }else{
+    document.getElementById('memoBodyInput').value=m.type==='note'?(m.b||''):(m.b||'');
+    _pendingCanvasUrl=m.canvas_url||null;
+    showMemoEditor();
+    if(m.canvas_url)_showCanvas(m.canvas_url);else _hideCanvas();
   }
 }
 function showMemoEditor(){
   document.getElementById('memoInsideFolder').style.display='none';
   document.getElementById('memoFolderView').style.display='none';
   document.getElementById('memoEditor').style.display='flex';
-  document.getElementById('memoDrawEditor').style.display='none';
 }
-function showMemoDrawEditor(dataUrl){
-  document.getElementById('memoInsideFolder').style.display='none';
-  document.getElementById('memoFolderView').style.display='none';
-  document.getElementById('memoEditor').style.display='none';
-  document.getElementById('memoDrawEditor').style.display='flex';
-  // 캔버스 초기화
+function _showCanvas(dataUrl){
+  const panel=document.getElementById('memoCanvasPanel');
+  panel.style.display='flex';
+  const lbl=document.getElementById('memoDrawToggleLabel');
+  if(lbl)lbl.textContent='Hide Drawing';
   setTimeout(function(){initDrawCanvas(dataUrl);},60);
+}
+function _hideCanvas(){
+  document.getElementById('memoCanvasPanel').style.display='none';
+  const lbl=document.getElementById('memoDrawToggleLabel');
+  if(lbl)lbl.textContent='Drawing';
+  _pendingCanvasUrl=null;
+}
+function toggleMemoCanvas(){
+  const panel=document.getElementById('memoCanvasPanel');
+  if(panel.style.display==='none'||!panel.style.display){
+    _showCanvas(null);
+  }else{
+    _hideCanvas();
+  }
 }
 async function saveMemo(){
   if(!isUnlocked){showTextPin(()=>saveMemo());return;}
-  const t=document.getElementById('memoTitleInput').value.trim(),b=document.getElementById('memoBodyInput').value;
+  const t=document.getElementById('memoTitleInput').value.trim();
+  const b=document.getElementById('memoBodyInput').value;
+  const canvasPanel=document.getElementById('memoCanvasPanel');
+  const hasCanvas=canvasPanel.style.display!=='none';
+  let canvas_url=null,canvas_path=null,memoType='text';
+  if(hasCanvas){
+    const canvas=document.getElementById('memoDrawCanvas');
+    toast('저장 중...');
+    try{
+      const blob=await new Promise(res=>{
+        const ok=canvas.toBlob(res,'image/webp',0.88);
+        if(!ok)canvas.toBlob(res,'image/png');
+      });
+      const existing=editId?cachedMemos.find(x=>x.id===editId):null;
+      canvas_path=existing?.canvas_path||existing?.path||('mk_drawings/'+('d'+Date.now()+'_'+Math.random().toString(36).substr(2,5))+'.webp');
+      const fr=sRef(stg,canvas_path);
+      await uploadBytes(fr,blob,{contentType:blob.type});
+      canvas_url=await getDownloadURL(fr);
+    }catch(e){toast('Canvas save failed');return;}
+    memoType='note';
+  }
   try{
-    if(editId)await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b,type:'text',u:Date.now()});
-    else await addDoc(memosCol,{t,b,type:'text',c:Date.now(),u:Date.now(),folder:curMemoFolder});
+    if(editId){
+      const upd={t,b,type:memoType,u:Date.now()};
+      if(hasCanvas){upd.canvas_url=canvas_url;upd.canvas_path=canvas_path;}
+      else{upd.canvas_url=null;upd.canvas_path=null;}
+      await updateDoc(doc(db,'mk_app','data','memos',editId),upd);
+    }else{
+      const data={t,b,type:memoType,c:Date.now(),u:Date.now(),folder:curMemoFolder};
+      if(hasCanvas){data.canvas_url=canvas_url;data.canvas_path=canvas_path;}
+      const newDoc=await addDoc(memosCol,data);
+      // GitHub 자동 push
+      if(_ghEnabled()&&memoType==='text'){
+        const f=cachedMemoFolders.find(x=>x.id===curMemoFolder);
+        _ghPush(f?f.name:'Uncategorized',{...data,id:newDoc.id}).catch(()=>{});
+      }
+    }
   }catch(e){toast('Save failed');return;}
   toast('Saved');cancelMemo();
 }
-async function saveMemoDraw(){
-  if(!isUnlocked){showTextPin(()=>saveMemoDraw());return;}
-  const t=document.getElementById('memoDrawTitle').value.trim();
-  const canvas=document.getElementById('memoDrawCanvas');
-  toast('저장 중...');
-  try{
-    /* canvas → WebP Blob (용량 작고 빠름, 미지원 시 PNG 폴백) */
-    const blob=await new Promise(res=>{
-      const ok=canvas.toBlob(res,'image/webp',0.88);
-      if(!ok)canvas.toBlob(res,'image/png');
-    });
-    /* 기존 파일 경로: 재저장 시 덮어쓰기 위해 고정 경로 사용 */
-    const existing=editId?cachedMemos.find(x=>x.id===editId):null;
-    const path=existing?.path||('mk_drawings/'+('d'+Date.now()+'_'+Math.random().toString(36).substr(2,5))+'.webp');
-    const fr=sRef(stg,path);
-    await uploadBytes(fr,blob,{contentType:blob.type});
-    const url=await getDownloadURL(fr);
-    if(editId){
-      await updateDoc(doc(db,'mk_app','data','memos',editId),{t,b:url,path,type:'draw',u:Date.now()});
-    }else{
-      await addDoc(memosCol,{t,b:url,path,type:'draw',c:Date.now(),u:Date.now(),folder:curMemoFolder});
-    }
-  }catch(e){toast('Save failed');return;}
-  toast('Saved ✓');cancelMemo();
-}
 function cancelMemo(){
-  editId=null;
+  editId=null;_pendingCanvasUrl=null;
+  _hideCanvas();
   document.getElementById('memoEditor').style.display='none';
-  document.getElementById('memoDrawEditor').style.display='none';
   document.getElementById('memoInsideFolder').style.display='';
   renderMemos();
 }
-async function delMemo(id){if(!isUnlocked){showTextPin(()=>delMemo(id));return;}if(!confirm('Delete this note?'))return;try{const m=cachedMemos.find(x=>x.id===id);if(m?.path)await deleteObject(sRef(stg,m.path)).catch(()=>{});await deleteDoc(doc(db,'mk_app','data','memos',id));}catch(e){}renderMemos();}
-window.newMemo=newMemo;window.editMemo=editMemo;window.saveMemo=saveMemo;window.saveMemoDraw=saveMemoDraw;window.cancelMemo=cancelMemo;window.delMemo=delMemo;window.renderMemos=renderMemos;
+async function delMemo(id){if(!isUnlocked){showTextPin(()=>delMemo(id));return;}if(!confirm('Delete this note?'))return;try{const m=cachedMemos.find(x=>x.id===id);const stoPath=m?.canvas_path||m?.path;if(stoPath)await deleteObject(sRef(stg,stoPath)).catch(()=>{});await deleteDoc(doc(db,'mk_app','data','memos',id));}catch(e){}renderMemos();}
+window.newMemo=newMemo;window.editMemo=editMemo;window.saveMemo=saveMemo;window.cancelMemo=cancelMemo;window.delMemo=delMemo;window.renderMemos=renderMemos;window.toggleMemoCanvas=toggleMemoCanvas;
 
 /* ── 그림판 엔진 ── */
 var _dc={tool:'pen',color:'#ffffff',size:5,drawing:false,history:[],ctx:null,canvas:null,lastX:0,lastY:0};
@@ -3389,7 +3432,7 @@ function setDrawTool(tool){
   document.getElementById('drawToolEraser').style.borderColor=tool==='eraser'?'#ffb4a2':'#353535';
   document.getElementById('drawToolEraser').style.background=tool==='eraser'?'rgba(255,180,162,.1)':'transparent';
   document.getElementById('drawToolEraser').style.color=tool==='eraser'?'#ffb4a2':'#a08d88';
-  const lbl=document.querySelector('#memoDrawEditor [id="drawCursorPreview"] + span');
+  const lbl=document.querySelector('#memoCanvasPanel [id="drawCursorPreview"] + span');
   if(lbl)lbl.textContent=tool==='eraser'?'지우개':'펜';
 }
 function setDrawColor(color){
@@ -3408,6 +3451,105 @@ function setDrawSize(size){
   if(prev){const s=Math.max(4,Math.min(size*1.8,28));prev.style.width=s+'px';prev.style.height=s+'px';}
 }
 window.drawUndo=drawUndo;window.drawClear=drawClear;window.setDrawTool=setDrawTool;window.setDrawColor=setDrawColor;window.setDrawSize=setDrawSize;
+
+/* ===== GitHub / Obsidian Sync ===== */
+function _ghEnabled(){return !!(localStorage.getItem('mk_gh_pat')&&localStorage.getItem('mk_gh_repo'));}
+function _ghHeaders(){return{Authorization:'token '+localStorage.getItem('mk_gh_pat'),'Content-Type':'application/json',Accept:'application/vnd.github.v3+json'};}
+function _ghSafe(s){return(s||'').replace(/[^a-zA-Z0-9가-힣\-_ ]/g,'').replace(/\s+/g,'-').slice(0,60);}
+function _ghFilePath(folderName,memo){const base=localStorage.getItem('mk_gh_path')||'';const dir=base?(base+'/'+_ghSafe(folderName)):_ghSafe(folderName);const file=_ghSafe(memo.t||'untitled')+'_'+String(memo.id).slice(0,6)+'.md';return dir+'/'+file;}
+function _ghFrontmatter(memo){return'---\ntitle: '+escHtml(memo.t||'Untitled')+'\nmk_id: '+memo.id+'\ncreated: '+new Date(memo.c||Date.now()).toISOString()+'\nupdated: '+new Date(memo.u||Date.now()).toISOString()+'\n---\n\n'+(memo.b||'');}
+async function _ghPush(folderName,memo){
+  if(!_ghEnabled()||memo.type==='draw')return;
+  const[owner,repo]=(localStorage.getItem('mk_gh_repo')||'/').split('/');
+  if(!owner||!repo)return;
+  const path=_ghFilePath(folderName,memo);
+  let content;
+  try{content=btoa(unescape(encodeURIComponent(_ghFrontmatter(memo))));}catch(e){return;}
+  let sha;
+  try{const r=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path,{headers:_ghHeaders()});if(r.ok){const j=await r.json();sha=j.sha;}}catch(e){}
+  const body={message:'mk.hub: '+(memo.t||'untitled'),content};
+  if(sha)body.sha=sha;
+  await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path,{method:'PUT',headers:_ghHeaders(),body:JSON.stringify(body)});
+}
+function saveGhSettings(){
+  const pat=document.getElementById('ghPatInput').value.trim();
+  const repo=document.getElementById('ghRepoInput').value.trim();
+  const path=document.getElementById('ghPathInput').value.trim();
+  if(!pat||!repo){toast('PAT와 Repository를 입력해주세요.');return;}
+  localStorage.setItem('mk_gh_pat',pat);
+  localStorage.setItem('mk_gh_repo',repo);
+  if(path)localStorage.setItem('mk_gh_path',path);else localStorage.removeItem('mk_gh_path');
+  const st=document.getElementById('ghStatus');if(st)st.textContent='Saved';
+  toast('GitHub 설정 저장됨');
+}
+async function testGhConnection(){
+  if(!_ghEnabled()){toast('먼저 저장해주세요.');return;}
+  const[owner,repo]=(localStorage.getItem('mk_gh_repo')||'/').split('/');
+  const st=document.getElementById('ghStatus');if(st)st.textContent='연결 중...';
+  try{
+    const r=await fetch('https://api.github.com/repos/'+owner+'/'+repo,{headers:_ghHeaders()});
+    if(r.ok){if(st)st.textContent='연결 성공 ✓';toast('GitHub 연결 성공!');}
+    else{if(st)st.textContent='연결 실패 ('+r.status+')';toast('연결 실패: '+r.status);}
+  }catch(e){if(st)st.textContent='연결 오류';toast('연결 오류');}
+}
+function loadGhSettings(){
+  const pi=document.getElementById('ghPatInput');if(pi&&localStorage.getItem('mk_gh_pat'))pi.value=localStorage.getItem('mk_gh_pat');
+  const ri=document.getElementById('ghRepoInput');if(ri&&localStorage.getItem('mk_gh_repo'))ri.value=localStorage.getItem('mk_gh_repo');
+  const pa=document.getElementById('ghPathInput');if(pa&&localStorage.getItem('mk_gh_path'))pa.value=localStorage.getItem('mk_gh_path');
+}
+async function ghPushAll(){
+  if(!_ghEnabled()){toast('GitHub 설정을 먼저 저장해주세요.');return;}
+  await loadMemoFolders();
+  const snap=await getDocs(memosCol);
+  let count=0;
+  for(const d of snap.docs){
+    const memo={...d.data(),id:d.id};
+    if(memo.type==='draw')continue;
+    const f=cachedMemoFolders.find(x=>x.id===memo.folder);
+    await _ghPush(f?f.name:'Uncategorized',memo);
+    count++;
+  }
+  toast(count+'개 메모를 GitHub에 업로드했습니다.');
+}
+async function ghPullAll(){
+  if(!_ghEnabled()){toast('GitHub 설정을 먼저 저장해주세요.');return;}
+  const[owner,repo]=(localStorage.getItem('mk_gh_repo')||'/').split('/');
+  const basePath=localStorage.getItem('mk_gh_path')||'';
+  toast('GitHub에서 가져오는 중...');
+  try{
+    const url='https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+(basePath?basePath:'');
+    const r=await fetch(url,{headers:_ghHeaders()});
+    if(!r.ok){toast('GitHub 접근 실패: '+r.status);return;}
+    const items=await r.json();
+    await loadMemoFolders();
+    let imported=0;
+    for(const item of items){
+      if(item.type!=='dir')continue;
+      const folderName=item.name;
+      let folder=cachedMemoFolders.find(f=>f.name===folderName);
+      if(!folder){const ref=await addDoc(memoFoldersCol,{name:folderName,icon:'folder',order:Date.now()});folder={id:ref.id,name:folderName};}
+      const fr=await fetch(item.url,{headers:_ghHeaders()});
+      const files=await fr.json();
+      for(const file of files){
+        if(!file.name.endsWith('.md'))continue;
+        const cr=await fetch(file.url,{headers:_ghHeaders()});
+        const cj=await cr.json();
+        const text=decodeURIComponent(escape(atob((cj.content||'').replace(/\n/g,''))));
+        const mkIdMatch=text.match(/mk_id:\s*(\S+)/);
+        if(mkIdMatch){
+          try{const ex=await getDoc(doc(db,'mk_app','data','memos',mkIdMatch[1]));if(ex.exists())continue;}catch(e){}
+        }
+        const titleMatch=text.match(/title:\s*(.+)/);
+        const bodyMatch=text.match(/---[\s\S]*?---\n\n?([\s\S]*)/);
+        await addDoc(memosCol,{t:titleMatch?titleMatch[1].trim():'Untitled',b:bodyMatch?bodyMatch[1].trim():'',type:'text',c:Date.now(),u:Date.now(),folder:folder.id});
+        imported++;
+      }
+    }
+    toast('GitHub에서 '+imported+'개 메모를 가져왔습니다.');
+    renderMemoFolders();
+  }catch(e){toast('Pull 실패: '+e.message);}
+}
+window.saveGhSettings=saveGhSettings;window.testGhConnection=testGhConnection;window.ghPushAll=ghPushAll;window.ghPullAll=ghPullAll;
 
 /* ===== FILE FOLDERS ===== */
 let curFileFolder=null,cachedFileFolders=[],cachedFiles=[];
