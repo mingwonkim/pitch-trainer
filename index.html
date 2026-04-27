@@ -801,50 +801,41 @@ img{-webkit-touch-callout:none;}
   /* 서브 페이지 타이틀 */
   .app-page-title{font-size:clamp(26px,8vw,40px)!important;}
 
-  /* ══ 11. My Fragments 갤러리 리디자인 ══ */
-  /* 섹션 헤더 표시 */
-  #mobGalHdr{display:block!important;}
-  /* 마퀴 — accent 라인 + 배경 */
-  .gallery-marquee-wrap{
-    border-top:1px solid rgba(255,59,0,.2)!important;
-    border-bottom:1px solid rgba(255,59,0,.07)!important;
-    padding:11px 0!important;
-    background:#060404!important;
-  }
+  /* ══ 11. 카드 버튼 상단 간격 ══ */
+  #hubCardGrid>section>button{margin-top:16px!important;}
+
+  /* ══ 12. My Fragments — Instagram Feed ══ */
+  /* 마퀴 accent 라인 */
+  .gallery-marquee-wrap{border-top:1px solid rgba(255,59,0,.2)!important;border-bottom:1px solid rgba(255,59,0,.07)!important;padding:11px 0!important;background:#060404!important;}
   .gallery-marquee-item{font-size:clamp(34px,9vw,52px)!important;padding:0 20px!important;}
-  /* bento 그리드: 6열 기반 (1-3번: span 2, 4-5번: span 3) */
-  #mobileGalleryGrid{
-    grid-template-columns:repeat(6,1fr)!important;
-    gap:2px!important;
-    margin-top:0!important;
-    background:#060404!important;
-  }
-  .mob-gal-item{grid-column:span 2!important;aspect-ratio:1/1!important;}
-  .mob-gal-item:nth-child(4),
-  .mob-gal-item:nth-child(5){grid-column:span 3!important;aspect-ratio:3/2!important;}
-  /* 4,5번 iframe — 넓어진 item width에 맞게 left 보정 */
-  .mob-gal-item:nth-child(4) iframe,
-  .mob-gal-item:nth-child(5) iframe{left:-7px!important;}
-  /* 하단 gradient overlay */
-  .mob-gal-item::after{
-    content:''!important;
-    position:absolute!important;
-    inset:0!important;
-    background:linear-gradient(to top,rgba(4,2,2,.82) 0%,rgba(4,2,2,.15) 38%,transparent 62%)!important;
-    z-index:1!important;
-    pointer-events:none!important;
-  }
-  /* 라벨 — overlay 위에 표시 */
-  .mob-gal-label{
-    z-index:2!important;
-    bottom:8px!important;left:10px!important;
-    font-size:8px!important;
-    color:rgba(255,255,255,.82)!important;
-    letter-spacing:.13em!important;
-    text-shadow:0 1px 3px rgba(0,0,0,.95)!important;
-  }
-  /* 탭 피드백 */
-  .mob-gal-item:active{opacity:.78!important;transition:opacity .08s!important;}
+  /* 피드 표시 */
+  #mobInstaFeed{display:block!important;}
+  /* 피드 헤더 */
+  .mob-feed-hdr{display:flex;justify-content:space-between;align-items:flex-end;padding:18px 16px 13px;background:#060404;}
+  .mob-feed-hdr-label{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#FF3B00;margin:0 0 5px;}
+  .mob-feed-hdr-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900;letter-spacing:-.04em;text-transform:uppercase;color:#e5e2e1;line-height:1;}
+  .mob-feed-hdr-right{text-align:right;}
+  .mob-feed-hdr-coll{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;color:#524340;}
+  .mob-feed-hdr-year{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:600;letter-spacing:.08em;color:#353535;margin-top:2px;}
+  .mob-feed-divider{height:1px;background:linear-gradient(90deg,#FF3B00,rgba(255,59,0,.22) 55%,transparent);margin:0 16px;}
+  /* 각 포스트 */
+  .mob-post{border-bottom:1px solid #181414;cursor:pointer;background:#060404;transition:background .12s;}
+  .mob-post:active{background:#0d0a0a!important;}
+  /* 포스트 헤더 */
+  .mob-post-header{display:flex;align-items:center;gap:10px;padding:10px 14px;}
+  .mob-post-avatar{width:34px;height:34px;border-radius:50%;border:1.5px solid #FF3B00;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:800;color:#FF3B00;flex-shrink:0;background:#0a0606;}
+  .mob-post-meta{flex:1;}
+  .mob-post-user{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:#e5e2e1;letter-spacing:-.01em;}
+  .mob-post-tag{font-family:'Space Grotesk',sans-serif;font-size:10px;color:#524340;margin-top:1px;}
+  .mob-post-more{font-family:'Space Grotesk',sans-serif;font-size:18px;color:#353535;letter-spacing:.05em;line-height:1;}
+  /* 포스트 이미지 — 1:1 정사각형, 전체 너비 */
+  .mob-post-img{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:#0a0808;}
+  .mob-post-img iframe{position:absolute!important;width:1440px!important;height:900px!important;transform-origin:top left!important;transform:scale(0.4333)!important;left:-117px!important;top:0!important;border:none!important;pointer-events:none!important;max-width:none!important;}
+  /* 포스트 푸터 */
+  .mob-post-footer{padding:10px 14px 16px;}
+  .mob-post-caption{font-family:'Inter',sans-serif;font-size:12px;color:#a08d88;line-height:1.55;margin-bottom:8px;}
+  .mob-post-caption-bold{font-weight:700;color:#e5e2e1;}
+  .mob-post-cta{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ffb4a2;}
 }
 /* Bottom Nav active pill */
 .bnav.is-active{background:rgba(255,180,162,.07);border-radius:12px;}
@@ -1161,27 +1152,85 @@ html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk
       </div>
       <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
 
-    <!-- Mobile gallery -->
-      <!-- 모바일 갤러리 섹션 헤더 (CSS로 mobile에서만 show) -->
-      <div id="mobGalHdr" style="display:none;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-end;padding:18px 16px 13px;background:#060404;">
+    <!-- Mobile Instagram Feed (CSS로 mobile에서만 표시) -->
+      <div id="mobInstaFeed" style="display:none;">
+        <!-- 피드 헤더 -->
+        <div class="mob-feed-hdr">
           <div>
-            <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#FF3B00;margin:0 0 5px;">Visual Archive</p>
-            <h3 style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900;letter-spacing:-.04em;text-transform:uppercase;color:#e5e2e1;margin:0;line-height:1;">My Fragments</h3>
+            <div class="mob-feed-hdr-label">Visual Archive</div>
+            <div class="mob-feed-hdr-title">My Fragments</div>
           </div>
-          <div style="text-align:right;">
-            <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;color:#524340;margin:0 0 2px;">05 Collections</p>
-            <p style="font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:600;letter-spacing:.08em;color:#353535;margin:0;">2025</p>
+          <div class="mob-feed-hdr-right">
+            <div class="mob-feed-hdr-coll">05 Collections</div>
+            <div class="mob-feed-hdr-year">2025</div>
           </div>
         </div>
-        <div style="height:1px;background:linear-gradient(90deg,#FF3B00,rgba(255,59,0,.22) 55%,transparent);margin:0 16px;"></div>
-      </div>
-      <div id="mobileGalleryGrid" style="display:none;">
-        <div class="mob-gal-item" onclick="openPicExpand('1picture.html')"><iframe src="1picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob1">01 · Editorial</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('2picture.html')"><iframe src="2picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob2">02 · Lowtheory</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('3picture.html')"><iframe src="3picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob3">03 · Moodboard</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('4picture.html')"><iframe src="4picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob4">04 · Archive</div></div>
-        <div class="mob-gal-item" onclick="openPicExpand('5picture.html')"><iframe src="5picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe><div class="mob-gal-label" data-elabel="gal_mob5">05 · Grid</div></div>
+        <div class="mob-feed-divider"></div>
+        <!-- Post 01 -->
+        <article class="mob-post" onclick="openPicExpand('1picture.html')">
+          <div class="mob-post-header">
+            <div class="mob-post-avatar">01</div>
+            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Editorial</div></div>
+            <div class="mob-post-more">···</div>
+          </div>
+          <div class="mob-post-img"><iframe src="1picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe></div>
+          <div class="mob-post-footer">
+            <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Editorial — Curated layouts and visual compositions.</div>
+            <div class="mob-post-cta">View Collection →</div>
+          </div>
+        </article>
+        <!-- Post 02 -->
+        <article class="mob-post" onclick="openPicExpand('2picture.html')">
+          <div class="mob-post-header">
+            <div class="mob-post-avatar">02</div>
+            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Lowtheory</div></div>
+            <div class="mob-post-more">···</div>
+          </div>
+          <div class="mob-post-img"><iframe src="2picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe></div>
+          <div class="mob-post-footer">
+            <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Lowtheory — A quiet theory of aesthetics.</div>
+            <div class="mob-post-cta">View Collection →</div>
+          </div>
+        </article>
+        <!-- Post 03 -->
+        <article class="mob-post" onclick="openPicExpand('3picture.html')">
+          <div class="mob-post-header">
+            <div class="mob-post-avatar">03</div>
+            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Moodboard</div></div>
+            <div class="mob-post-more">···</div>
+          </div>
+          <div class="mob-post-img"><iframe src="3picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe></div>
+          <div class="mob-post-footer">
+            <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Moodboard — Fragments of color and form.</div>
+            <div class="mob-post-cta">View Collection →</div>
+          </div>
+        </article>
+        <!-- Post 04 -->
+        <article class="mob-post" onclick="openPicExpand('4picture.html')">
+          <div class="mob-post-header">
+            <div class="mob-post-avatar">04</div>
+            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Archive</div></div>
+            <div class="mob-post-more">···</div>
+          </div>
+          <div class="mob-post-img"><iframe src="4picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe></div>
+          <div class="mob-post-footer">
+            <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Archive — Moments preserved in still frames.</div>
+            <div class="mob-post-cta">View Collection →</div>
+          </div>
+        </article>
+        <!-- Post 05 -->
+        <article class="mob-post" onclick="openPicExpand('5picture.html')">
+          <div class="mob-post-header">
+            <div class="mob-post-avatar">05</div>
+            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Grid</div></div>
+            <div class="mob-post-more">···</div>
+          </div>
+          <div class="mob-post-img"><iframe src="5picture.html" loading="lazy" sandbox="allow-scripts" scrolling="no"></iframe></div>
+          <div class="mob-post-footer">
+            <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Grid — A systematic vision in patterns and shapes.</div>
+            <div class="mob-post-cta">View Collection →</div>
+          </div>
+        </article>
       </div>
 
     <!-- Lightbox -->
@@ -3719,6 +3768,18 @@ function renderTodoCal(){
    5picture: iframe 직접 스크롤, 오버레이 없음 (iOS 관성 스크롤) */
 
 var _carouselIdx=0,_carouselTotal=0,_carouselPic='',_picCache={};
+var _COLLECTIONS=['1picture.html','2picture.html','3picture.html','4picture.html','5picture.html'];
+var _currCollIdx=0;
+function navCollection(dir){
+  var ni=_currCollIdx+dir;
+  if(ni<0||ni>=_COLLECTIONS.length)return;
+  openPicExpand(_COLLECTIONS[ni]);
+}
+function _updateCollNav(){
+  var p=document.getElementById('picPrevColl'),n=document.getElementById('picNextColl');
+  if(p)p.style.opacity=_currCollIdx===0?'0.25':'1';
+  if(n)n.style.opacity=_currCollIdx===_COLLECTIONS.length-1?'0.25':'1';
+}
 
 /* 직접 localStorage에서 이미지 읽기 (iframe 없이 즉시 로드) */
 var _picExtractLS={
@@ -3828,6 +3889,9 @@ function openPicExpand(src){
   var cv=document.getElementById('picCarouselView');
   var fr=document.getElementById('picMainFrame');
   modal.style.display='block';
+  _currCollIdx=_COLLECTIONS.indexOf(src);
+  if(_currCollIdx<0)_currCollIdx=0;
+  _updateCollNav();
 
   if(src==='5picture.html'){
     /* 5picture: iframe 직접 스크롤 */
@@ -4184,9 +4248,13 @@ setTimeout(function(){
 
 <div id="picExpandModal" style="display:none;position:fixed;inset:0;z-index:10000;background:#0a0a0a;overflow:hidden;touch-action:none;overscroll-behavior:none;">
   <!-- 상단 바 -->
-  <div style="position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;padding:12px 16px;background:linear-gradient(180deg,rgba(10,8,8,.92) 60%,transparent);pointer-events:none;">
-    <button onclick="closePicExpand()" style="pointer-events:auto;background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;">← Back</button>
-    <span id="picExpandTitle" style="flex:1;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(255,180,162,.5);padding-right:80px;"></span>
+  <div style="position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;padding:12px 16px;gap:8px;background:linear-gradient(180deg,rgba(10,8,8,.92) 60%,transparent);pointer-events:none;">
+    <button onclick="closePicExpand()" style="pointer-events:auto;background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;flex-shrink:0;">← Back</button>
+    <span id="picExpandTitle" style="flex:1;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(255,180,162,.5);"></span>
+    <div style="display:flex;gap:5px;pointer-events:auto;flex-shrink:0;">
+      <button id="picPrevColl" onclick="navCollection(-1)" style="background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;width:34px;height:34px;color:#ffb4a2;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;">‹</button>
+      <button id="picNextColl" onclick="navCollection(1)" style="background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;width:34px;height:34px;color:#ffb4a2;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;">›</button>
+    </div>
   </div>
   <!-- 1-4picture: 네이티브 div 캐러셀 (iframe 터치 간섭 없음) -->
   <div id="picCarouselView" style="display:none;position:absolute;inset:0;overflow:hidden;touch-action:pan-y;">
