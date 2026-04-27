@@ -34,6 +34,56 @@
 - 데스크탑: iframe 폴라로이드 레이아웃
 - 모바일: `.mob-gal-item` 썸네일 → `#picExpandModal` fullscreen
 
+### 모바일 캐러셀 스와이프 (touch-action 핵심)
+- **문제**: 사진이 오른쪽으로 안 넘어가는 버그
+- **원인**: `touch-action:none`은 터치가 시작되는 **해당 요소**에 지정해야 함. 부모에만 지정하면 자식 `img` 요소의 기본 `touch-action:auto`가 브라우저 스크롤 제어권을 가져가 수평 스와이프가 막힘.
+- **해결**: `.pic-photo-slide`와 `.pic-photo-slide img` 모두에 `touch-action:none` 추가
+
+### 갤러리 섹션 라벨 (Intro/Verse/Prechorus/Sabi/Hook)
+- `_galSectionLabel` 함수: `{'1picture.html':'Intro', '2picture.html':'Verse', '3picture.html':'Prechorus', '4picture.html':'Sabi', '5picture.html':'Hook'}`
+- 캐러셀 타이틀: "INTRO · 01/05" 형식, 하단 dot 지시자 없음
+- 모바일 게시물 태그도 동일 라벨 사용
+
+### 잠긴 폴더 정보 숨김
+- `renderMemoFolders` / `renderFileFolders`에서 `f.locked && !isUnlocked` 조건 시:
+  - 아이콘 → `lock`
+  - 폴더명 → `· · ·`
+  - 메타 → `Locked`
+
+### Hub 버블 기본 화면
+- 3페이지 구조: `hubPage0`(메모1), `hubPage1`(명언/quote), `hubPage2`(메모2)
+- 기본 시작: `hubPage1`(명언)이 중앙 → 모바일/데스크탑 모두 명언이 첫 화면
+- `_showPage(n)`: `hub-no-lines`는 n===1(명언)에만 적용
+
+### 통합 메모 에디터 (Obsidian-like)
+- **결정**: `#memoDrawEditor` 제거, `#memoEditor` 하나로 통합
+- **구조**: 텍스트 입력 + "Drawing" 버튼으로 `#memoCanvasPanel` 접기/펼치기
+- **Firestore 타입**:
+  - `text`: 텍스트만 (기존)
+  - `draw`: 드로잉만 (기존, 레거시)
+  - `note`: 텍스트 + 드로잉 (신규) → `canvas_url`, `canvas_path` 필드 추가
+- **레거시 호환**: `editMemo()`에서 타입별 분기로 기존 `draw` 타입도 정상 렌더
+
+### GitHub / Obsidian 동기화
+- **방식**: GitHub REST API (`PUT /repos/{owner}/{repo}/contents/{path}`)
+- **저장 형식**: Obsidian 호환 YAML frontmatter `.md` 파일
+  ```
+  ---
+  title: 노트 제목
+  mk_id: firestoreDocId
+  created: ISO8601
+  updated: ISO8601
+  ---
+  
+  본문 내용
+  
+  ![](canvas_url)  ← 드로잉 있을 때만
+  ```
+- **동기화 범위**: `text` + `note` 타입 (텍스트 없는 순수 `draw`는 제외)
+- **자동 push**: `saveMemo()` 완료 후 신규/수정 모두 자동 push
+- **로컬 저장**: `mk_gh_pat`, `mk_gh_repo`, `mk_gh_path` → localStorage
+- **설정 가이드**: 바탕화면 `Obsidian 연동 설정 가이드.md` 참조
+
 ---
 
 ## 의사결정 로그
@@ -41,3 +91,9 @@
 | 날짜 | 결정 | 이유 |
 |------|------|------|
 | 2026-04-10 | memory.md 초기 생성 | 프로젝트 컨텍스트 보존 |
+| 2026-04-28 | 모바일 캐러셀 스와이프 수정 | touch-action을 img 요소에도 직접 지정 필요 |
+| 2026-04-28 | 갤러리 라벨 Intro/Verse/Prechorus/Sabi/Hook 적용 | 데스크탑 버전과 통일 |
+| 2026-04-28 | Hub 기본 화면을 명언(hubPage1)으로 변경 | 모바일/데스크탑 모두 동일 첫 화면 |
+| 2026-04-28 | 잠긴 폴더 이름/아이콘 숨김 | 개인정보 보호 |
+| 2026-04-28 | 통합 메모 에디터 (Obsidian-like) | 텍스트+드로잉 하나의 노트로 관리 |
+| 2026-04-28 | GitHub API로 Obsidian 동기화 | 정적 앱에서 가능한 현실적 방식 |

@@ -1,18 +1,38 @@
 # MK.HUB Todo
 
-## 2026-04-10 작업 목록
+---
+
+## 완료된 작업 (2026-04-28)
+
+- [x] 모바일 캐러셀 스크롤바 제거
+- [x] 모바일 사진 스와이프 수정 (`touch-action:none`을 img에도 적용)
+- [x] 캐러셀 하단 dot(01~05) 제거, Intro/Verse/Prechorus/Sabi/Hook 라벨로 교체
+- [x] 모바일 게시물 태그 라벨 통일 (데스크탑 버전 기준)
+- [x] Hub 기본 화면을 명언(quote) 섹션으로 변경 — 모바일/데스크탑 동일
+- [x] 잠긴 폴더 이름·아이콘·개수 숨김 (Notepad + Vault 모두)
+- [x] 통합 메모 에디터 구현 — 텍스트+드로잉 하나의 노트로 (Obsidian-like)
+- [x] GitHub API 기반 Obsidian 동기화 구현
+  - Settings에 Obsidian Sync 섹션 추가
+  - 노트 저장 시 GitHub .md 자동 push (신규/수정 모두)
+  - Push All / Pull from GitHub 수동 버튼
+  - 드로잉 포함 노트도 동기화 (이미지 링크 포함)
+- [x] 바탕화면에 Obsidian 연동 설정 가이드 파일 생성
+
+---
+
+## 남은 작업
 
 ### 1. Music 페이지 — 흥미로운 곡 섹션 추가
-- [ ] index.html에서 Music 페이지의 "좋아하는 곡" 섹션 구조 파악
 - [ ] "흥미로운 곡" 섹션 UI 추가 (뮤비 링크 + 흥미로운 이유 필드)
-- [ ] Firestore 저장/불러오기 로직 추가 (좋아하는 곡과 동일 포맷)
+- [ ] Firestore 저장/불러오기 로직 (좋아하는 곡과 동일 포맷)
 - [ ] 추가/삭제 기능 구현
-- [ ] 테스트 및 커밋
 
 ### 2. 밝은 모드(Light Mode) 추가
-- [ ] 현재 CSS 변수(color scheme) 구조 파악
-- [ ] light mode CSS 변수 정의
-- [ ] 설정 페이지에 라이트/다크 토글 버튼 추가
+- [ ] CSS 변수 기반 light mode 정의
+- [ ] Settings 페이지에 라이트/다크 토글 버튼
 - [ ] `localStorage`에 모드 저장 및 복원
-- [ ] 전체 UI 밝은 모드 적용 확인
-- [ ] 테스트 및 커밋
+
+### 3. Obsidian 동기화 — 추가 개선 (선택)
+- [ ] Obsidian에서 수정한 내용 Pull 시 기존 메모 업데이트 (현재는 추가만)
+- [ ] 드로잉 전용(`draw` 타입) 메모도 텍스트 없이 이미지만 .md로 동기화
+- [ ] GitHub push 결과를 UI에 표시 (성공/실패 토스트)
