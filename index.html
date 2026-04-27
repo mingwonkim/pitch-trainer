@@ -809,7 +809,7 @@ img{-webkit-touch-callout:none;}
   .gallery-marquee-wrap{border-top:1px solid rgba(255,59,0,.2)!important;border-bottom:1px solid rgba(255,59,0,.07)!important;padding:11px 0!important;background:#060404!important;}
   .gallery-marquee-item{font-size:clamp(34px,9vw,52px)!important;padding:0 20px!important;}
   /* 피드 표시 */
-  #mobInstaFeed{display:block!important;}
+  #mobInstaFeed{display:block!important;padding-top:16px!important;}
   /* 피드 헤더 */
   .mob-feed-hdr{display:flex;justify-content:space-between;align-items:flex-end;padding:18px 16px 13px;background:#060404;}
   .mob-feed-hdr-label{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#FF3B00;margin:0 0 5px;}
@@ -819,7 +819,7 @@ img{-webkit-touch-callout:none;}
   .mob-feed-hdr-year{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:600;letter-spacing:.08em;color:#353535;margin-top:2px;}
   .mob-feed-divider{height:1px;background:linear-gradient(90deg,#FF3B00,rgba(255,59,0,.22) 55%,transparent);margin:0 16px;}
   /* 각 포스트 */
-  .mob-post{border-bottom:1px solid #181414;cursor:pointer;background:#060404;transition:background .12s;}
+  .mob-post{border-bottom:none;cursor:pointer;background:#060404;transition:background .12s;margin-bottom:20px!important;}
   .mob-post:active{background:#0d0a0a!important;}
   /* 포스트 헤더 */
   .mob-post-header{display:flex;align-items:center;gap:10px;padding:10px 14px;}
@@ -4238,8 +4238,8 @@ setTimeout(function(){
     <span id="picExpandTitle" style="flex:1;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(255,180,162,.5);padding-right:80px;"></span>
   </div>
   <!-- 1-4picture: 네이티브 div 캐러셀 (iframe 터치 간섭 없음) -->
-  <div id="picCarouselView" style="display:none;position:absolute;inset:0;overflow:hidden;touch-action:pan-y;">
-    <div id="picPhotoTrack" style="display:flex;width:100%;height:100%;will-change:transform;touch-action:pan-y;"></div>
+  <div id="picCarouselView" style="display:none;position:absolute;inset:0;overflow:hidden;touch-action:none;">
+    <div id="picPhotoTrack" style="display:flex;width:100%;height:100%;will-change:transform;touch-action:none;"></div>
     <div id="picCarouselDots" style="position:absolute;bottom:24px;left:0;right:0;z-index:5;display:flex;justify-content:center;gap:6px;pointer-events:none;"></div>
   </div>
   <!-- 5picture: iframe 직접 스크롤 (오버레이 없음 → iOS 네이티브 관성 스크롤) -->
