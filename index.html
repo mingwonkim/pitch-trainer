@@ -3437,7 +3437,7 @@ async function ghPullAll(){
     if(!r.ok){toast('GitHub 접근 실패: '+r.status);return;}
     const items=await r.json();
     await loadMemoFolders();
-    let imported=0;
+    let imported=0,updated=0;
     for(const item of items){
       if(item.type!=='dir')continue;
       const folderName=item.name;
@@ -3451,16 +3451,24 @@ async function ghPullAll(){
         const cj=await cr.json();
         const text=decodeURIComponent(escape(atob((cj.content||'').replace(/\n/g,''))));
         const mkIdMatch=text.match(/mk_id:\s*(\S+)/);
-        if(mkIdMatch){
-          try{const ex=await getDoc(doc(db,'mk_app','data','memos',mkIdMatch[1]));if(ex.exists())continue;}catch(e){}
-        }
         const titleMatch=text.match(/title:\s*(.+)/);
         const bodyMatch=text.match(/---[\s\S]*?---\n\n?([\s\S]*)/);
-        await addDoc(memosCol,{t:titleMatch?titleMatch[1].trim():'Untitled',b:bodyMatch?bodyMatch[1].trim():'',type:'text',c:Date.now(),u:Date.now(),folder:folder.id});
-        imported++;
+        const t=titleMatch?titleMatch[1].trim():'Untitled';
+        const b=(bodyMatch?bodyMatch[1].trim():'').replace(/\n*!\[\]\([^)]*\)\s*$/,'').trim();
+        let existingId=null;
+        if(mkIdMatch){
+          try{const ex=await getDoc(doc(db,'mk_app','data','memos',mkIdMatch[1]));if(ex.exists())existingId=mkIdMatch[1];}catch(e){}
+        }
+        if(existingId){
+          await updateDoc(doc(db,'mk_app','data','memos',existingId),{t,b,u:Date.now()});
+          updated++;
+        }else{
+          await addDoc(memosCol,{t,b,type:'text',c:Date.now(),u:Date.now(),folder:folder.id});
+          imported++;
+        }
       }
     }
-    toast('GitHub에서 '+imported+'개 메모를 가져왔습니다.');
+    toast('GitHub Pull 완료 — 추가 '+imported+'개, 업데이트 '+updated+'개');
     renderMemoFolders();
   }catch(e){toast('Pull 실패: '+e.message);}
 }
