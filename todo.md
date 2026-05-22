@@ -37,7 +37,7 @@
   - My Fragments/갤러리 라이트모드 색상 적용 + `#blackFadeOverlay` 라이트모드 비활성화
 - [x] 흰 칸 → 시그니처 연핑크 (2026-05-23): Hub 카드·음악 모듈 카드·폴더 카드·`#ffe9e3`
 - [x] 옅은 글씨 추가 보정 (2026-05-23): `text-[#ffb4a2]`→`#FF3B00`, `text-on-surface/*`·`writing-text` 다크닝, 하단바 비선택 칸, My Fragments 번호
-- [ ] (선택) Todo 페이지(`#page-todo`) 라이트모드 보정 — `.todo-cal-num` 등 흰 글씨 안 보임
+- [x] Todo 페이지(`#page-todo`) 라이트모드 보정 (2026-05-23) — 캘린더 칸 연핑크, 날짜·할 일 글씨 다크닝, 월 이동 버튼·토요일 색 보정
 
 ### 3. Obsidian 동기화 — 추가 개선 (선택)
 - [ ] Obsidian에서 수정한 내용 Pull 시 기존 메모 업데이트 (현재는 추가만)
