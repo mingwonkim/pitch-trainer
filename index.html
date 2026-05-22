@@ -3441,6 +3441,7 @@ async function ghPullAll(){
     for(const item of items){
       if(item.type!=='dir')continue;
       const folderName=item.name;
+      if(folderName.startsWith('.'))continue; // .obsidian/.git 등 설정 폴더 제외
       let folder=cachedMemoFolders.find(f=>f.name===folderName);
       if(!folder){const ref=await addDoc(memoFoldersCol,{name:folderName,icon:'folder',order:Date.now()});folder={id:ref.id,name:folderName};}
       const fr=await fetch(item.url,{headers:_ghHeaders()});
