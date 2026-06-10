@@ -58,6 +58,14 @@
 - [x] Music 플레이리스트 카드(같은 .folder-card)도 ✕ → Material close 통일
 - [x] 라이트 모드 보정 + 다크/라이트/모바일/호버 검증 + commit/push
 
+### 6차 요청 (2026-06-10) — 명언 칸 + 메인화면 UI 개선
+복원 지점: git tag `pre-hub-redesign-20260610` (커밋 28994f0, push됨)
+- [x] 명언/메모 버블: 글래스 카드 + 상단 레드 그라데이션 라인 + "TODAY'S QUOTE/MEMO" 태그 + format_quote 워터마크(명언 페이지만) + 살몬 pill 활성 dot
+- [x] 명언·메모 타이포 Pretendard 전환, 작성자 살몬 강조
+- [x] 히어로: 펄스 레드 도트 + 오늘 날짜 라벨 + MK.HUB 타이틀 그라데이션 페이드
+- [x] 라이트/모바일 대응, 페이지 전환 태그 갱신 JS
+- [x] 다크/라이트/모바일 검증 + commit/push
+
 ---
 
 ## 완료된 작업 (2026-04-28)
