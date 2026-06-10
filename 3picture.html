@@ -783,7 +783,7 @@ document.getElementById('mb-global-file').addEventListener('change', function(e)
   if (img) img.src = URL.createObjectURL(file);
   var ph = document.querySelector('[data-placeholder-for="'+imgId+'"]');
   if (ph) ph.hidden = true;
-  // IndexedDB 저장 (백그라운드, 축소·압축)
+  // IndexedDB 저장 (백그라운드, 원본 화질)
   MKPics.fileToDataURL(file).then(function(durl) {
     MKPics.set('p3:'+imgId, durl);
   });

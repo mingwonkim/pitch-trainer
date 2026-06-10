@@ -40,31 +40,13 @@
 
   function getMany(keys){return Promise.all(keys.map(get));}
 
-  /* 파일 → 축소·압축된 dataURL (최대 1600px, JPEG q0.85). 실패 시 원본 dataURL 반환 */
-  function fileToDataURL(file,maxDim,quality){
-    maxDim=maxDim||1600;quality=quality||0.85;
+  /* 파일 → 원본 dataURL (압축·축소 없음 — 원본 화질 그대로 저장) */
+  function fileToDataURL(file){
     return new Promise(function(res,rej){
       var r=new FileReader();
       r.onload=function(){res(r.result);};
       r.onerror=function(){rej(r.error);};
       r.readAsDataURL(file);
-    }).then(function(raw){
-      return new Promise(function(res){
-        var img=new Image();
-        img.onload=function(){
-          var w=img.naturalWidth,h=img.naturalHeight;
-          if(!w||!h){res(raw);return;}
-          var sc=Math.min(1,maxDim/Math.max(w,h));
-          var c=document.createElement('canvas');
-          c.width=Math.round(w*sc);c.height=Math.round(h*sc);
-          var x=c.getContext('2d');
-          x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
-          x.drawImage(img,0,0,c.width,c.height);
-          try{res(c.toDataURL('image/jpeg',quality));}catch(e){res(raw);}
-        };
-        img.onerror=function(){res(raw);};
-        img.src=raw;
-      });
     });
   }
 

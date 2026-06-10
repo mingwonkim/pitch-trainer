@@ -815,25 +815,34 @@ html.light #memoEditor{background:rgba(255,250,248,.9);}
   .mob-feed-hdr-coll{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;color:#524340;}
   .mob-feed-hdr-year{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:600;letter-spacing:.08em;color:#353535;margin-top:2px;}
   .mob-feed-divider{height:1px;background:linear-gradient(90deg,#FF3B00,rgba(255,59,0,.22) 55%,transparent);margin:0 16px;}
-  /* 각 포스트 */
-  .mob-post{border-bottom:none;cursor:pointer;background:#060404;transition:background .12s;margin-bottom:20px!important;}
-  .mob-post:active{background:#0d0a0a!important;}
+  /* 각 포스트 — 라운드 카드 (인스타그램 스타일) */
+  .mob-post{cursor:pointer;background:#0b0808;transition:background .12s,transform .12s;margin:0 12px 22px!important;border-radius:18px;border:1px solid #1c1515;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,.35);}
+  .mob-post:active{background:#100c0c!important;transform:scale(.985);}
   /* 포스트 헤더 */
-  .mob-post-header{display:flex;align-items:center;gap:10px;padding:10px 14px;}
-  .mob-post-avatar{width:34px;height:34px;border-radius:50%;border:1.5px solid #FF3B00;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:800;color:#FF3B00;flex-shrink:0;background:#0a0606;}
+  .mob-post-header{display:flex;align-items:center;gap:11px;padding:12px 14px;}
+  .mob-post-avatar{width:36px;height:36px;border-radius:50%;border:2px solid transparent;background:linear-gradient(#0b0808,#0b0808) padding-box,conic-gradient(from 210deg,#FF3B00,#ffb4a2,#ff7847,#FF3B00) border-box;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:800;color:#ffb4a2;flex-shrink:0;}
   .mob-post-meta{flex:1;}
-  .mob-post-user{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:#e5e2e1;letter-spacing:-.01em;}
-  .mob-post-tag{font-family:'Space Grotesk',sans-serif;font-size:10px;color:#524340;margin-top:1px;}
+  .mob-post-user{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-weight:700;color:#e5e2e1;letter-spacing:-.01em;}
+  .mob-post-tag{font-family:'Pretendard Variable',Pretendard,'Inter',sans-serif;font-size:10.5px;color:#6b5a55;margin-top:1px;}
   .mob-post-more{font-family:'Space Grotesk',sans-serif;font-size:18px;color:#353535;letter-spacing:.05em;line-height:1;}
-  /* 포스트 이미지 — 1:1 정사각형, 전체 너비 */
+  /* 포스트 이미지 — 1:1 정사각형 (iframe 배율은 fitFeedThumbs()가 카드 폭에 맞춤) */
   .mob-post-img{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:#0a0808;}
   .mob-post-img iframe{position:absolute!important;width:1440px!important;height:900px!important;transform-origin:top left!important;transform:scale(0.4333)!important;left:-117px!important;top:0!important;border:none!important;pointer-events:none!important;max-width:none!important;}
+  /* 액션 바 — 좋아요 / 공유 / 전체보기 */
+  .mob-post-actions{display:flex;align-items:center;gap:2px;padding:6px 8px 0;}
+  .mob-act{background:none;border:none;padding:8px;color:#e5e2e1;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:10px;}
+  .mob-act:active{background:rgba(255,255,255,.06);}
+  .mob-act .material-symbols-outlined{font-size:23px;}
+  .mob-act-like.liked{color:#FF3B00;}
+  .mob-act-like.liked .material-symbols-outlined{font-variation-settings:'FILL' 1;animation:likePop .3s ease;}
+  .mob-act-spacer{flex:1;}
   /* 포스트 푸터 */
-  .mob-post-footer{padding:10px 14px 16px;}
-  .mob-post-caption{font-family:'Inter',sans-serif;font-size:12px;color:#a08d88;line-height:1.55;margin-bottom:8px;}
+  .mob-post-footer{padding:4px 16px 16px;}
+  .mob-post-caption{font-family:'Pretendard Variable',Pretendard,'Inter',sans-serif;font-size:13px;color:#a08d88;line-height:1.6;margin-bottom:11px;letter-spacing:-.01em;}
   .mob-post-caption-bold{font-weight:700;color:#e5e2e1;}
-  .mob-post-cta{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ffb4a2;}
+  .mob-post-cta{display:inline-flex;align-items:center;gap:6px;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#ffb4a2;padding:8px 14px;border:1px solid rgba(255,180,162,.3);border-radius:9999px;background:rgba(255,180,162,.05);}
 }
+@keyframes likePop{0%{transform:scale(.6);}60%{transform:scale(1.25);}100%{transform:scale(1);}}
 /* Bottom Nav active pill */
 .bnav.is-active{background:rgba(255,180,162,.07);border-radius:12px;}
 /* Expand modal 타이틀 개선 */
@@ -909,9 +918,12 @@ html.light .mob-feed-hdr{background:var(--mk-bg) !important;}
 html.light .mob-feed-hdr-title{color:var(--mk-on-surf) !important;}
 html.light .mob-feed-hdr-coll{color:var(--mk-outline) !important;}
 html.light .mob-feed-hdr-year{color:var(--mk-outline-var) !important;}
-html.light .mob-post{background:var(--mk-surface) !important;}
+html.light .mob-post{background:#fffdfc !important;border-color:rgba(0,0,0,.08) !important;box-shadow:0 12px 26px rgba(0,0,0,.07) !important;}
 html.light .mob-post:active{background:var(--mk-surface-lo) !important;}
-html.light .mob-post-avatar{background:var(--mk-surface-lo) !important;}
+html.light .mob-post-avatar{background:linear-gradient(#fffdfc,#fffdfc) padding-box,conic-gradient(from 210deg,#FF3B00,#ffb4a2,#ff7847,#FF3B00) border-box !important;color:#FF3B00 !important;}
+html.light .mob-act{color:#3a2e2a !important;}
+html.light .mob-act-like.liked{color:#FF3B00 !important;}
+html.light .mob-post-cta{color:#FF3B00 !important;border-color:rgba(255,59,0,.3) !important;background:rgba(255,59,0,.05) !important;}
 html.light .mob-post-user{color:var(--mk-on-surf) !important;}
 html.light .mob-post-tag{color:var(--mk-outline) !important;}
 html.light .mob-post-more{color:var(--mk-outline-var) !important;}
@@ -1240,6 +1252,7 @@ html.light .hub-pdot.active{background:#FF3B00 !important;}
             <div class="mob-post-more">···</div>
           </div>
           <div class="mob-post-img"><iframe src="1picture.html" loading="lazy" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe></div>
+          <div class="mob-post-actions"><button class="mob-act mob-act-like" data-like-key="1picture.html" onclick="event.stopPropagation();toggleFeedLike(this,'1picture.html')"><span class="material-symbols-outlined">favorite</span></button><button class="mob-act" onclick="event.stopPropagation();shareFeedPost('Intro')"><span class="material-symbols-outlined">ios_share</span></button><span class="mob-act-spacer"></span><button class="mob-act" onclick="event.stopPropagation();openPicExpand('1picture.html')"><span class="material-symbols-outlined">open_in_full</span></button></div>
           <div class="mob-post-footer">
             <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Editorial — Curated layouts and visual compositions.</div>
             <div class="mob-post-cta">View Collection →</div>
@@ -1253,6 +1266,7 @@ html.light .hub-pdot.active{background:#FF3B00 !important;}
             <div class="mob-post-more">···</div>
           </div>
           <div class="mob-post-img"><iframe src="2picture.html" loading="lazy" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe></div>
+          <div class="mob-post-actions"><button class="mob-act mob-act-like" data-like-key="2picture.html" onclick="event.stopPropagation();toggleFeedLike(this,'2picture.html')"><span class="material-symbols-outlined">favorite</span></button><button class="mob-act" onclick="event.stopPropagation();shareFeedPost('Verse')"><span class="material-symbols-outlined">ios_share</span></button><span class="mob-act-spacer"></span><button class="mob-act" onclick="event.stopPropagation();openPicExpand('2picture.html')"><span class="material-symbols-outlined">open_in_full</span></button></div>
           <div class="mob-post-footer">
             <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Lowtheory — A quiet theory of aesthetics.</div>
             <div class="mob-post-cta">View Collection →</div>
@@ -1266,6 +1280,7 @@ html.light .hub-pdot.active{background:#FF3B00 !important;}
             <div class="mob-post-more">···</div>
           </div>
           <div class="mob-post-img"><iframe src="3picture.html" loading="lazy" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe></div>
+          <div class="mob-post-actions"><button class="mob-act mob-act-like" data-like-key="3picture.html" onclick="event.stopPropagation();toggleFeedLike(this,'3picture.html')"><span class="material-symbols-outlined">favorite</span></button><button class="mob-act" onclick="event.stopPropagation();shareFeedPost('Prechorus')"><span class="material-symbols-outlined">ios_share</span></button><span class="mob-act-spacer"></span><button class="mob-act" onclick="event.stopPropagation();openPicExpand('3picture.html')"><span class="material-symbols-outlined">open_in_full</span></button></div>
           <div class="mob-post-footer">
             <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Moodboard — Fragments of color and form.</div>
             <div class="mob-post-cta">View Collection →</div>
@@ -1279,6 +1294,7 @@ html.light .hub-pdot.active{background:#FF3B00 !important;}
             <div class="mob-post-more">···</div>
           </div>
           <div class="mob-post-img"><iframe src="4picture.html" loading="lazy" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe></div>
+          <div class="mob-post-actions"><button class="mob-act mob-act-like" data-like-key="4picture.html" onclick="event.stopPropagation();toggleFeedLike(this,'4picture.html')"><span class="material-symbols-outlined">favorite</span></button><button class="mob-act" onclick="event.stopPropagation();shareFeedPost('Sabi')"><span class="material-symbols-outlined">ios_share</span></button><span class="mob-act-spacer"></span><button class="mob-act" onclick="event.stopPropagation();openPicExpand('4picture.html')"><span class="material-symbols-outlined">open_in_full</span></button></div>
           <div class="mob-post-footer">
             <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Archive — Moments preserved in still frames.</div>
             <div class="mob-post-cta">View Collection →</div>
@@ -1292,6 +1308,7 @@ html.light .hub-pdot.active{background:#FF3B00 !important;}
             <div class="mob-post-more">···</div>
           </div>
           <div class="mob-post-img"><iframe src="5picture.html" loading="lazy" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe></div>
+          <div class="mob-post-actions"><button class="mob-act mob-act-like" data-like-key="5picture.html" onclick="event.stopPropagation();toggleFeedLike(this,'5picture.html')"><span class="material-symbols-outlined">favorite</span></button><button class="mob-act" onclick="event.stopPropagation();shareFeedPost('Hook')"><span class="material-symbols-outlined">ios_share</span></button><span class="mob-act-spacer"></span><button class="mob-act" onclick="event.stopPropagation();openPicExpand('5picture.html')"><span class="material-symbols-outlined">open_in_full</span></button></div>
           <div class="mob-post-footer">
             <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Grid — A systematic vision in patterns and shapes.</div>
             <div class="mob-post-cta">View Collection →</div>
@@ -3989,6 +4006,36 @@ function _updateCarousel(animate){
   });
   cv.addEventListener('touchcancel',function(){locked=false;});
 })();
+
+/* ── 모바일 피드 액션: 좋아요(localStorage 저장) / 공유 / 썸네일 배율 맞춤 ── */
+var _feedLikes={};
+try{_feedLikes=JSON.parse(localStorage.getItem('mk_feed_likes')||'{}');}catch(e){}
+function toggleFeedLike(btn,key){
+  if(_feedLikes[key])delete _feedLikes[key];else _feedLikes[key]=1;
+  try{localStorage.setItem('mk_feed_likes',JSON.stringify(_feedLikes));}catch(e){}
+  btn.classList.toggle('liked',!!_feedLikes[key]);
+}
+function shareFeedPost(tag){
+  if(navigator.share)navigator.share({title:'mk.hub — '+tag,url:location.origin}).catch(function(){});
+}
+document.querySelectorAll('.mob-act-like').forEach(function(b){
+  if(_feedLikes[b.getAttribute('data-like-key')])b.classList.add('liked');
+});
+window.toggleFeedLike=toggleFeedLike;window.shareFeedPost=shareFeedPost;
+
+/* 피드 썸네일 iframe 배율을 카드 폭에 맞춤 (기존 390px 고정값 보정) */
+function fitFeedThumbs(){
+  document.querySelectorAll('.mob-post-img iframe').forEach(function(f){
+    var w=f.parentElement.clientWidth;
+    if(!w)return;
+    var sc=w/900; /* 1440px 페이지의 중앙 900px 영역을 크롭 표시 */
+    f.style.setProperty('transform','scale('+sc+')','important');
+    f.style.setProperty('left',(-(1440*sc-w)/2)+'px','important');
+  });
+}
+window.addEventListener('resize',fitFeedThumbs);
+window.addEventListener('load',fitFeedThumbs);
+fitFeedThumbs();
 
 function openPicExpand(src){
   document.documentElement.style.overflow='hidden';

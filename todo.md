@@ -20,6 +20,18 @@
 - [x] Notepad 수정 브라우저 검증 (다크/라이트 모드 스크린샷 확인)
 - [x] git commit + push
 
+### 2차 요청 (2026-06-10)
+- [x] 사진 원본 화질 그대로 저장 — pic-store.js에서 1600px JPEG 압축 제거, 원본 dataURL 그대로 IndexedDB 저장 (바이트 무손실 검증)
+- [x] 모바일 갤러리 피드 UI 개선 (인스타그램 참조)
+  - 포스트를 라운드 카드(18px)로 분리 + 그림자
+  - 아바타에 IG 스토리식 그라데이션 링
+  - 액션 바 추가: 좋아요(localStorage `mk_feed_likes` 저장·하트 애니메이션) / 공유(Web Share API) / 전체보기
+  - "View Collection" → 필(pill) 버튼, 캡션 Pretendard 13px
+  - 썸네일 iframe 배율 fitFeedThumbs()로 카드 폭 반응형 (기존 390px 고정값 보정)
+  - 라이트 모드 대응 (흰 카드·주황 CTA)
+  - 참고: 캐러셀 하단 dot은 과거에 의도적으로 제거한 이력이 있어 다시 넣지 않음
+- [x] 검증 + commit/push
+
 ---
 
 ## 완료된 작업 (2026-04-28)
