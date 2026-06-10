@@ -928,17 +928,18 @@ html.light .bg-surface-container-high{background:var(--mk-surface) !important;}
 html.light .border-\[#252525\]{border-color:var(--mk-border) !important;}
 html.light .border-\[#353535\]{border-color:var(--mk-border-hi) !important;}
 html.light .border-white\/\[\.03\]{border-color:var(--mk-border) !important;}
-/* Hub card backgrounds */
-html.light section[data-card]{background:#ffe9e3 !important;border-color:#ffcabd !important;}
+/* Hub card backgrounds — 연핑크 카드 + 진한 보더/그림자로 구분 강화 */
+html.light section[data-card]{background:#ffe9e3 !important;border-color:#f3c0ae !important;box-shadow:0 10px 30px rgba(186,118,96,.14) !important;}
 /* Writing lines */
 html.light .writing-line{border-bottom-color:rgba(0,0,0,.06) !important;}
 /* folder-card additional */
-html.light .folder-card{background:#ffe9e3 !important;border-color:#ffcabd !important;box-shadow:0 2px 8px rgba(0,0,0,.08);}
-html.light .folder-card.add-card{background:transparent !important;border-color:var(--mk-border-hi) !important;}
+html.light .folder-card{background:#ffe9e3 !important;border-color:#f3c0ae !important;box-shadow:0 8px 22px rgba(186,118,96,.16) !important;backdrop-filter:none !important;}
+html.light .folder-card.add-card{background:transparent !important;border-color:var(--mk-border-hi) !important;box-shadow:none !important;}
+html.light .folder-card .fc-icon{background:rgba(255,255,255,.65) !important;border-color:rgba(255,59,0,.15) !important;box-shadow:none !important;}
 html.light .folder-card .fc-del{color:rgba(0,0,0,.35) !important;}
 html.light .folder-card .fc-del:hover{color:#FF3B00 !important;}
 html.light .folder-card .fc-lock{background:rgba(255,59,0,.08) !important;color:#FF3B00 !important;border-color:rgba(255,59,0,.2) !important;}
-html.light .folder-card.locked{background:#ffe1d8 !important;}
+html.light .folder-card.locked{background:#ffd9cc !important;}
 html.light .folder-card.locked .fc-name{color:rgba(255,59,0,.6) !important;}
 html.light .folder-card .fc-meta{color:var(--mk-outline) !important;}
 /* mk-card hover */
@@ -966,10 +967,10 @@ html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk
 /* ── Light mode: faint text contrast boost ── */
 html.light .text-outline\/40,html.light .text-outline\/50,html.light .text-outline\/60,html.light .text-outline\/70{color:var(--mk-outline) !important;}
 html.light .text-white\/40{color:var(--mk-outline) !important;}
-/* ── Light mode: Weekly To-Do — signature soft pink ── */
-html.light section.todo-hub{background:#ffe9e3 !important;border-color:#ffcabd !important;}
-html.light section.todo-hub:hover{border-color:#ffb4a2 !important;}
-html.light .todo-day{background:rgba(255,255,255,.6) !important;border-color:#ffd6cb !important;}
+/* ── Light mode: Weekly To-Do — 연핑크 컨테이너 + 흰 셀 위계 ── */
+html.light section.todo-hub{background:#ffe9e3 !important;border-color:#f3c0ae !important;box-shadow:0 10px 30px rgba(186,118,96,.14) !important;}
+html.light section.todo-hub:hover{border-color:#FF3B00 !important;}
+html.light .todo-day{background:#fffdfc !important;border-color:#f0d3c6 !important;}
 html.light .todo-day:hover{border-color:#ffb4a2 !important;}
 html.light .todo-day.today{border-color:#FF3B00 !important;background:rgba(255,59,0,.06) !important;}
 html.light .todo-day-num{color:var(--mk-on-surf) !important;}
@@ -999,7 +1000,7 @@ html.light .mob-post-caption{color:var(--mk-outline) !important;}
 html.light .mob-post-caption-bold{color:var(--mk-on-surf) !important;}
 html.light .mob-post-cta{color:#FF3B00 !important;}
 /* ── Light mode: 흰 칸 → 시그니처 연핑크 ── */
-html.light .app-module-card{background:#ffe9e3 !important;border-color:#ffcabd !important;}
+html.light .app-module-card{background:#ffe9e3 !important;border-color:#f3c0ae !important;box-shadow:0 8px 22px rgba(186,118,96,.12) !important;}
 html.light .amc-icon,html.light .amc-arrow{color:#FF3B00 !important;}
 html.light .folder-card .fc-icon .material-symbols-outlined{color:#FF3B00 !important;}
 /* ── Light mode: 옅은 글씨 가독성 (storage used 수준으로) ── */
@@ -1014,27 +1015,32 @@ html.light .bnav:not(.is-active){color:var(--mk-outline) !important;}
 /* ── Light mode: Todo 페이지 + 캘린더 ── */
 html.light #todoMonthLabel{color:var(--mk-on-surf) !important;}
 html.light .todo-mon-btn{color:#FF3B00 !important;border-color:var(--mk-border-hi) !important;}
-html.light .todo-cal-cell{background:#ffe9e3 !important;border-color:#ffcabd !important;}
-html.light .todo-cal-cell:hover{border-color:#ffb4a2 !important;background:#ffe1d8 !important;}
-html.light .todo-cal-cell.today{border-color:#FF3B00 !important;background:rgba(255,59,0,.06) !important;}
+html.light .todo-cal-cell{background:#fffdfc !important;border-color:#f0d3c6 !important;}
+html.light .todo-cal-cell:hover{border-color:#ffb4a2 !important;background:#fff4ef !important;}
+html.light .todo-cal-cell.today{border-color:#FF3B00 !important;background:#ffefe9 !important;}
 html.light .todo-cal-num{color:var(--mk-on-surf) !important;}
 html.light .todo-cal-cell.sat .todo-cal-num,html.light .cal-head-sat{color:#2f6fc0 !important;}
 html.light .todo-cal-cell.sun .todo-cal-num,html.light .todo-cal-cell.holiday .todo-cal-num,html.light .todo-cal-cell.today .todo-cal-num{color:#FF3B00 !important;}
-html.light .todo-chip{color:var(--mk-on-surf) !important;background:rgba(255,255,255,.65) !important;}
-html.light .todo-side{background:rgba(255,250,248,.9) !important;}
-html.light .todo-cal-wrap{background:rgba(255,250,248,.9) !important;}
+html.light .todo-chip{color:var(--mk-on-surf) !important;background:#ffeae3 !important;}
+html.light .todo-side{background:#ffe9e3 !important;border-color:#f3c0ae !important;box-shadow:0 10px 30px rgba(186,118,96,.14) !important;backdrop-filter:none !important;}
+html.light .todo-cal-wrap{background:#ffe9e3 !important;border-color:#f3c0ae !important;box-shadow:0 10px 30px rgba(186,118,96,.14) !important;backdrop-filter:none !important;}
+html.light .todo-quick{border-color:rgba(255,59,0,.3) !important;}
+html.light .todo-quick:focus-within{border-color:#FF3B00 !important;}
+html.light .todo-row:hover{background:rgba(255,255,255,.55) !important;}
+html.light .todo-empty{color:var(--mk-outline-var) !important;}
 html.light .todo-side-date{color:var(--mk-on-surf) !important;}
 html.light .todo-side-sub{color:var(--mk-outline) !important;}
 html.light .todo-progress{background:rgba(0,0,0,.07) !important;}
 html.light .todo-quick input{color:var(--mk-on-surf) !important;}
 html.light .todo-quick input::placeholder{color:var(--mk-outline-var) !important;}
-html.light .todo-row:hover{background:rgba(0,0,0,.04) !important;}
 html.light .todo-row-text{color:var(--mk-on-surf) !important;}
 html.light .todo-check{border-color:#cdb6ac !important;}
 html.light .todo-row.done .todo-check{background:#FF3B00 !important;border-color:#FF3B00 !important;}
 html.light .todo-dot.done{background:#d8c4bb !important;}
-/* ── Light mode: 명언칸(Hub 버블) → 시그니처 연핑크 ── */
-html.light .hub-bubble{background-color:#ffe9e3 !important;border-color:#ffcabd !important;box-shadow:0 6px 24px rgba(0,0,0,.1),0 2px 6px rgba(0,0,0,.06) !important;}
+/* ── Light mode: 명언칸(Hub 버블) → 시그니처 연핑크
+   주의: background 쇼트핸드 필수 — 다크용 그라데이션(background-image)까지 지워야
+   메모 페이지가 검정으로 보이지 않음 ── */
+html.light .hub-bubble{background:#ffe9e3 !important;border-color:#f3c0ae !important;box-shadow:0 10px 30px rgba(186,118,96,.16) !important;backdrop-filter:none !important;}
 html.light .hub-quote-text{color:var(--mk-on-surf) !important;}
 html.light .hub-quote-author{color:var(--mk-outline) !important;}
 html.light .hub-bubble-memo{color:var(--mk-on-surf) !important;caret-color:var(--mk-on-surf) !important;}
