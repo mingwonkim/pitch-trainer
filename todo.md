@@ -122,8 +122,12 @@
 ### 3. Obsidian 동기화 — 추가 개선 (선택)
 - [x] Pull 시 기존 메모 업데이트 (2026-05-23) — `mk_id` 일치 시 `updateDoc`, 본문 끝 이미지 마크다운 제거
 - [x] `ghPullAll` dot-폴더(.obsidian 등) 제외 (2026-05-23)
-- [ ] 드로잉 전용(`draw` 타입) 메모도 텍스트 없이 이미지만 .md로 동기화
-- [ ] GitHub push 결과를 UI에 표시 (성공/실패 토스트)
+- [x] 드로잉 전용(`draw` 타입) 메모도 텍스트 없이 이미지만 .md로 동기화 (2026-06-11)
+  - draw 타입은 `b`가 이미지 URL — frontmatter 본문 비우고 `![](b)` 마크다운으로 출력
+  - ghPushAll의 draw 스킵 제거 (이미지 없는 draw만 제외)
+- [x] GitHub push 결과를 UI에 표시 (성공/실패 토스트) (2026-06-11)
+  - _ghPush가 PUT 실패 시 throw → 노트 저장 시 "GitHub 동기화 완료/실패" 토스트
+  - Push All은 실패 건수 집계해 "N개 업로드, M개 실패" 표시
 
 ### 4. 옵시디언 볼트 세팅 (2026-05-23 완료)
 - Obsidian 앱 설치 + 볼트 `C:\CodingProjects\obsidian-vault` 생성

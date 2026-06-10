@@ -1783,7 +1783,7 @@ html.light .hub-quote-author{color:#FF3B00 !important;}
 
     <div class="app-settings-section">
       <div class="app-settings-tag">Obsidian Sync</div>
-      <p class="text-xs text-outline mb-4 leading-relaxed">GitHub 저장소를 통해 Obsidian 볼트와 동기화합니다. Obsidian에 <b>Obsidian Git</b> 플러그인 설치 필요. 텍스트 노트만 동기화됩니다.</p>
+      <p class="text-xs text-outline mb-4 leading-relaxed">GitHub 저장소를 통해 Obsidian 볼트와 동기화합니다. Obsidian에 <b>Obsidian Git</b> 플러그인 설치 필요. 드로잉 노트는 이미지 링크로 동기화됩니다.</p>
       <div class="flex flex-col gap-3">
         <div>
           <div style="font-size:10px;color:#a08d88;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;">GitHub Personal Access Token</div>
@@ -3386,14 +3386,14 @@ async function saveMemo(){
       await updateDoc(doc(db,'mk_app','data','memos',editId),upd);
       if(_ghEnabled()){
         const m=cachedMemos.find(x=>x.id===editId)||{};
-        _ghPush(f?f.name:'Uncategorized',{...m,...upd,id:editId,canvas_url:upd.canvas_url}).catch(()=>{});
+        _ghPush(f?f.name:'Uncategorized',{...m,...upd,id:editId,canvas_url:upd.canvas_url}).then(()=>toast('GitHub 동기화 완료')).catch(()=>toast('GitHub 동기화 실패'));
       }
     }else{
       const data={t,b,type:memoType,c:Date.now(),u:Date.now(),folder:curMemoFolder};
       if(hasCanvas){data.canvas_url=canvas_url;data.canvas_path=canvas_path;}
       const newDoc=await addDoc(memosCol,data);
       if(_ghEnabled()){
-        _ghPush(f?f.name:'Uncategorized',{...data,id:newDoc.id}).catch(()=>{});
+        _ghPush(f?f.name:'Uncategorized',{...data,id:newDoc.id}).then(()=>toast('GitHub 동기화 완료')).catch(()=>toast('GitHub 동기화 실패'));
       }
     }
   }catch(e){toast('Save failed');return;}
@@ -3503,23 +3503,26 @@ function _ghHeaders(){return{Authorization:'token '+localStorage.getItem('mk_gh_
 function _ghSafe(s){return(s||'').replace(/[^a-zA-Z0-9가-힣\-_ ]/g,'').replace(/\s+/g,'-').slice(0,60);}
 function _ghFilePath(folderName,memo){const base=localStorage.getItem('mk_gh_path')||'';const dir=base?(base+'/'+_ghSafe(folderName)):_ghSafe(folderName);const file=_ghSafe(memo.t||'untitled')+'_'+String(memo.id).slice(0,6)+'.md';return dir+'/'+file;}
 function _ghFrontmatter(memo){
-  var fm='---\ntitle: '+(memo.t||'Untitled')+'\nmk_id: '+memo.id+'\ncreated: '+new Date(memo.c||Date.now()).toISOString()+'\nupdated: '+new Date(memo.u||Date.now()).toISOString()+'\n---\n\n'+(memo.b||'');
-  if(memo.canvas_url)fm+='\n\n![]('+(memo.canvas_url)+')';
+  var isDraw=memo.type==='draw'; // 레거시 draw 타입은 b가 이미지 URL
+  var fm='---\ntitle: '+(memo.t||'Untitled')+'\nmk_id: '+memo.id+'\ncreated: '+new Date(memo.c||Date.now()).toISOString()+'\nupdated: '+new Date(memo.u||Date.now()).toISOString()+'\n---\n\n'+(isDraw?'':(memo.b||''));
+  var img=isDraw?memo.b:memo.canvas_url;
+  if(img)fm+='\n\n![]('+img+')';
   return fm;
 }
 async function _ghPush(folderName,memo){
   if(!_ghEnabled())return;
-  if(memo.type==='draw'&&!memo.b)return; // 순수 드로잉(텍스트 없음)은 제외
+  if(memo.type==='draw'&&!memo.b)return; // draw 타입인데 이미지(b)조차 없으면 제외
   const[owner,repo]=(localStorage.getItem('mk_gh_repo')||'/').split('/');
   if(!owner||!repo)return;
   const path=_ghFilePath(folderName,memo);
   let content;
-  try{content=btoa(unescape(encodeURIComponent(_ghFrontmatter(memo))));}catch(e){return;}
+  content=btoa(unescape(encodeURIComponent(_ghFrontmatter(memo))));
   let sha;
   try{const r=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path,{headers:_ghHeaders()});if(r.ok){const j=await r.json();sha=j.sha;}}catch(e){}
   const body={message:'mk.hub: '+(memo.t||'untitled'),content};
   if(sha)body.sha=sha;
-  await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path,{method:'PUT',headers:_ghHeaders(),body:JSON.stringify(body)});
+  const res=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path,{method:'PUT',headers:_ghHeaders(),body:JSON.stringify(body)});
+  if(!res.ok)throw new Error('GitHub '+res.status);
 }
 function saveGhSettings(){
   const pat=document.getElementById('ghPatInput').value.trim();
@@ -3551,15 +3554,14 @@ async function ghPushAll(){
   if(!_ghEnabled()){toast('GitHub 설정을 먼저 저장해주세요.');return;}
   await loadMemoFolders();
   const snap=await getDocs(memosCol);
-  let count=0;
+  let count=0,failed=0;
   for(const d of snap.docs){
     const memo={...d.data(),id:d.id};
-    if(memo.type==='draw')continue;
+    if(memo.type==='draw'&&!memo.b)continue;
     const f=cachedMemoFolders.find(x=>x.id===memo.folder);
-    await _ghPush(f?f.name:'Uncategorized',memo);
-    count++;
+    try{await _ghPush(f?f.name:'Uncategorized',memo);count++;}catch(e){failed++;}
   }
-  toast(count+'개 메모를 GitHub에 업로드했습니다.');
+  toast(failed?count+'개 업로드, '+failed+'개 실패':count+'개 메모를 GitHub에 업로드했습니다.');
 }
 async function ghPullAll(){
   if(!_ghEnabled()){toast('GitHub 설정을 먼저 저장해주세요.');return;}
