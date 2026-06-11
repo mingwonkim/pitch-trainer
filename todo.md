@@ -79,6 +79,15 @@
 - [x] 명언칸: 다크와 동일한 글래스 그라데이션·토플라인·태그·워터마크 유지, 색만 반전
 - [x] 허브/Notepad/Todo/모바일 라이트 검증 + commit/push
 
+### 9차 요청 (2026-06-11) — 갤러리 DNG 업로드 지원
+- [x] pic-store.js: fileToDataURL에서 DNG 감지 → TIFF IFD 파싱으로 내장 JPEG 프리뷰(최대 크기) 추출 → JPEG dataURL로 저장
+  - raw IFD(CFA 32803 / LinearRaw 34892)는 lossless JPEG이라 <img> 렌더 불가 → 후보에서 제외
+  - 프리뷰 없는 DNG는 alert 후 실패 처리 (변환 불가)
+  - 테스트: `C:\CodingProjects\tmp\test_dng_extract.js` (합성 DNG로 추출 검증, node 실행)
+- [x] 1~5picture.html: 파일 선택기 accept를 `image/*,.dng`로 확장
+- [x] commit + push (d4b4a07)
+- 남은 확인: 실제 카메라/폰 DNG 파일로 브라우저 업로드 1회 테스트 (사용자)
+
 ---
 
 ## 완료된 작업 (2026-04-28)
