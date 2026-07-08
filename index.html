@@ -1090,12 +1090,55 @@ html.light #mkGlow{mix-blend-mode:multiply;background:radial-gradient(circle,rgb
 @keyframes mkIntroSub{to{opacity:.85;}}
 html.mk-intro-hold{overflow:hidden;}
 html.mk-intro-hold #page-hub *{animation-play-state:paused!important;}
+/* ── v2: 커스텀 커서 (데스크탑) ── */
+html.mk-cursor-on,html.mk-cursor-on *{cursor:none!important;}
+#mkCursor{position:fixed;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;border:1.5px solid rgba(255,180,162,.7);border-radius:50%;z-index:10002;pointer-events:none;opacity:0;transition:opacity .25s,width .18s,height .18s,margin .18s,border-color .18s,background-color .18s;}
+#mkCursor.mk-cur-hot{width:48px;height:48px;margin:-24px 0 0 -24px;background-color:rgba(255,180,162,.07);border-color:#ffb4a2;}
+#mkCursorDot{position:fixed;left:0;top:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:#ffb4a2;z-index:10002;pointer-events:none;opacity:0;transition:opacity .25s;}
+html.light #mkCursor{border-color:rgba(255,59,0,.55);}
+html.light #mkCursor.mk-cur-hot{border-color:#FF3B00;background-color:rgba(255,59,0,.05);}
+html.light #mkCursorDot{background:#FF3B00;}
+/* ── v2: 클릭 리플 ── */
+.mk-ripple{position:fixed;width:88px;height:88px;margin:-44px 0 0 -44px;border-radius:50%;border:1.5px solid rgba(255,180,162,.65);pointer-events:none;z-index:10001;animation:mkRipple .55s ease-out forwards;}
+@keyframes mkRipple{from{transform:scale(.1);opacity:.9;}to{transform:scale(1.6);opacity:0;}}
+html.light .mk-ripple{border-color:rgba(255,59,0,.5);}
+/* ── v2: hero 타이틀 글자 인터랙션 ── */
+.mk-ch{display:inline-block;background:inherit;-webkit-background-clip:text;background-clip:text;transition:transform .3s cubic-bezier(.22,.61,.36,1);}
+@media(hover:hover){.mk-ch:hover{transform:translateY(-.06em) rotate(1.5deg);}}
+.mk-title-in .mk-ch{opacity:0;transform:translateY(.35em);animation:mkChIn .6s cubic-bezier(.22,.61,.36,1) calc(var(--i)*55ms) forwards;}
+@keyframes mkChIn{to{opacity:1;transform:none;}}
+/* ── v2: 실시간 시계 / 스크롤 프로그레스 / 백투탑 ── */
+#mkClock{margin-left:10px;color:#ffb4a2;opacity:.75;font-variant-numeric:tabular-nums;letter-spacing:.14em;}
+html.light #mkClock{color:#FF3B00;}
+#mkScrollBar{position:fixed;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,#ffb4a2,#FF3B00);transform:scaleX(0);transform-origin:left;z-index:60;pointer-events:none;}
+#mkTop{position:fixed;right:22px;bottom:30px;width:44px;height:44px;border-radius:50%;background:rgba(28,27,27,.72);backdrop-filter:blur(12px);border:1px solid var(--mk-border-hi);color:#ffb4a2;display:flex;align-items:center;justify-content:center;z-index:55;cursor:pointer;opacity:0;transform:translateY(16px);transition:opacity .35s,transform .35s,border-color .25s;pointer-events:none;}
+#mkTop.mk-show{opacity:1;transform:none;pointer-events:auto;}
+#mkTop:hover{border-color:#ffb4a2;}
+html.light #mkTop{background:rgba(255,255,255,.8);color:#FF3B00;}
+/* ── v2: nav 스크롤 자동 숨김 ── */
+nav.fixed.top-0{transition:transform .35s ease;}
+nav.fixed.top-0.mk-nav-hide{transform:translateY(-100%);}
+/* ── v2: 카드 스포트라이트 + music 이퀄라이저 격발 ── */
+#hubCardGrid>section::before{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(255,180,162,.09),transparent 65%);opacity:0;transition:opacity .35s;pointer-events:none;}
+#hubCardGrid>section:hover::before{opacity:1;}
+html.light #hubCardGrid>section::before{background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(255,59,0,.06),transparent 65%);}
+#hubCardGrid>section[data-card="music"]:hover .viz-bar{animation-duration:.32s;}
+/* ── v2: Weekly To-Do 셀 팝 ── */
+#todoHubWeek>div{transition:transform .25s cubic-bezier(.22,.61,.36,1);}
+@media(hover:hover){#todoHubWeek>div:hover{transform:translateY(-4px);}}
+/* ── v2: 갤러리 구분선 스크롤 채움 ── */
+.gal-sep-rule{position:relative;overflow:hidden;}
+.gal-sep-rule::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#ffb4a2,#FF3B00);transform:scaleX(var(--fill,0));transform-origin:left;opacity:.55;}
+/* ── v2: 더스트 파티클 캔버스 ── */
+#mkDust{position:fixed;inset:0;z-index:0;pointer-events:none;}
 /* ── reduced-motion 통합 가드 ── */
 @media (prefers-reduced-motion:reduce){
   #mkAurora i{animation:none!important;}
   .mk-reveal{opacity:1!important;transform:none!important;transition:none!important;}
   .page.active{animation:none;}
-  #mkGlow{display:none;}
+  #mkGlow,#mkCursor,#mkCursorDot,#mkDust,.mk-ripple{display:none!important;}
+  .mk-title-in .mk-ch{animation:none;opacity:1;transform:none;}
+  nav.fixed.top-0{transition:none;}
 }
 </style>
 </head>
@@ -4719,6 +4762,7 @@ renderGallery();
       try{sessionStorage.setItem('mk_intro','1');}catch(e){}
       intro.classList.add('mk-intro-exit');
       initReveal();
+      document.dispatchEvent(new CustomEvent('mk:introend'));
       setTimeout(function(){if(intro.parentNode)intro.parentNode.removeChild(intro);},650);
     };
     setTimeout(endIntro,1250);
@@ -4734,6 +4778,205 @@ renderGallery();
   initParallax();
   initTilt();
   initGlow();
+})();
+
+/* ===== MK Motion Layer v2 — 커서/리플/타이포/시계/스크롤UI/스포트라이트/더스트 ===== */
+(function(){
+  var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var FINE=matchMedia('(hover:hover) and (pointer:fine)').matches;
+  var DESK=matchMedia('(min-width:768px)').matches;
+  var hub=document.getElementById('page-hub');
+  function hubActive(){return hub&&hub.classList.contains('active');}
+
+  /* ── hero 타이틀: 글자 분해 → 스태거 등장 + 호버 리프트 + 스크램블 ── */
+  var h1=hub?hub.querySelector('h1.hub-hero-title'):null;
+  if(h1&&!RM){
+    var txt=h1.textContent;h1.textContent='';
+    txt.split('').forEach(function(c,i){
+      var s=document.createElement('span');s.className='mk-ch';s.style.setProperty('--i',i);s.textContent=c;h1.appendChild(s);
+    });
+    var startTitle=function(){
+      h1.classList.add('mk-title-in');
+      var last=h1.lastElementChild;
+      if(last)last.addEventListener('animationend',function(){h1.classList.remove('mk-title-in');},{once:true});
+      setTimeout(function(){h1.classList.remove('mk-title-in');},1600);
+    };
+    if(document.getElementById('mkIntro'))document.addEventListener('mk:introend',startTitle,{once:true});
+    else startTitle();
+    if(FINE){
+      var scrambling=false,GLYPH='#@%&AZKX0147';
+      h1.addEventListener('pointerenter',function(){
+        if(scrambling||h1.classList.contains('mk-title-in'))return;scrambling=true;
+        h1.querySelectorAll('.mk-ch').forEach(function(s,i){
+          var orig=s.textContent,n=0,max=5+i*2;
+          var iv=setInterval(function(){
+            n++;
+            if(n>=max){s.textContent=orig;clearInterval(iv);}
+            else s.textContent=GLYPH[Math.random()*GLYPH.length|0];
+          },45);
+        });
+        setTimeout(function(){scrambling=false;},2600);
+      });
+    }
+  }
+
+  /* ── 실시간 시계 (hero 라벨) ── */
+  var dateEl=document.getElementById('hubHeroDate');
+  if(dateEl){
+    var ck=document.createElement('span');ck.id='mkClock';
+    dateEl.insertAdjacentElement('afterend',ck);
+    var ckTick=function(){var d=new Date(),p=function(n){return n<10?'0'+n:n;};ck.textContent=p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());};
+    ckTick();setInterval(ckTick,1000);
+  }
+
+  /* ── 스크롤 프로그레스바 / 백투탑 / nav 숨김 / gal-sep 채움 / 마퀴 가속 ── */
+  var bar=document.createElement('div');bar.id='mkScrollBar';document.body.appendChild(bar);
+  var topBtn=document.createElement('button');topBtn.id='mkTop';topBtn.setAttribute('aria-label','맨 위로');
+  topBtn.innerHTML='<span class="material-symbols-outlined" style="font-size:20px;">arrow_upward</span>';
+  topBtn.addEventListener('click',function(){window.scrollTo({top:0,behavior:RM?'auto':'smooth'});});
+  document.body.appendChild(topBtn);
+  var navEl=document.querySelector('nav.fixed.top-0');
+  var seps=[].slice.call(document.querySelectorAll('.gal-sep-rule'));
+  var mqEl=document.querySelector('.gallery-marquee'),mqAnim=null,mqBoost=1,mqRaf=null;
+  function mqSet(r){
+    if(!mqEl)return;
+    if(!mqAnim&&mqEl.getAnimations)mqAnim=mqEl.getAnimations()[0]||null;
+    if(mqAnim)mqAnim.playbackRate=r;
+  }
+  function mqDecay(){
+    if(mqRaf)return;
+    (function step(){
+      mqBoost+=(1-mqBoost)*.06;
+      if(Math.abs(mqBoost-1)<.02){mqBoost=1;mqSet(1);mqRaf=null;return;}
+      mqSet(mqBoost);mqRaf=requestAnimationFrame(step);
+    })();
+  }
+  var lastY=window.scrollY,sTick=false;
+  function onScroll2(){
+    if(sTick)return;sTick=true;
+    requestAnimationFrame(function(){
+      sTick=false;
+      var y=window.scrollY,dy=y-lastY;lastY=y;
+      var max=document.documentElement.scrollHeight-innerHeight;
+      bar.style.transform='scaleX('+(max>0?Math.min(y/max,1):0).toFixed(4)+')';
+      topBtn.classList.toggle('mk-show',y>innerHeight*1.4);
+      if(navEl){
+        if(y>140&&dy>4)navEl.classList.add('mk-nav-hide');
+        else if(dy<-4||y<80)navEl.classList.remove('mk-nav-hide');
+      }
+      if(hubActive()&&!RM){
+        for(var i=0;i<seps.length;i++){
+          var r=seps[i].getBoundingClientRect();
+          if(r.top<innerHeight&&r.bottom>0)seps[i].style.setProperty('--fill',Math.max(0,Math.min(1,(innerHeight-r.top)/(innerHeight*.55))).toFixed(3));
+        }
+        if(DESK&&dy!==0){mqBoost=Math.min(1+Math.abs(dy)/14,3.4);mqSet(mqBoost);mqDecay();}
+      }
+    });
+  }
+  window.addEventListener('scroll',onScroll2,{passive:true});
+  onScroll2();
+
+  /* ── 클릭 리플 ── */
+  if(!RM){
+    document.addEventListener('pointerdown',function(e){
+      if(e.clientX<=0&&e.clientY<=0)return;
+      var r=document.createElement('div');r.className='mk-ripple';
+      r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';
+      document.body.appendChild(r);
+      r.addEventListener('animationend',function(){r.remove();},{once:true});
+      setTimeout(function(){if(r.parentNode)r.remove();},800);
+    },{passive:true});
+  }
+
+  /* ── 커스텀 커서 (데스크탑) ── */
+  if(FINE&&DESK&&!RM){
+    var cur=document.createElement('div');cur.id='mkCursor';
+    var dot=document.createElement('div');dot.id='mkCursorDot';
+    document.body.appendChild(cur);document.body.appendChild(dot);
+    document.documentElement.classList.add('mk-cursor-on');
+    var ccx=-100,ccy=-100,ctx2=-100,cty=-100,cDown=false,cRaf=null,cShown=false;
+    function cLoop(){
+      ccx+=(ctx2-ccx)*.22;ccy+=(cty-ccy)*.22;
+      cur.style.transform='translate3d('+ccx.toFixed(1)+'px,'+ccy.toFixed(1)+'px,0)'+(cDown?' scale(.82)':'');
+      dot.style.transform='translate3d('+ctx2+'px,'+cty+'px,0)';
+      if(Math.abs(ctx2-ccx)>.3||Math.abs(cty-ccy)>.3)cRaf=requestAnimationFrame(cLoop);
+      else cRaf=null;
+    }
+    document.addEventListener('pointermove',function(e){
+      ctx2=e.clientX;cty=e.clientY;
+      if(!cShown){cShown=true;cur.style.opacity=1;dot.style.opacity=1;ccx=ctx2;ccy=cty;}
+      var t=e.target&&e.target.closest?e.target.closest('a,button,[onclick],input,textarea,select,[contenteditable],.bnav,.nav-link,section[data-card],.todo-hub,.hub-bubble,.mob-post'):null;
+      cur.classList.toggle('mk-cur-hot',!!t);
+      if(!cRaf)cRaf=requestAnimationFrame(cLoop);
+    },{passive:true});
+    document.addEventListener('pointerdown',function(){cDown=true;if(!cRaf)cRaf=requestAnimationFrame(cLoop);},{passive:true});
+    document.addEventListener('pointerup',function(){cDown=false;if(!cRaf)cRaf=requestAnimationFrame(cLoop);},{passive:true});
+    document.documentElement.addEventListener('mouseleave',function(){cShown=false;cur.style.opacity=0;dot.style.opacity=0;});
+  }
+
+  /* ── hero 마우스 패럴랙스 (스크롤 패럴랙스는 부모 래퍼, 마우스는 h1 — 독립 합성) ── */
+  if(FINE&&DESK&&!RM&&h1){
+    var hgx=0,hgy=0,hcx=0,hcy=0,hRaf=null;
+    function hStep(){
+      hcx+=(hgx-hcx)*.08;hcy+=(hgy-hcy)*.08;
+      h1.style.transform='translate3d('+(hcx*-14).toFixed(1)+'px,'+(hcy*-8).toFixed(1)+'px,0)';
+      if(Math.abs(hgx-hcx)>.002||Math.abs(hgy-hcy)>.002)hRaf=requestAnimationFrame(hStep);
+      else hRaf=null;
+    }
+    document.addEventListener('pointermove',function(e){
+      hgx=e.clientX/innerWidth-.5;hgy=e.clientY/innerHeight-.5;
+      if(!hRaf&&hubActive())hRaf=requestAnimationFrame(hStep);
+    },{passive:true});
+  }
+
+  /* ── 카드 스포트라이트 좌표 ── */
+  if(FINE&&DESK&&!RM){
+    [].forEach.call(document.querySelectorAll('#hubCardGrid > section'),function(card){
+      card.addEventListener('pointermove',function(e){
+        var r=card.getBoundingClientRect();
+        card.style.setProperty('--mx',(e.clientX-r.left).toFixed(0)+'px');
+        card.style.setProperty('--my',(e.clientY-r.top).toFixed(0)+'px');
+      },{passive:true});
+    });
+  }
+
+  /* ── 더스트 파티클 (hub 활성 + 화면 표시 중에만 rAF) ── */
+  if(!RM){
+    var cv=document.createElement('canvas');cv.id='mkDust';
+    var au=document.getElementById('mkAurora');
+    if(au&&au.parentNode)au.parentNode.insertBefore(cv,au.nextSibling);else document.body.appendChild(cv);
+    var dctx=cv.getContext('2d'),W=0,H=0,N=DESK?34:16,ps=[],dRaf=null,dmx=-9999,dmy=-9999;
+    function dResize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+    dResize();window.addEventListener('resize',dResize);
+    for(var i=0;i<N;i++)ps.push({x:0,y:0,r:.6+Math.random()*1.3,v:.12+Math.random()*.3,ph:Math.random()*6.28,a:.12+Math.random()*.3});
+    ps.forEach(function(p){p.x=Math.random()*W;p.y=Math.random()*H;});
+    if(FINE)document.addEventListener('pointermove',function(e){dmx=e.clientX;dmy=e.clientY;},{passive:true});
+    function dDraw(){
+      dRaf=null;
+      if(!hubActive()||document.hidden||window.scrollY>innerHeight*2.4){dctx.clearRect(0,0,W,H);return;}
+      dctx.clearRect(0,0,W,H);
+      var light=document.documentElement.classList.contains('light');
+      for(var i=0;i<ps.length;i++){
+        var p=ps[i];
+        p.ph+=.008;p.y-=p.v;p.x+=Math.sin(p.ph)*.18;
+        if(FINE){
+          var dx=p.x-dmx,dy=p.y-dmy,d2=dx*dx+dy*dy;
+          if(d2<12100&&d2>1){var d=Math.sqrt(d2),f=(1-d/110)*1.4;p.x+=dx/d*f;p.y+=dy/d*f;}
+        }
+        if(p.y<-10){p.y=H+10;p.x=Math.random()*W;}
+        if(p.x<-10)p.x=W+10;else if(p.x>W+10)p.x=-10;
+        dctx.beginPath();dctx.arc(p.x,p.y,p.r,0,6.283);
+        dctx.fillStyle=light?'rgba(255,59,0,'+(p.a*.5).toFixed(3)+')':'rgba(255,190,170,'+p.a.toFixed(3)+')';
+        dctx.fill();
+      }
+      dRaf=requestAnimationFrame(dDraw);
+    }
+    function dKick(){if(!dRaf&&hubActive()&&!document.hidden)dRaf=requestAnimationFrame(dDraw);}
+    dKick();
+    document.addEventListener('visibilitychange',dKick);
+    if(hub)new MutationObserver(dKick).observe(hub,{attributes:true,attributeFilter:['class']});
+    window.addEventListener('scroll',dKick,{passive:true});
+  }
 })();
 </script>
 <script>
