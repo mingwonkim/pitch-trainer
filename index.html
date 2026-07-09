@@ -1075,9 +1075,11 @@ html.light #mkAurora i:nth-child(2){background:radial-gradient(closest-side,rgba
 /* ── 스크롤 리빌 ── */
 .mk-reveal{opacity:0;transform:translateY(22px);}
 .mk-reveal.mk-in{opacity:1;transform:none;transition:opacity var(--mk-dur-2) var(--mk-ease),transform var(--mk-dur-2) var(--mk-ease);transition-delay:var(--rd,0ms);}
-/* ── 페이지 전환 ── */
-.page.active{animation:mkPageIn var(--mk-dur-1) var(--mk-ease);}
-@keyframes mkPageIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+/* ── 페이지 전환 (2단: out .22s → in .28s) ── */
+.page.active{animation:mkPageIn .28s var(--mk-ease);}
+@keyframes mkPageIn{from{opacity:0;transform:translateY(12px) scale(1.005);}to{opacity:1;transform:none;}}
+.page.active.mk-page-out{animation:mkPageOut .22s var(--mk-ease) both;}
+@keyframes mkPageOut{to{opacity:0;transform:scale(.985);filter:brightness(.8);}}
 /* ── 마우스 글로우 (데스크탑 전용, JS 게이트) ── */
 #mkGlow{position:fixed;left:0;top:0;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;background:radial-gradient(circle,rgba(255,180,162,.06),transparent 65%);z-index:1;pointer-events:none;opacity:0;transition:opacity var(--mk-dur-2) ease;mix-blend-mode:screen;}
 #mkGlow.mk-on{opacity:1;}
@@ -1205,6 +1207,7 @@ html.light .app-ghost-btn:hover{border-color:rgba(255,59,0,.4);color:#FF3B00;}
   #mkAurora i{animation:none!important;}
   .mk-reveal{opacity:1!important;transform:none!important;transition:none!important;}
   .page.active{animation:none;}
+  .page.mk-page-out{animation:none;}
   #mkGlow,#mkCursor,#mkCursorDot,#mkDust,#mkMoss,.mk-ripple{display:none!important;}
   .mk-title-in .mk-ch{animation:none;opacity:1;transform:none;}
   .mk-stg{animation:none;opacity:1;transform:none;}
@@ -2769,14 +2772,24 @@ window.saveRecoveryEmail=saveRecoveryEmail;
 window.updateRecoveryEmailDisplay=updateRecoveryEmailDisplay;
 
 /* ===== Navigation ===== */
-let curPage='hub';let navHistory=[];
-function setPage(p){if(curPage&&curPage!==p)navHistory.push(curPage);
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  const pg=document.getElementById('page-'+p);if(pg)pg.classList.add('active');curPage=p;
-  document.querySelectorAll('.nav-link').forEach(a=>{const act=a.dataset.page===p;a.className=`nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer ${act?'text-[#ffb4a2] font-bold':'text-[#ffb4a2]/40 hover:text-[#ffb4a2]'}`;});
-  document.querySelectorAll('.bnav').forEach(a=>{const act=a.dataset.page===p;a.classList.toggle('text-[#ffb4a2]',act);a.classList.toggle('text-[#ffb4a2]/30',!act);a.classList.toggle('is-active',act);a.classList.remove('text-white/40','scale-110');if(act)a.classList.add('scale-105');const ic=a.querySelector('.material-symbols-outlined');if(ic)ic.style.fontVariationSettings=act?"'FILL' 1":"'FILL' 0";});
-  window.scrollTo({top:0,behavior:'auto'});
-  if(window.mkPageEnter)window.mkPageEnter(p);
+let curPage='hub';let navHistory=[];let mkPgOutTimer=0;
+function setPage(p){if(curPage&&curPage!==p)navHistory.push(curPage);curPage=p;
+  const commit=()=>{
+    document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+    const pg=document.getElementById('page-'+p);if(pg)pg.classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(a=>{const act=a.dataset.page===p;a.className=`nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer ${act?'text-[#ffb4a2] font-bold':'text-[#ffb4a2]/40 hover:text-[#ffb4a2]'}`;});
+    document.querySelectorAll('.bnav').forEach(a=>{const act=a.dataset.page===p;a.classList.toggle('text-[#ffb4a2]',act);a.classList.toggle('text-[#ffb4a2]/30',!act);a.classList.toggle('is-active',act);a.classList.remove('text-white/40','scale-110');if(act)a.classList.add('scale-105');const ic=a.querySelector('.material-symbols-outlined');if(ic)ic.style.fontVariationSettings=act?"'FILL' 1":"'FILL' 0";});
+    window.scrollTo({top:0,behavior:'auto'});
+    if(window.mkPageEnter)window.mkPageEnter(p);
+  };
+  /* 중복 호출 가드: 진행 중 전환은 취소하고 마지막 호출 기준으로 재시작 */
+  if(mkPgOutTimer){clearTimeout(mkPgOutTimer);mkPgOutTimer=0;}
+  document.querySelectorAll('.page.mk-page-out').forEach(el=>el.classList.remove('mk-page-out'));
+  const out=document.querySelector('.page.active');
+  if(out&&out.id!=='page-'+p&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    out.classList.add('mk-page-out');
+    mkPgOutTimer=setTimeout(()=>{mkPgOutTimer=0;out.classList.remove('mk-page-out');commit();},220);
+  }else commit();
 }
 function goHub(){setPage('hub');}
 function goBack(){if(navHistory.length>0){var prev=navHistory.pop();setPage(prev);navHistory.pop();}else setPage('hub');}
