@@ -5504,8 +5504,8 @@ setTimeout(function(){
 <!-- ===== BGM — Ryuichi Sakamoto (YouTube 임베드, 공식 채널/레이블 영상) ===== -->
 <script>
 (function(){
-  /* 공식 업로드: MCML(Playing the Piano 2022)·Aqua(Opus)·energy flow·andata */
-  var BGM_IDS=['ELJf83TelA0','CGK6jZPMEcA','z45xGGTo3J0','pygwK0sBUdM'];
+  /* 'Presenting Ryuichi Sakamoto' — YouTube 공식 아티스트 플레이리스트 */
+  var BGM_LIST='RDCLAK5uy_kM9uhkCHubOWVDe567JNq1Fu6izd-oLys';
   var player=null,ready=false,loading=false,on=false;
   function icon(){var b=document.getElementById('bgmBtn');if(!b)return;b.textContent=on?'volume_up':'volume_off';b.classList.toggle('bgm-on',on);}
   function start(){
@@ -5515,8 +5515,8 @@ setTimeout(function(){
       player=new YT.Player('bgmHost',{width:2,height:2,playerVars:{playsinline:1},events:{
         onReady:function(){
           ready=true;player.setVolume(45);
-          player.loadPlaylist(BGM_IDS,Math.floor(Math.random()*BGM_IDS.length));
-          player.setLoop(true);
+          player.loadPlaylist({list:BGM_LIST,listType:'playlist'});
+          player.setShuffle(true);player.setLoop(true);
           if(!on)player.pauseVideo();
         },
         onError:function(){try{player.nextVideo();}catch(e){}} /* 임베드 불가/삭제 곡은 스킵 */
