@@ -85,6 +85,7 @@ html.light{
   --mk-input:rgba(0,0,0,.03);
 }
 body{background:var(--mk-bg);color:var(--mk-on-surf);transition:background .3s,color .3s;}
+body.bg-background{background:var(--mk-bg);} /* v5 컬러 브리지: tailwind bg-background(#131313)보다 우선 */
 /* Light mode nav overrides — 상단 바를 하단 바처럼 어두운 톤으로 */
 html.light nav.fixed.top-0{background:rgba(19,19,19,.6) !important;border-bottom-color:rgba(255,255,255,.06) !important;}
 html.light nav.fixed.top-0 .text-\[\#ffb4a2\]{color:#ffb4a2 !important;}
@@ -4952,11 +4953,12 @@ renderGallery();
       mqSet(mqBoost);mqRaf=requestAnimationFrame(step);
     })();
   }
-  var lastY=window.scrollY,sTick=false;
+  var lastY=window.scrollY,sTick=false,brLast=-1;
   function onScroll2(){
     if(sTick)return;sTick=true;
     requestAnimationFrame(function(){
       sTick=false;
+      var brT=0;
       var y=window.scrollY,dy=y-lastY;lastY=y;
       var max=document.documentElement.scrollHeight-innerHeight;
       bar.style.transform='scaleX('+(max>0?Math.min(y/max,1):0).toFixed(4)+')';
@@ -4972,10 +4974,24 @@ renderGallery();
         }
         if(DESK&&dy!==0){mqBoost=Math.min(1+Math.abs(dy)/14,3.4);mqSet(mqBoost);mqDecay();}
         /* 시계 스크롤 추적 — 갤러리 섹션이 화면에 들어오기 시작하면 정지 */
-        if(ck&&mqWrap){
+        if(mqWrap){
           var mw=mqWrap.getBoundingClientRect();
-          var ckStop=y+mw.top-innerHeight;
-          ck.style.setProperty('--ckY',Math.max(0,Math.min(y,ckStop)).toFixed(0)+'px');
+          if(ck){
+            var ckStop=y+mw.top-innerHeight;
+            ck.style.setProperty('--ckY',Math.max(0,Math.min(y,ckStop)).toFixed(0)+'px');
+          }
+          /* v5: 갤러리 컬러 브리지 — 마퀴 접근 시 배경이 파치먼트 톤으로 물듦 */
+          brT=+Math.max(0,Math.min(1,(innerHeight*1.5-mw.top)/innerHeight)).toFixed(3);
+        }
+      }
+      if(brT!==brLast){
+        brLast=brT;
+        if(!brT)document.documentElement.style.removeProperty('--mk-bg');
+        else{
+          var L=document.documentElement.classList.contains('light');
+          var f=L?[245,242,240]:[19,19,19],k=(L?.8:.45)*brT;
+          document.documentElement.style.setProperty('--mk-bg',
+            'rgb('+Math.round(f[0]+(237-f[0])*k)+','+Math.round(f[1]+(230-f[1])*k)+','+Math.round(f[2]+(214-f[2])*k)+')');
         }
       }
     });
