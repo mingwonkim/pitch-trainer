@@ -1210,6 +1210,9 @@ html.light #fileList>div:hover{box-shadow:0 12px 28px rgba(0,0,0,.1);}
 /* 프레스 피드백 (클릭 순간 눌림) */
 #hubCardGrid>section:active{transform:scale(.98)!important;transition-duration:.1s!important;}
 .folder-card:active,.app-module-card:active{transform:scale(.97);transition-duration:.1s;}
+/* ── BGM 토글 — 재생 중 레드 + 숨쉬는 펄스 ── */
+#bgmBtn.bgm-on{color:#FF3B00;animation:bgmPulse 2.2s ease-in-out infinite;}
+@keyframes bgmPulse{50%{opacity:.5;}}
 /* 페이지 라벨 트래킹 인 (01 — Notepad 등) */
 .page.active .app-page-label{animation:mkLabelIn var(--mk-dur-2) var(--mk-ease) both;}
 @keyframes mkLabelIn{from{letter-spacing:.5em;opacity:0;}to{letter-spacing:.22em;opacity:1;}}
@@ -1284,6 +1287,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
   #memoList>*,#fileList>*,#memoFolderGrid>*,#fileFolderGrid>*{animation:none;}
   .page.active .app-page-label{animation:none;}
   .app-dropzone.over{animation:none;}
+  #bgmBtn.bgm-on{animation:none;}
   nav.fixed.top-0{transition:none;}
   #hubCardGrid>section::after,.folder-card::after,#musicModuleGrid>[data-module]::after{transition:none;}
 }
@@ -1323,9 +1327,12 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
     <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="music" data-elabel="nav_music" onclick="openApp('music')">Music</a>
   </div>
   <div class="flex gap-5 items-center">
+    <span id="bgmBtn" class="material-symbols-outlined text-[20px] text-[#ffb4a2]/50 cursor-pointer hover:text-[#FF3B00] transition-colors duration-300" onclick="toggleBgm()" title="BGM — Ryuichi Sakamoto">volume_off</span>
     <span class="material-symbols-outlined text-[20px] text-[#ffb4a2]/50 cursor-pointer hover:text-[#FF3B00] transition-colors duration-300" onclick="openApp('settings')">settings</span>
   </div>
 </nav>
+<!-- BGM 숨김 플레이어 (YouTube IFrame API가 이 div를 iframe으로 교체) -->
+<div id="bgmHost" style="position:fixed;left:-9999px;top:0;width:2px;height:2px;"></div>
 
 <!-- Bottom Nav -->
 <nav class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
@@ -5493,5 +5500,39 @@ setTimeout(function(){
     </div><!-- /todo-layout -->
   </div>
 </div>
+
+<!-- ===== BGM — Ryuichi Sakamoto (YouTube 임베드, 공식 채널/레이블 영상) ===== -->
+<script>
+(function(){
+  /* 공식 업로드: MCML(Playing the Piano 2022)·Aqua(Opus)·energy flow·andata */
+  var BGM_IDS=['ELJf83TelA0','CGK6jZPMEcA','z45xGGTo3J0','pygwK0sBUdM'];
+  var player=null,ready=false,loading=false,on=false;
+  function icon(){var b=document.getElementById('bgmBtn');if(!b)return;b.textContent=on?'volume_up':'volume_off';b.classList.toggle('bgm-on',on);}
+  function start(){
+    if(ready){player.playVideo();return;}
+    if(loading)return;loading=true;
+    window.onYouTubeIframeAPIReady=function(){
+      player=new YT.Player('bgmHost',{width:2,height:2,playerVars:{playsinline:1},events:{
+        onReady:function(){
+          ready=true;player.setVolume(45);
+          player.loadPlaylist(BGM_IDS,Math.floor(Math.random()*BGM_IDS.length));
+          player.setLoop(true);
+          if(!on)player.pauseVideo();
+        },
+        onError:function(){try{player.nextVideo();}catch(e){}} /* 임베드 불가/삭제 곡은 스킵 */
+      }});
+    };
+    var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
+  }
+  window.toggleBgm=function(){
+    on=!on;localStorage.setItem('mk_bgm',on?'1':'0');icon();
+    if(on)start();else if(ready)player.pauseVideo();
+  };
+  /* 이전 세션에서 켜져 있었으면 첫 제스처(자동재생 정책상 필요) 때 재개 */
+  if(localStorage.getItem('mk_bgm')==='1'){
+    document.addEventListener('pointerdown',function(){on=true;icon();start();},{once:true});
+  }
+})();
+</script>
 </body>
 </html>
