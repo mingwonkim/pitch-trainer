@@ -158,9 +158,6 @@ html.light #memoEditor{background:rgba(255,250,248,.9);}
 }
 .folder-card .fc-lock .material-symbols-outlined{font-size:13px;font-variation-settings:'FILL' 1;}
 .folder-card .fc-lock:hover,.folder-card .fc-lock:active{background:rgba(255,180,162,.2);color:#ffd2c6 !important;}
-.folder-card.locked{border-color:rgba(255,180,162,.22);background:linear-gradient(160deg,rgba(255,180,162,.05),rgba(255,255,255,.01));}
-.folder-card.locked .fc-icon{background:linear-gradient(135deg,rgba(255,180,162,.2),rgba(255,59,0,.1));border-color:rgba(255,180,162,.25);}
-.folder-card.locked .fc-name{letter-spacing:.2em;color:rgba(255,180,162,.55);}
 .folder-card .fc-icon{
   width:46px;height:46px;border-radius:14px;
   background:linear-gradient(135deg,rgba(255,180,162,.14),rgba(255,59,0,.06));
@@ -946,8 +943,6 @@ html.light .folder-card .fc-icon{background:linear-gradient(135deg,rgba(255,59,0
 html.light .folder-card .fc-del{color:rgba(0,0,0,.35) !important;}
 html.light .folder-card .fc-del:hover{color:#FF3B00 !important;}
 html.light .folder-card .fc-lock{background:rgba(255,59,0,.08) !important;color:#FF3B00 !important;border-color:rgba(255,59,0,.2) !important;}
-html.light .folder-card.locked{background:linear-gradient(160deg,rgba(255,59,0,.07),rgba(255,255,255,.92)) !important;border-color:rgba(255,59,0,.22) !important;}
-html.light .folder-card.locked .fc-name{color:rgba(255,59,0,.6) !important;}
 html.light .folder-card .fc-meta{color:var(--mk-outline) !important;}
 /* mk-card hover */
 html.light .mk-card:hover{background:rgba(0,0,0,.04) !important;}
@@ -1162,7 +1157,7 @@ html.light #musicModuleGrid>[data-module]::before{background:radial-gradient(240
 html.light #hubCardGrid>section::after,html.light .folder-card::after,html.light #musicModuleGrid>[data-module]::after{background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(255,59,0,.35),transparent 70%);}
 /* ── v4: 내부 페이지 인터랙션 확장 ── */
 /* 리스트·그리드 항목 스태거 등장 (렌더마다 재생) */
-#memoList>*,#fileList>*,#memoFolderGrid>*,#fileFolderGrid>*{animation:mkListIn var(--mk-dur-1) var(--mk-ease) backwards;}
+#memoList>*,#fileList>*,#memoFolderGrid>*,#fileFolderGrid>*{animation:mkListIn var(--mk-dur-2) var(--mk-ease-pop) backwards;}
 #memoList>:nth-child(2),#fileList>:nth-child(2),#memoFolderGrid>:nth-child(2),#fileFolderGrid>:nth-child(2){animation-delay:.05s;}
 #memoList>:nth-child(3),#fileList>:nth-child(3),#memoFolderGrid>:nth-child(3),#fileFolderGrid>:nth-child(3){animation-delay:.1s;}
 #memoList>:nth-child(4),#fileList>:nth-child(4),#memoFolderGrid>:nth-child(4),#fileFolderGrid>:nth-child(4){animation-delay:.15s;}
@@ -1170,7 +1165,7 @@ html.light #hubCardGrid>section::after,html.light .folder-card::after,html.light
 #memoList>:nth-child(6),#fileList>:nth-child(6),#memoFolderGrid>:nth-child(6),#fileFolderGrid>:nth-child(6){animation-delay:.25s;}
 #memoList>:nth-child(7),#fileList>:nth-child(7),#memoFolderGrid>:nth-child(7),#fileFolderGrid>:nth-child(7){animation-delay:.3s;}
 #memoList>:nth-child(n+8),#fileList>:nth-child(n+8),#memoFolderGrid>:nth-child(n+8),#fileFolderGrid>:nth-child(n+8){animation-delay:.35s;}
-@keyframes mkListIn{from{opacity:0;transform:translateY(12px);}}
+@keyframes mkListIn{from{opacity:0;transform:translateY(14px) scale(.96);}}
 /* memo 노트 hover 살몬 액센트 바 */
 #memoList .mk-card{position:relative;overflow:hidden;}
 #memoList .mk-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#ffb4a2,#FF3B00);transform:scaleY(0);transform-origin:top;transition:transform var(--mk-dur-1) var(--mk-ease);}
@@ -1195,6 +1190,26 @@ html.light #fileList>div:hover{box-shadow:0 12px 28px rgba(0,0,0,.1);}
 .app-module-card:hover .amc-icon{transform:scale(1.14) rotate(-6deg);}
 .amc-num{transition:color var(--mk-dur-1),letter-spacing var(--mk-dur-1);}
 .app-module-card:hover .amc-num{color:#ffb4a2;letter-spacing:.32em;}
+/* ── 13차: 허브 카드·폴더 인터랙티브 강화 ── */
+/* 허브 카드 커서 틸트 (데스크탑 hover 전용 — 모바일은 transform:none 유지) */
+@media(hover:hover) and (pointer:fine){
+  #hubCardGrid>section:hover{transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg)) translateY(-6px);}
+  #hubCardGrid>section[data-card="files"]:hover{transform:perspective(900px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg)) translateY(-16px);}
+}
+/* 허브 카드 아이콘 팝 + 카드 넘버 트래킹 */
+#hubCardGrid>section .flex.justify-between>.material-symbols-outlined{transition:transform var(--mk-dur-1) var(--mk-ease-pop);}
+#hubCardGrid>section:hover .flex.justify-between>.material-symbols-outlined{transform:scale(1.18) rotate(-8deg);}
+#hubCardGrid>section .flex.justify-between>span:last-child{transition:color var(--mk-dur-1),letter-spacing var(--mk-dur-1);}
+#hubCardGrid>section:hover .flex.justify-between>span:last-child{color:#FF3B00;letter-spacing:.45em;}
+/* 허브 카드 내부 리스트 도미노 슬라이드 (notepad 라인·vault 항목) */
+#hubCardGrid>section :is(.writing-line,.space-y-8>div){transition:transform .35s var(--mk-ease);}
+#hubCardGrid>section:hover :is(.writing-line,.space-y-8>div){transform:translateX(7px);}
+#hubCardGrid>section:hover :is(.writing-line,.space-y-8>div):nth-child(2){transition-delay:.06s;}
+#hubCardGrid>section:hover :is(.writing-line,.space-y-8>div):nth-child(3){transition-delay:.12s;}
+#hubCardGrid>section:hover :is(.writing-line,.space-y-8>div):nth-child(4){transition-delay:.18s;}
+/* 프레스 피드백 (클릭 순간 눌림) */
+#hubCardGrid>section:active{transform:scale(.98)!important;transition-duration:.1s!important;}
+.folder-card:active,.app-module-card:active{transform:scale(.97);transition-duration:.1s;}
 /* 페이지 라벨 트래킹 인 (01 — Notepad 등) */
 .page.active .app-page-label{animation:mkLabelIn var(--mk-dur-2) var(--mk-ease) both;}
 @keyframes mkLabelIn{from{letter-spacing:.5em;opacity:0;}to{letter-spacing:.22em;opacity:1;}}
@@ -5161,6 +5176,10 @@ renderGallery();
         var r=card.getBoundingClientRect();
         card.style.setProperty('--mx',(e.clientX-r.left).toFixed(0)+'px');
         card.style.setProperty('--my',(e.clientY-r.top).toFixed(0)+'px');
+        /* 13차: 커서 위치 기반 3D 틸트 (카드가 커서 좁은 각도) */
+        var cx=(e.clientX-r.left)/r.width-.5,cy=(e.clientY-r.top)/r.height-.5;
+        card.style.setProperty('--rx',(cx*2.4).toFixed(2)+'deg');
+        card.style.setProperty('--ry',(-cy*1.8).toFixed(2)+'deg');
       },{passive:true});
     });
   }
@@ -5238,6 +5257,16 @@ renderGallery();
       el.style.setProperty('--rx',(cx*5).toFixed(2)+'deg');
       el.style.setProperty('--ry',(-cy*4).toFixed(2)+'deg');
     },{passive:true});
+    /* 13차: 폴더 카드 hover 시 아이콘 folder → folder_open 스왑 */
+    function fcSwap(e,open){
+      var c=e.target&&e.target.closest?e.target.closest('.folder-card'):null;if(!c)return;
+      if(e.relatedTarget&&c.contains(e.relatedTarget))return;
+      var ic=c.querySelector('.amc-icon .material-symbols-outlined,.fc-icon .material-symbols-outlined');if(!ic)return;
+      if(open&&ic.textContent==='folder')ic.textContent='folder_open';
+      else if(!open&&ic.textContent==='folder_open')ic.textContent='folder';
+    }
+    document.addEventListener('pointerover',function(e){fcSwap(e,true);},{passive:true});
+    document.addEventListener('pointerout',function(e){fcSwap(e,false);},{passive:true});
   }
 
   /* ── '기억의 이끼' — 커서가 지나간 자리에 덩굴이 자라고 블룸이 피었다 서서히 사라짐 ── */
