@@ -1213,6 +1213,9 @@ html.light #fileList>div:hover{box-shadow:0 12px 28px rgba(0,0,0,.1);}
 /* ── BGM 토글 — 재생 중 레드 + 숨쉬는 펄스 ── */
 #bgmBtn.bgm-on{color:#FF3B00;animation:bgmPulse 2.2s ease-in-out infinite;}
 @keyframes bgmPulse{50%{opacity:.5;}}
+/* ── BGM 볼륨 슬라이더 — 재생 중에만 펼쳐짐 ── */
+#bgmVol{width:0;opacity:0;accent-color:#FF3B00;cursor:pointer;transition:width var(--mk-dur-1) var(--mk-ease),opacity var(--mk-dur-1);}
+#bgmWrap.bgm-playing #bgmVol{width:72px;opacity:1;}
 /* 페이지 라벨 트래킹 인 (01 — Notepad 등) */
 .page.active .app-page-label{animation:mkLabelIn var(--mk-dur-2) var(--mk-ease) both;}
 @keyframes mkLabelIn{from{letter-spacing:.5em;opacity:0;}to{letter-spacing:.22em;opacity:1;}}
@@ -1327,7 +1330,10 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
     <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="music" data-elabel="nav_music" onclick="openApp('music')">Music</a>
   </div>
   <div class="flex gap-5 items-center">
-    <span id="bgmBtn" class="material-symbols-outlined text-[20px] text-[#ffb4a2]/50 cursor-pointer hover:text-[#FF3B00] transition-colors duration-300" onclick="toggleBgm()" title="BGM — Ryuichi Sakamoto">volume_off</span>
+    <span id="bgmWrap" class="flex items-center gap-2">
+      <input type="range" id="bgmVol" min="0" max="100" value="45" oninput="setBgmVol(this.value)" title="Volume">
+      <span id="bgmBtn" class="material-symbols-outlined text-[20px] text-[#ffb4a2]/50 cursor-pointer hover:text-[#FF3B00] transition-colors duration-300" onclick="toggleBgm()" title="BGM — Ryuichi Sakamoto">volume_off</span>
+    </span>
     <span class="material-symbols-outlined text-[20px] text-[#ffb4a2]/50 cursor-pointer hover:text-[#FF3B00] transition-colors duration-300" onclick="openApp('settings')">settings</span>
   </div>
 </nav>
@@ -5507,14 +5513,25 @@ setTimeout(function(){
   /* 'Presenting Ryuichi Sakamoto' — YouTube 공식 아티스트 플레이리스트 */
   var BGM_LIST='RDCLAK5uy_kM9uhkCHubOWVDe567JNq1Fu6izd-oLys';
   var player=null,ready=false,loading=false,on=false;
-  function icon(){var b=document.getElementById('bgmBtn');if(!b)return;b.textContent=on?'volume_up':'volume_off';b.classList.toggle('bgm-on',on);}
+  var vol=parseInt(localStorage.getItem('mk_bgm_vol'),10);if(isNaN(vol))vol=45;
+  function icon(){
+    var b=document.getElementById('bgmBtn');if(!b)return;
+    b.textContent=on?(vol===0?'volume_mute':'volume_up'):'volume_off';
+    b.classList.toggle('bgm-on',on);
+    var w=document.getElementById('bgmWrap');if(w)w.classList.toggle('bgm-playing',on);
+  }
+  window.setBgmVol=function(v){
+    vol=parseInt(v,10)||0;localStorage.setItem('mk_bgm_vol',vol);
+    if(ready)player.setVolume(vol);icon();
+  };
+  document.getElementById('bgmVol').value=vol;
   function start(){
     if(ready){player.playVideo();return;}
     if(loading)return;loading=true;
     window.onYouTubeIframeAPIReady=function(){
       player=new YT.Player('bgmHost',{width:2,height:2,playerVars:{playsinline:1},events:{
         onReady:function(){
-          ready=true;player.setVolume(45);
+          ready=true;player.setVolume(vol);
           player.loadPlaylist({list:BGM_LIST,listType:'playlist'});
           player.setShuffle(true);player.setLoop(true);
           if(!on)player.pauseVideo();
