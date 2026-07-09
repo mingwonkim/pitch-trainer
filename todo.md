@@ -217,10 +217,11 @@
 검증은 gstack browse로 실측(다크/라이트, 데스크탑/모바일 375px, 콘솔 신규 에러 0, reduced-motion 가드).
 index.html.backup은 절대 수정 금지. 완료 즉시 이 목록에 [x]+한 줄 결과 기록.
 
-- [ ] 1. **모션 언어 통일** — v1~v4에 흩어진 이징·duration을 CSS 변수 토큰으로 통일.
+- [x] 1. **모션 언어 통일** — v1~v4에 흩어진 이징·duration을 CSS 변수 토큰으로 통일.
   `:root`에 `--mk-ease`(기본 cubic-bezier(.22,.61,.36,1)), `--mk-ease-pop`(cubic-bezier(.34,1.56,.64,1)),
   `--mk-dur-1: .3s / --mk-dur-2: .6s / --mk-dur-3: 1.2s` 정의 후 mk- 계열 애니메이션/트랜지션 전부 치환.
   duration은 가장 가까운 토큰으로 스냅. 기능 변화 0 — 치환 전후 렌더 동일성 확인.
+  → 완료: 토큰 5종 정의 + mk 레이어 치환(mk 외 앱 CSS 무수정), browse 실측 다크/라이트 통과, 콘솔 신규 에러 0.
 - [ ] 2. **글로우 보더 (시네마틱 라이팅)** — hubCardGrid 카드·folder-card·music 모듈 카드의 보더가
   커서 근처만 밝아지게. 기존 --mx/--my 재활용, ::after에 radial-gradient 보더(padding 1px + mask:
   linear-gradient XOR 방식 또는 border-image 불가 시 inset box). 기존 스포트라이트(배경)와 공존.
