@@ -5514,11 +5514,11 @@ setTimeout(function(){
 (function(){
   /* 'Presenting Ryuichi Sakamoto' — YouTube 공식 아티스트 플레이리스트 */
   var BGM_LIST='RDCLAK5uy_kM9uhkCHubOWVDe567JNq1Fu6izd-oLys';
-  var player=null,ready=false,loading=false,on=false;
+  var player=null,ready=false,loading=false,on=false,muted=false,wantUnmute=false;
   var vol=parseInt(localStorage.getItem('mk_bgm_vol'),10);if(isNaN(vol))vol=45;
   function icon(){
     var b=document.getElementById('bgmBtn');if(!b)return;
-    b.textContent=on?(vol===0?'volume_mute':'volume_up'):'volume_off';
+    b.textContent=on?((muted||vol===0)?'volume_mute':'volume_up'):'volume_off';
     b.classList.toggle('bgm-on',on);
     var w=document.getElementById('bgmWrap');if(w)w.classList.toggle('bgm-playing',on);
   }
@@ -5527,29 +5527,39 @@ setTimeout(function(){
     if(ready)player.setVolume(vol);icon();
   };
   document.getElementById('bgmVol').value=vol;
-  function start(){
-    if(ready){player.playVideo();return;}
+  function start(mutedStart){
+    if(mutedStart)muted=true;
+    if(ready){if(!muted)player.unMute();player.playVideo();return;}
     if(loading)return;loading=true;
     window.onYouTubeIframeAPIReady=function(){
-      player=new YT.Player('bgmHost',{width:2,height:2,playerVars:{playsinline:1},events:{
+      player=new YT.Player('bgmHost',{width:2,height:2,playerVars:{playsinline:1,mute:muted?1:0},events:{
         onReady:function(){
           ready=true;player.setVolume(vol);
+          if(muted)player.mute();
           player.loadPlaylist({list:BGM_LIST,listType:'playlist'});
           player.setShuffle(true);player.setLoop(true);
           if(on)player.playVideo();else player.pauseVideo();
+          if(wantUnmute){wantUnmute=false;muted=false;player.unMute();player.setVolume(vol);player.playVideo();icon();}
         },
         onError:function(){try{player.nextVideo();}catch(e){}} /* 임베드 불가/삭제 곡은 스킵 */
       }});
     };
     var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
   }
+  function bgmUnmute(){ /* 첫 사용자 제스처 → 소리 켜기 (자동재생 정책상 음소거로만 자동재생 가능) */
+    if(!on)return;
+    muted=false;
+    if(ready){player.unMute();player.setVolume(vol);player.playVideo();}else wantUnmute=true;
+    icon();
+  }
   window.toggleBgm=function(){
-    on=!on;localStorage.setItem('mk_bgm',on?'1':'0');icon();
-    if(on)start();else if(ready)player.pauseVideo();
+    on=!on;localStorage.setItem('mk_bgm',on?'1':'0');muted=false;icon();
+    if(on)start(false);else if(ready)player.pauseVideo();
   };
-  /* 이전 세션에서 켜져 있었으면 첫 제스처(자동재생 정책상 필요) 때 재개 */
-  if(localStorage.getItem('mk_bgm')==='1'){
-    document.addEventListener('pointerdown',function(){on=true;icon();start();},{once:true});
+  /* 자동재생: 명시적으로 끈 적 없으면 음소거로 자동재생 → 첫 제스처에 소리 켜기 */
+  if(localStorage.getItem('mk_bgm')!=='0'){
+    on=true;start(true);icon();
+    document.addEventListener('pointerdown',bgmUnmute,{once:true});
   }
 })();
 </script>
