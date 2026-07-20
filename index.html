@@ -1440,31 +1440,20 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
     </section>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="hubCardGrid">
-      <!-- Notepad -->
-      <section data-card="memo" class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('memo')">
+      <!-- Briefing (옛 Notepad 슬롯: data-card="memo" 유지) -->
+      <section data-card="memo" class="bg-[#1c1b1b]/80 backdrop-blur-xl p-10 rounded-2xl border border-[#252525] flex flex-col justify-between h-[560px] md:h-[620px] hover:translate-y-[-6px] hover:border-[#ffb4a2]/20 hover:shadow-lg hover:shadow-[#ffb4a2]/5 transition-all duration-300 cursor-pointer group relative overflow-hidden" onclick="openApp('briefing')">
         <div>
-          <div class="flex justify-between items-start mb-6"><span class="material-symbols-outlined text-3xl text-[#ffb4a2]">edit_note</span><span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">01</span></div>
-          <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter" data-elabel="card_notepad">Notepad</h2>
-          <div class="space-y-0 mb-1" style="position:relative;">
-            <div class="writing-line" style="animation-delay:0s;">
-              <span class="writing-dot" style="background:#FF3B00;"></span>
-              <div class="writing-text" style="width:88%;animation-delay:0.1s;color:rgba(229,226,225,.55);" data-elabel="notepad_line1">Visual Architecture Breakdown</div>
-            </div>
-            <div class="writing-line" style="animation-delay:0.15s;">
-              <span class="writing-dot" style="background:#FF3B00;"></span>
-              <div class="writing-text" style="width:72%;animation-delay:0.25s;color:rgba(229,226,225,.55);" data-elabel="notepad_line2">Manifesto of Quiet Luxury</div>
-            </div>
-            <div class="writing-line" style="animation-delay:0.3s;">
-              <span class="writing-dot" style="background:#FF3B00;"></span>
-              <div class="writing-text" style="width:80%;animation-delay:0.4s;color:rgba(229,226,225,.55);" data-elabel="notepad_line3">Typography Tension Guidelines</div>
-            </div>
-            <div class="writing-line writing-line-blank" style="animation-delay:0.45s;border-bottom-color:rgba(255,59,0,.2);">
-              <span class="writing-dot writing-dot-blink" style="background:#FF3B00;"></span>
-              <div class="writing-text-cursor" style="animation-delay:0.55s;background:#FF3B00;"></div>
-            </div>
+          <div class="flex justify-between items-start mb-6">
+            <button id="briefMailBtn" onclick="event.stopPropagation();openMailbox()" title="새 브리핑" style="position:relative;background:none;border:none;padding:0;cursor:pointer;line-height:0;">
+              <span class="material-symbols-outlined text-3xl text-[#ffb4a2]">mail</span>
+              <span id="briefMailBadge" style="display:none;position:absolute;top:-6px;right:-8px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#FF3B00;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;line-height:18px;text-align:center;box-shadow:0 0 0 2px #1c1b1b;">0</span>
+            </button>
+            <span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">01</span>
           </div>
+          <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter" data-elabel="card_briefing">Briefing</h2>
+          <div id="briefCardTeaser" class="space-y-3"></div>
         </div>
-        <button class="w-full border border-[#353535] text-[#ffb4a2] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:bg-[#ffb4a2] group-hover:text-[#360e05] group-hover:border-[#ffb4a2] transition-all">Open Records →</button>
+        <button class="w-full border border-[#353535] text-[#ffb4a2] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:bg-[#ffb4a2] group-hover:text-[#360e05] group-hover:border-[#ffb4a2] transition-all">Open Archive →</button>
       </section>
 
       <!-- Vault -->
@@ -1803,6 +1792,35 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
   </div>
 </div>
 
+<!-- ============ BRIEFING PAGE ============ -->
+<div class="page min-h-screen pt-24 pb-40 px-6" id="page-briefing">
+  <div class="max-w-3xl mx-auto">
+    <div class="mb-8 app-hero" data-num="01">
+      <button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button>
+      <div class="app-page-label">01 — Briefing</div>
+      <h1 class="app-page-title">Archive</h1>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:16px;">
+      <button onclick="briefNavMonth(-1)" style="background:none;border:1px solid #353535;border-radius:999px;width:36px;height:36px;color:#ffb4a2;font-size:16px;cursor:pointer;">‹</button>
+      <span id="briefMonthLabel" style="font-family:'Space Grotesk';font-size:16px;font-weight:700;color:#e5e2e1;"></span>
+      <button onclick="briefNavMonth(1)" style="background:none;border:1px solid #353535;border-radius:999px;width:36px;height:36px;color:#ffb4a2;font-size:16px;cursor:pointer;">›</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px;"><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">월</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">화</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">수</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">목</div><div style="font-size:10px;font-weight:700;color:#524340;text-align:center;padding:8px 0;">금</div><div class="cal-head-sat" style="font-size:10px;font-weight:700;text-align:center;padding:8px 0;">토</div><div class="cal-head-sun" style="font-size:10px;font-weight:700;text-align:center;padding:8px 0;">일</div></div>
+    <div id="briefCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;"></div>
+  </div>
+</div>
+
+<!-- 브리핑 리더 오버레이 (칸 밖에서 읽기) -->
+<div id="briefReader" style="display:none;position:fixed;inset:0;z-index:9990;background:rgba(10,9,9,.97);backdrop-filter:blur(14px);overflow-y:auto;">
+  <div style="max-width:680px;margin:0 auto;padding:52px 24px 96px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;">
+      <div id="briefReaderDate"></div>
+      <button onclick="closeBriefReader()" style="flex-shrink:0;background:none;border:1px solid #353535;border-radius:999px;width:38px;height:38px;color:#a08d88;font-size:18px;cursor:pointer;line-height:1;">✕</button>
+    </div>
+    <div id="briefReaderBody"></div>
+  </div>
+</div>
+
 <!-- ============ MUSIC PAGE ============ -->
 <div class="page min-h-screen pt-24 pb-40 px-6" id="page-music">
   <div class="max-w-4xl mx-auto">
@@ -2038,12 +2056,6 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
     </div>
 
     <div class="app-settings-section">
-      <div class="app-settings-tag">Vault 통합</div>
-      <p class="text-xs text-outline mb-4 leading-relaxed">기존 Vault의 파일 폴더·파일을 통합 저장소(노트+첨부)로 편입합니다. <b>Storage 원본은 삭제되지 않습니다.</b> 1회만 실행하세요.</p>
-      <button class="app-action-btn !py-2.5 !text-xs" onclick="runVaultMerge()"><span class="material-symbols-outlined text-base">merge</span> 파일 편입 실행</button>
-    </div>
-
-    <div class="app-settings-section">
       <div class="app-settings-tag">Background</div>
       <p class="text-xs text-outline mb-5 leading-relaxed">왼쪽·중앙·오른쪽 슬롯에 각각 사진을 지정합니다. 슬롯을 클릭해서 교체하세요.</p>
       <div class="grid grid-cols-3 gap-3 mb-2" id="bgSlotGrid">
@@ -2174,7 +2186,7 @@ let collection,doc,getDocs,getDoc,setDoc,addDoc,updateDoc,deleteDoc,orderBy,quer
 let sRef,uploadBytes,getDownloadURL,deleteObject,listAll;
 let getAuth,sendSignInLinkToEmail,isSignInWithEmailLink,signInWithEmailLink;
 let db=null,stg=null,auth=null;
-let memosCol=null,memoFoldersCol=null,filesCol=null,fileFoldersCol=null;
+let memosCol=null,memoFoldersCol=null,filesCol=null,fileFoldersCol=null,briefsCol=null;
 let bgImagesDoc=null,todosCol=null,hubMemoDoc=null,hubMemo2Doc=null;
 // openApp은 hoisted function — 5초 fallback 전에 미리 window에 노출
 window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
@@ -2215,6 +2227,7 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
   ytKeyDoc=doc(db,'mk_app','settings');masterSettingsDoc=doc(db,'mk_app','master_settings');
   playlistsCol=collection(db,'mk_app','data','playlists');playlistSongsCol=collection(db,'mk_app','data','playlist_songs');
   gallerCol=collection(db,'mk_app','data','gallery');
+  briefsCol=collection(db,'mk_app','data','briefs');
   // Firebase Auth — 인증 후 데이터 로드 (Firestore Rules: request.auth != null)
   let _dataLoaded=false;
   onAuthStateChanged(auth,async function(user){
@@ -2223,6 +2236,7 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
     // 인증 완료 — 데이터 로드 시작
     loadBgImages().then(()=>renderBgGrid());
     loadTodos().then(function(){renderTodoHub();});
+    loadBriefs().then(function(){renderBriefingCard();});
     getDoc(masterSettingsDoc).then(function(snap){
       if(!snap||!snap.exists())return;
       var d=snap.data();
@@ -3047,6 +3061,7 @@ function showTextPin(cb){
 }
 function doOpenApp(a){
   if(a==='files')a='memo'; // Notepad↔Vault 통합: Vault 진입은 통합 페이지로
+  if(a==='briefing'){document.getElementById('briefReader').style.display='none';renderBriefCal();loadBriefs().then(function(){renderBriefCal();renderBriefingCard();});setPage('briefing');return;}
   if(a==='todo'){setPage('todo');renderTodoDay();loadTodos().then(function(){renderTodoCal();renderTodoDay();});return;}
   if(a==='memo'){curMemoFolder=null;document.getElementById('memoFolderView').style.display='';document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';renderMemoFolders();}
   if(a==='files'){curFileFolder=null;document.getElementById('fileFolderView').style.display='';document.getElementById('fileInsideFolder').style.display='none';renderFileFolders();}
@@ -3771,29 +3786,6 @@ async function uploadToMemoFolder(fl){
   renderMemos();
 }
 window.uploadToMemoFolder=uploadToMemoFolder;
-// 일회성 마이그레이션: 기존 Vault(file_folders/files) → 통합 저장소(folders/memos). Storage 원본 보존.
-async function runVaultMerge(){
-  if(!isUnlocked){showTextPin(()=>runVaultMerge());return;}
-  if(localStorage.getItem('mk_merge_done')){if(!confirm('이미 통합을 실행했습니다. 남은 파일만 다시 편입할까요?'))return;}
-  else if(!confirm('기존 Vault의 파일 폴더·파일을 통합 저장소로 편입합니다.\n(Storage 원본은 삭제되지 않음)\n진행할까요?'))return;
-  toast('통합 중…');
-  try{
-    // 1) 파일 폴더 → folders 트리로 복제(같은 id 유지 → 파일의 folder 값 그대로 유효)
-    const ff=await getDocs(fileFoldersCol);
-    for(const d of ff.docs){await setDoc(doc(db,'mk_app','data','folders',d.id),d.data());}
-    // 2) 각 파일 → 파일 노트로 편입 후 원본 files 문서 삭제(Storage 객체는 보존)
-    const fsnap=await getDocs(filesCol);let n=0;
-    for(const d of fsnap.docs){
-      const x=d.data();
-      await addDoc(memosCol,{t:x.n||'파일',b:'',type:'file',att:[{n:x.n,url:x.url,path:x.path,size:x.size,type:x.type}],folder:x.folder||'none',c:x.c||Date.now(),u:x.c||Date.now()});
-      await deleteDoc(doc(db,'mk_app','data','files',d.id));n++;
-    }
-    localStorage.setItem('mk_merge_done','1');
-    toast('통합 완료: 파일 '+n+'개 편입');
-    if(curPage==='memo'){curMemoFolder=null;document.getElementById('memoFolderView').style.display='';document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';renderMemoFolders();}
-  }catch(e){toast('통합 실패');}
-}
-window.runVaultMerge=runVaultMerge;
 
 /* ── 그림판 엔진 ── */
 var _dc={tool:'pen',color:'#ffffff',size:5,drawing:false,history:[],ctx:null,canvas:null,lastX:0,lastY:0};
@@ -4151,7 +4143,7 @@ function applyHubCardOrder(){
 function renderHubCardOrderUI(){
   var el=document.getElementById('hubCardOrderList');if(!el)return;
   var order=JSON.parse(localStorage.getItem('hubCardOrder')||'["memo","files","music"]');
-  var labels={memo:'Notepad',files:'Vault',music:'Music'};
+  var labels={memo:'Briefing',files:'Vault',music:'Music'};
   el.innerHTML=order.map(function(k,i){
     return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:8px;margin-bottom:6px;">'
       +'<span style="font-family:\'Space Grotesk\',sans-serif;font-size:12px;color:#e5e2e1;">'+(labels[k]||k)+'</span>'
@@ -4404,6 +4396,97 @@ function renderTodoCal(){
   if(ed>0){for(var i=1;i<=7-ed;i++)html+='<div class="todo-cal-cell other"><div class="todo-cal-num">'+i+'</div></div>';}
   grid.innerHTML=html;
 }
+
+/* ===== Briefing (morning-brief → Firestore → 브리핑 칸) ===== */
+var cachedBriefs=[];var _briefMonth=new Date();
+async function loadBriefs(){try{var s=await getDocs(query(briefsCol,orderBy('date','desc')));cachedBriefs=[];s.forEach(function(d){cachedBriefs.push({id:d.id,...d.data()});});}catch(e){cachedBriefs=[];}}
+function _briefUnread(){return cachedBriefs.filter(function(b){return !b.read;});}
+function renderBriefingCard(){
+  var badge=document.getElementById('briefMailBadge');var teaser=document.getElementById('briefCardTeaser');
+  if(!teaser)return;
+  var unread=_briefUnread();
+  if(badge){if(unread.length){badge.style.display='';badge.textContent=unread.length>9?'9+':unread.length;}else badge.style.display='none';}
+  if(!cachedBriefs.length){teaser.innerHTML='<div class="text-[13px] text-outline/50" style="line-height:1.7;">아직 브리핑이 없습니다.<br>매일 아침 자동으로 도착합니다.</div>';return;}
+  teaser.innerHTML=cachedBriefs.slice(0,4).map(function(b){
+    var n=(b.news?b.news.length:0)+(b.market?b.market.length:0);
+    var dot=b.read?'rgba(255,180,162,.3)':'#FF3B00';
+    return '<div style="display:flex;align-items:center;gap:10px;">'
+      +'<span style="width:6px;height:6px;border-radius:50%;background:'+dot+';flex-shrink:0;"></span>'
+      +'<span class="truncate" style="font-size:13px;color:rgba(229,226,225,.6);flex:1;min-width:0;">'+escHtml(b.dateDisplay||b.date)+'</span>'
+      +'<span style="font-size:11px;color:#524340;font-family:\'Space Grotesk\',sans-serif;">'+n+'건</span></div>';
+  }).join('');
+}
+async function markBriefRead(dateId){
+  try{await updateDoc(doc(db,'mk_app','data','briefs',dateId),{read:true});}catch(e){}
+  var b=cachedBriefs.find(function(x){return x.id===dateId;});if(b)b.read=true;
+  renderBriefingCard();
+  var pg=document.getElementById('page-briefing');if(pg&&pg.classList.contains('active'))renderBriefCal();
+  var rd=document.getElementById('briefReader');if(rd&&rd.style.display!=='none')openBriefReader(dateId);
+  toast('읽음 처리됨');
+}
+function openMailbox(){var u=_briefUnread();if(!u.length){toast('새 브리핑이 없습니다');return;}openBriefReader(u[0].id);}
+function briefNavMonth(dir){_briefMonth.setMonth(_briefMonth.getMonth()+dir);renderBriefCal();}
+function renderBriefCal(){
+  var now=new Date();var todayStr=now.toISOString().slice(0,10);
+  var y=_briefMonth.getFullYear(),m=_briefMonth.getMonth();
+  var lbl=document.getElementById('briefMonthLabel');if(lbl)lbl.textContent=y+'년 '+(m+1)+'월';
+  var first=new Date(y,m,1);var sd=first.getDay();sd=sd===0?6:sd-1;
+  var last=new Date(y,m+1,0).getDate();
+  var grid=document.getElementById('briefCalGrid');if(!grid)return;
+  var byDate={};cachedBriefs.forEach(function(b){byDate[b.date]=b;});
+  var html='';var pl=new Date(y,m,0);
+  for(var i=sd-1;i>=0;i--)html+='<div class="todo-cal-cell other"><div class="todo-cal-num">'+(pl.getDate()-i)+'</div></div>';
+  for(var d=1;d<=last;d++){
+    var ds=y+'-'+(m+1<10?'0':'')+(m+1)+'-'+(d<10?'0':'')+d;
+    var dow=new Date(y,m,d).getDay();var isToday=ds===todayStr;var isSat=dow===6;var isSun=dow===0;
+    var b=byDate[ds];
+    var cls='todo-cal-cell'+(isToday?' today':'')+(isSat?' sat':'')+(isSun?' sun':'');
+    html+='<div class="'+cls+'"'+(b?' onclick="openBriefReader(\''+ds+'\')" style="cursor:pointer;"':'')+'>';
+    html+='<div class="todo-cal-num"><span class="n">'+d+'</span></div>';
+    if(b)html+='<div class="todo-dots"><span class="todo-dot'+(b.read?' done':'')+'"></span></div>';
+    html+='</div>';
+  }
+  var ed=(sd+last)%7;if(ed>0){for(var i=1;i<=7-ed;i++)html+='<div class="todo-cal-cell other"><div class="todo-cal-num">'+i+'</div></div>';}
+  grid.innerHTML=html;
+}
+var DIR_MARK={'상승':['#4ade80','▲'],'하락':['#f87171','▼'],'중립':['#facc15','●']};
+function _briefSection(title){return '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#FF3B00;margin:32px 0 14px;">'+title+'</div>';}
+function _briefStory(it){
+  var head=escHtml(it.title||'');
+  if(it.url)head='<a href="'+escHtml(it.url)+'" target="_blank" style="color:#e5e2e1;text-decoration:none;">'+head+'</a>';
+  return '<div style="padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid #232323;">'
+    +'<div style="font-size:17px;font-weight:700;line-height:1.4;margin-bottom:7px;">'+head+'</div>'
+    +'<div style="font-size:14px;color:#a8a29e;line-height:1.65;margin-bottom:7px;">'+escHtml(it.summary||'')+'</div>'
+    +'<div style="font-size:11px;color:#524340;text-transform:uppercase;letter-spacing:.08em;">'+escHtml(it.source||'')+'</div></div>';
+}
+function _briefMarketRow(it){
+  var mk=DIR_MARK[it.direction]||['#a08d88','●'];
+  var head=escHtml(it.title||'');
+  if(it.url)head='<a href="'+escHtml(it.url)+'" target="_blank" style="color:#e5e2e1;text-decoration:none;">'+head+'</a>';
+  return '<div style="padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid #232323;">'
+    +'<div style="display:flex;justify-content:space-between;gap:10px;font-size:16px;font-weight:700;line-height:1.4;margin-bottom:7px;"><span>'+head+'</span><span style="color:'+mk[0]+';flex-shrink:0;">'+mk[1]+'</span></div>'
+    +'<div style="font-size:14px;color:#a8a29e;line-height:1.65;margin-bottom:7px;">'+escHtml(it.summary||'')+'</div>'
+    +'<div style="font-size:11px;color:#524340;text-transform:uppercase;letter-spacing:.08em;">'+escHtml(it.source||'')+'</div></div>';
+}
+function openBriefReader(dateId){
+  var b=cachedBriefs.find(function(x){return x.id===dateId;});if(!b)return;
+  document.getElementById('briefReaderDate').innerHTML='<div style="font-family:\'Space Grotesk\',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#524340;margin-bottom:8px;">Morning Briefing</div>'
+    +'<div style="font-size:22px;font-weight:700;color:#e5e2e1;">'+escHtml(b.dateDisplay||b.date)+' <span style="font-size:13px;color:#FF3B00;">'+escHtml(b.weekday||'')+'</span></div>';
+  var html=_briefSection('AI 업계');
+  html+=(b.news&&b.news.length)?b.news.map(_briefStory).join(''):'<div style="font-size:13px;color:#524340;">'+escHtml(b.newsRaw||'항목 없음')+'</div>';
+  html+=_briefSection('시장 영향 (한국·미국)');
+  html+=(b.market&&b.market.length)?b.market.map(_briefMarketRow).join(''):'<div style="font-size:13px;color:#524340;">'+escHtml(b.marketRaw||'항목 없음')+'</div>';
+  if(b.reviews&&b.reviews.length){
+    html+=_briefSection('앱 리뷰');
+    html+=b.reviews.map(function(r){return '<div style="margin-bottom:16px;"><div style="font-weight:700;font-size:14px;margin-bottom:5px;color:#e5e2e1;">'+escHtml(r.app||'')+'</div><div style="font-size:13px;color:#a8a29e;line-height:1.6;white-space:pre-line;">'+escHtml(r.summary||'')+'</div></div>';}).join('');
+  }
+  if(!b.read)html+='<button onclick="markBriefRead(\''+b.id+'\')" style="margin-top:24px;width:100%;padding:14px;border:1px solid #FF3B00;border-radius:10px;background:rgba(255,59,0,.08);color:#FF3B00;font-family:\'Space Grotesk\',sans-serif;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;">읽음 처리</button>';
+  document.getElementById('briefReaderBody').innerHTML=html;
+  var rd=document.getElementById('briefReader');rd.style.display='block';rd.scrollTop=0;
+}
+function closeBriefReader(){document.getElementById('briefReader').style.display='none';}
+window.loadBriefs=loadBriefs;window.renderBriefingCard=renderBriefingCard;window.markBriefRead=markBriefRead;window.openMailbox=openMailbox;window.briefNavMonth=briefNavMonth;window.renderBriefCal=renderBriefCal;window.openBriefReader=openBriefReader;window.closeBriefReader=closeBriefReader;
+
 /* ===== Picture Gallery — v4 ===== */
 /* 1-4picture: 히든 iframe에서 이미지 추출 → 네이티브 div 캐러셀 (완벽한 스와이프)
    5picture: iframe 직접 스크롤, 오버레이 없음 (iOS 관성 스크롤) */
