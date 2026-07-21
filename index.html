@@ -588,6 +588,7 @@ html.light #memoEditor{background:rgba(255,250,248,.9);}
 .todo-day-num{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:#e5e2e1;margin-bottom:7px;}
 .todo-day-num .n{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;padding:0 3px;margin-left:-4px;}
 .todo-day.today .todo-day-num .n{background:#FF3B00;color:#fff;}
+.todo-warn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;margin-left:3px;border-radius:50%;background:#FF3B00;color:#fff;font-size:10px;font-weight:800;line-height:1;vertical-align:middle;}
 /* 더보기 버튼 */
 .todo-more-btn{display:flex;align-items:center;gap:2px;background:none;border:none;cursor:pointer;color:#FF3B00;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;padding:2px 0;margin-top:3px;line-height:1;}
 .todo-more-btn:hover{color:#ffb4a2;}
@@ -4288,9 +4289,10 @@ function renderTodoHub(){
     var ds=d.toISOString().slice(0,10);
     var isToday=ds===now.toISOString().slice(0,10);
     var dt=_todos.filter(function(t){return t.date===ds;}).sort(function(a,b){return a.done-b.done;});
+    var overdue=ds<now.toISOString().slice(0,10)&&dt.some(function(t){return !t.done;});
     html+='<div class="todo-day'+(isToday?' today':'')+'">';
     html+='<div class="todo-day-head">'+days[i]+'</div>';
-    html+='<div class="todo-day-num"><span class="n">'+d.getDate()+'</span></div>';
+    html+='<div class="todo-day-num"><span class="n">'+d.getDate()+'</span>'+(overdue?'<span class="todo-warn">!</span>':'')+'</div>';
     /* 처음 3개 — Todo 페이지와 동일한 칩 스타일 */
     for(var j=0;j<Math.min(dt.length,3);j++){
       html+='<div class="todo-chip'+(dt[j].done?' done':'')+'">'+escHtml(dt[j].text)+'</div>';
@@ -4376,8 +4378,9 @@ function renderTodoCal(){
     var isToday=ds===todayStr;var isSat=dow===6;var isSun=dow===0;var isHol=isKrHol(y,m,d);
     var cls='todo-cal-cell'+(isToday?' today':'')+(ds===window._todoSelectedDate?' selected':'')+(isSat?' sat':'')+(isSun||isHol?' sun':'');
     var dt=_todos.filter(function(t){return t.date===ds;});
+    var overdue=ds<todayStr&&dt.some(function(t){return !t.done;});
     html+='<div class="'+cls+'" onclick="selectTodoDate(\''+ds+'\')">';
-    html+='<div class="todo-cal-num"><span class="n">'+d+'</span></div>';
+    html+='<div class="todo-cal-num"><span class="n">'+d+'</span>'+(overdue?'<span class="todo-warn">!</span>':'')+'</div>';
     /* 데스크탑: 항목 칩 (최대 3개 + 더보기) */
     dt.slice(0,3).forEach(function(t){html+='<div class="todo-chip'+(t.done?' done':'')+'">'+escHtml(t.text)+'</div>';});
     if(dt.length>3)html+='<div class="todo-chip-more">+'+(dt.length-3)+'</div>';
@@ -5238,6 +5241,25 @@ renderGallery();
         }
         ckLx=e.clientX;
       },{passive:true});
+    }
+    /* 모바일(터치): 손가락 좌우 드래그로 데스크탑과 동일한 --ckP를 구동(좌→우 채움, 우→좌 원복) */
+    if(!FINE&&!RM){
+      var tT=0,tP=0,tRaf=null,tDown=false,tLX=0;
+      function tStep(){
+        tP+=(tT-tP)*.18;
+        if(Math.abs(tT-tP)<.05){tP=tT;ck.style.setProperty('--ckP',tP.toFixed(2));tRaf=null;return;}
+        ck.style.setProperty('--ckP',tP.toFixed(2));
+        tRaf=requestAnimationFrame(tStep);
+      }
+      document.addEventListener('pointerdown',function(e){if(hubActive()){tDown=true;tLX=e.clientX;}},{passive:true});
+      document.addEventListener('pointermove',function(e){
+        if(!tDown||!hubActive())return;
+        var dx=e.clientX-tLX;tLX=e.clientX;
+        tT=Math.max(0,Math.min(100,tT+dx/innerWidth*100));
+        if(!tRaf)tRaf=requestAnimationFrame(tStep);
+      },{passive:true});
+      document.addEventListener('pointerup',function(){tDown=false;},{passive:true});
+      document.addEventListener('pointercancel',function(){tDown=false;},{passive:true});
     }
   }
 
