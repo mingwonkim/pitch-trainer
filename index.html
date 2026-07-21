@@ -4517,6 +4517,7 @@ function openBriefReader(dateId){
 function closeBriefReader(){document.getElementById('briefReader').style.display='none';window.scrollTo(0,_briefScrollY);} // iframe 로드로 밀린 배경 스크롤 복원
 async function delBrief(dateId){
   if(!dateId)return;
+  if(!isUnlocked){showTextPin(function(){delBrief(dateId);});return;}
   if(!confirm('이 브리핑을 삭제하시겠습니까?'))return;
   try{await deleteDoc(doc(db,'mk_app','data','briefs',dateId));}catch(e){}
   cachedBriefs=cachedBriefs.filter(function(x){return x.id!==dateId;});
